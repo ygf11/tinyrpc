@@ -1,8 +1,7 @@
-package com.ygf.handler;
+package com.ygf.tinyrpc.protocol.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.internal.logging.Slf4JLoggerFactory;
 
 /**
  * echo handler
