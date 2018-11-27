@@ -26,7 +26,6 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter{
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("write:"+firstMessage.toString());
         ctx.writeAndFlush(firstMessage);
     }
 
