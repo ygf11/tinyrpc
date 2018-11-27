@@ -5,6 +5,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 
 /**
  * echo handler
@@ -12,6 +14,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
  * @Date 20181127
  */
 public class EchoClientHandler extends ChannelInboundHandlerAdapter{
+    InternalLogger logger = InternalLoggerFactory.getInstance(getClass());
 
     public final ByteBuf firstMessage;
 
@@ -24,6 +27,7 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter{
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        logger.info("active:", ctx);
         ctx.writeAndFlush(firstMessage);
     }
 
