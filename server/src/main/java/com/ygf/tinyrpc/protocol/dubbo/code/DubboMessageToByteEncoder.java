@@ -1,6 +1,7 @@
 package com.ygf.tinyrpc.protocol.dubbo.code;
 
 import com.ygf.tinyrpc.protocol.dubbo.message.DubboRequestMessage;
+import com.ygf.tinyrpc.serialize.SerializeUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -9,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -22,13 +24,13 @@ public class DubboMessageToByteEncoder extends MessageToByteEncoder<DubboRequest
 
     private static Logger logger = LoggerFactory.getLogger(DubboMessageToByteEncoder.class);
     /**
-     * service name字段长度占用两个字节
+     * service name域的长度占用两个字节
      */
-    private static final byte SERVICE_LENGTH = 2;
+    private static final byte SERVICE_NAME_LENGTH = 2;
     /**
-     * 方法参数表中参数个数占用1个字节
+     * 方法参数表中参数个数域长度占用1个字节
      */
-    private static final byte PARAMS_SIZE = 1;
+    private static final byte PARAMS_SIZE_LENGTH = 1;
 
     @Override
     protected void encode(ChannelHandlerContext ctx, DubboRequestMessage msg, ByteBuf out) throws Exception {
@@ -36,26 +38,45 @@ public class DubboMessageToByteEncoder extends MessageToByteEncoder<DubboRequest
             logger.info("msg invalid:{}", msg);
             return;
         }
-        int requestId = msg.getRequestId();
-        //byte protocol = msg.getProtocol();
-        //byte version = msg.getVersion();
-        //byte type = msg.getType();
+        // dubbo协议
+        out.writeByte((byte) 1);
+        // 请求类型 rpc请求
+        out.writeByte((byte) 1);
+        // 协议版本
+        out.writeByte((byte) 0);
+        // 请求序列号
+        out.writeInt(msg.getRequestId());
+
+        // 保存此时的writerIndex
+        int saved = out.writerIndex();
+        // 占位
+        out.writeInt(0);
+
+
         String serviceName = msg.getServiceName();
         List<Object> params = msg.getParams();
-        // 2字节
-        int serviceNameLength = serviceName.getBytes().length;
-        // serviceName
 
-        // 2字节
+        int serviceNameLength = serviceName.getBytes().length;
         int paramSize = params.size();
 
+        int length = 0;
+        length += SERVICE_NAME_LENGTH;
+        length += serviceNameLength + PARAMS_SIZE_LENGTH;
 
-        int lenth = 0;
-        lenth = SERVICE_LENGTH + serviceName.getBytes().length;
-        lenth += PARAMS_SIZE;
         for (int i = 0; i < paramSize; ++i) {
+            Object param = params.get(i);
+            byte[] bytes = SerializeUtils.objectToByteArray(param);
+            if (bytes == null) {
+                logger.error("serialize failed");
+                return;
+            }
 
+            length += bytes.length;
+            out.writeBytes(bytes, 0, bytes.length);
         }
+
+        out.writerIndex(saved);
+        out.writeInt(length);
     }
 
     /**
