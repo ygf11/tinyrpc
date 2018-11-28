@@ -3,7 +3,7 @@ package com.ygf.tinyrpc.protocol.dubbo.message;
 /**
  * 请求返回消息
  * @author theo
- * @Date 20181127
+ * @date 20181127
  */
 public class DubboResponseMessage {
     /**

@@ -6,25 +6,25 @@ import java.util.List;
  * 请求端发送的消息
  *
  * @author theo
- * @Date 20181127
+ * @date 20181127
  */
 public class DubboRequestMessage {
     /**
      * 请求序列号标识
      */
-    private int requestId;
+    private Integer requestId;
     /**
      * 协议名
      */
-    private String protocal;
+    //private byte protocol;
     /**
      * 协议版本号
      */
-    private byte version;
+    //private byte version;
     /**
      * 请求类型
      */
-    private byte type;
+    //private byte type;
     /**
      * 服务名：全限定类名+方法名
      */
@@ -66,31 +66,7 @@ public class DubboRequestMessage {
         this.requestId = requestId;
     }
 
-    public int getRequestId() {
+    public Integer getRequestId() {
         return requestId;
-    }
-
-    public void setProtocal(String protocal) {
-        this.protocal = protocal;
-    }
-
-    public String getProtocal() {
-        return protocal;
-    }
-
-    public void setType(byte type) {
-        this.type = type;
-    }
-
-    public byte getType() {
-        return type;
-    }
-
-    public void setVersion(byte version) {
-        this.version = version;
-    }
-
-    public byte getVersion() {
-        return version;
     }
 }
