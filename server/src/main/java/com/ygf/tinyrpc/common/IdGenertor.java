@@ -24,7 +24,7 @@ public class IdGenertor {
         do {
             current = GENERATOR.get();
             next = current >= Integer.MAX_VALUE ? 0 : current + 1;
-        } while (GENERATOR.compareAndSet(current, next));
+        } while (!GENERATOR.compareAndSet(current, next));
 
         return next;
     }
