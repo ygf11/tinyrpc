@@ -38,12 +38,6 @@ public class DubboRequestMessage {
      */
     private List<Object> params;
 
-    public DubboRequestMessage(String serviceName, List<String> paramNames, List<Object> params) {
-        this.serviceName = serviceName;
-        this.paramNames = paramNames;
-        this.params = params;
-    }
-
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }

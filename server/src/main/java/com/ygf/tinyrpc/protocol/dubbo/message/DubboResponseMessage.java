@@ -23,7 +23,8 @@ public class DubboResponseMessage {
      */
     private int type;
     /**
-     * 如果返回类型为抛出一个异常 则此项为异常类名  否则此项不存在
+     * 当type为1 即抛出异常时使用 表示这个异常的全限定类名
+     * 当type不为1时 此项不存在
      */
     private String exceptionClassName;
     /**
@@ -31,5 +32,51 @@ public class DubboResponseMessage {
      */
     private Object result;
 
+    public int getRequestId() {
+        return requestId;
+    }
 
+    public void setRequestId(int requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public String getExceptionClassName() {
+        return exceptionClassName;
+    }
+
+    public void setExceptionClassName(String exceptionClassName) {
+        this.exceptionClassName = exceptionClassName;
+    }
+
+    public Object getResult() {
+        return result;
+    }
+
+    public void setResult(Object result) {
+        this.result = result;
+    }
 }
