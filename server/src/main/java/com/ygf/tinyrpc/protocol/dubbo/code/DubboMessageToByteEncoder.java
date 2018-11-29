@@ -62,6 +62,9 @@ public class DubboMessageToByteEncoder extends MessageToByteEncoder<DubboRequest
         length += SERVICE_NAME_LENGTH;
         length += serviceNameLength + PARAMS_SIZE_LENGTH;
 
+        out.writeShort(serviceNameLength);
+        out.writeBytes(serviceName.getBytes());
+
         for (int i = 0; i < paramSize; ++i) {
             Object param = params.get(i);
             byte[] bytes = SerializeUtils.objectToByteArray(param);
@@ -69,13 +72,15 @@ public class DubboMessageToByteEncoder extends MessageToByteEncoder<DubboRequest
                 logger.error("serialize failed");
                 return;
             }
-
             length += bytes.length;
+            out.writeShort(bytes.length);
             out.writeBytes(bytes, 0, bytes.length);
         }
-
+        out.markWriterIndex();
         out.writerIndex(saved);
         out.writeInt(length);
+        out.resetWriterIndex();
+
     }
 
     /**
