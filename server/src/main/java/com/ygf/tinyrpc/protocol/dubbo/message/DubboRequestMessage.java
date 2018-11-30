@@ -32,7 +32,7 @@ public class DubboRequestMessage {
     /**
      * 参数全限定类名
      */
-    private List<String> paramNames;
+    //private List<String> paramNames;
     /**
      * 参数值
      */
@@ -46,13 +46,13 @@ public class DubboRequestMessage {
         return serviceName;
     }
 
-    public void setParamNames(List<String> paramNames) {
-        this.paramNames = paramNames;
-    }
+    //public void setParamNames(List<String> paramNames) {
+    //    this.paramNames = paramNames;
+    //}
 
-    public List<String> getParamNames() {
-        return paramNames;
-    }
+    //public List<String> getParamNames() {
+    //    return paramNames;
+    //}
 
     public void setParams(List<Object> params) {
         this.params = params;

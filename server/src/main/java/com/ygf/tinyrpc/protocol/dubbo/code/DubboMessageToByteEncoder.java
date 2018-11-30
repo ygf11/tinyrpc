@@ -37,12 +37,14 @@ public class DubboMessageToByteEncoder extends MessageToByteEncoder<DubboRequest
             logger.info("msg invalid:{}", msg);
             return;
         }
+
+        logger.info("request:{} start encode", msg.getRequestId());
         // dubbo协议
-        out.writeByte((byte) 1);
-        // 请求类型 rpc请求
         out.writeByte((byte) 1);
         // 协议版本
         out.writeByte((byte) 0);
+        // 请求类型 rpc请求
+        out.writeByte((byte) 1);
         // 请求序列号
         out.writeInt(msg.getRequestId());
 
@@ -76,6 +78,8 @@ public class DubboMessageToByteEncoder extends MessageToByteEncoder<DubboRequest
             out.writeShort(bytes.length);
             out.writeBytes(bytes, 0, bytes.length);
         }
+
+        // 更新数据段长度
         out.markWriterIndex();
         out.writerIndex(saved);
         out.writeInt(length);
@@ -91,7 +95,7 @@ public class DubboMessageToByteEncoder extends MessageToByteEncoder<DubboRequest
      */
     private boolean isInvalid(DubboRequestMessage msg) {
         if (msg == null || msg.getRequestId() == null || StringUtils.isNotBlank(msg.getServiceName())
-                || CollectionUtils.isEmpty(msg.getParamNames()) || CollectionUtils.isEmpty(msg.getParams())) {
+                 || CollectionUtils.isEmpty(msg.getParams())) {
             return false;
         }
 

@@ -25,7 +25,7 @@ public class JunitTest {
         paramNames.add("arg1");
         paramNames.add("arg2");
         paramNames.add("arg3");
-        msg.setParamNames(paramNames);
+        //msg.setParamNames(paramNames);
         List<Object> params = new ArrayList<Object>();
         params.add((Integer)1);
         params.add((Integer)2);
