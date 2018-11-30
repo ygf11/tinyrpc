@@ -6,19 +6,19 @@ package com.ygf.tinyrpc.protocol.dubbo.message;
  * @author theo
  * @date 20181130
  */
-public class RpcResponseMessage {
+public class RpcResponseMessage  extends Header{
     /**
      * 表示rpc请求的id
      */
-    private int requestId;
+    private Integer requestId;
     /**
      * 客户端请求的服务名
      */
-    private String sevice;
+    private String service;
     /**
      * 返回类型 正常-1/异常-2
      */
-    private byte type;
+    private Byte resultType;
     /**
      * 结果的全限定类名(当type为2时，是一个异常类名)
      */
@@ -28,7 +28,7 @@ public class RpcResponseMessage {
      */
     private Object result;
 
-    public int getRequestId() {
+    public Integer getRequestId() {
         return requestId;
     }
 
@@ -36,20 +36,20 @@ public class RpcResponseMessage {
         this.requestId = requestId;
     }
 
-    public String getSevice() {
-        return sevice;
+    public String getService() {
+        return service;
     }
 
-    public void setSevice(String sevice) {
-        this.sevice = sevice;
+    public void setService(String service) {
+        this.service = service;
     }
 
-    public byte getType() {
-        return type;
+    public Byte getResultType() {
+        return resultType;
     }
 
-    public void setType(byte type) {
-        this.type = type;
+    public void setResultType(byte resultType) {
+        this.resultType = resultType;
     }
 
     public String getTargetClass() {

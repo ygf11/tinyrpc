@@ -8,7 +8,7 @@ import java.util.List;
  * @author theo
  * @date 20181130
  */
-public class RpcRequestMessage extends DubboHeader {
+public class RpcRequestMessage extends Header {
     /**
      * 客户端一次rpc请求的标识
      */

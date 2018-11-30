@@ -6,29 +6,29 @@ package com.ygf.tinyrpc.protocol.dubbo.message;
  * @author theo
  * @date 20181130
  */
-public class DubboHeader {
+public class Header {
     /**
      * 协议类型
      */
-    private byte protocol;
+    private Byte protocol;
     /**
      * 协议版本
      */
-    private byte version;
+    private Byte version;
     /**
      * 请求类型
      */
-    private byte type;
+    private Byte type;
     /**
      * 会话id
      */
-    private int sessionId;
+    private Integer sessionId;
     /**
      * 数据段长度
      */
-    private int dataLength;
+    private Integer dataLength;
 
-    public byte getProtocol() {
+    public Byte getProtocol() {
         return protocol;
     }
 
@@ -36,7 +36,7 @@ public class DubboHeader {
         this.protocol = protocol;
     }
 
-    public byte getVersion() {
+    public Byte getVersion() {
         return version;
     }
 
@@ -44,7 +44,7 @@ public class DubboHeader {
         this.version = version;
     }
 
-    public byte getType() {
+    public Byte getType() {
         return type;
     }
 
@@ -52,7 +52,7 @@ public class DubboHeader {
         this.type = type;
     }
 
-    public int getSessionId() {
+    public Integer getSessionId() {
         return sessionId;
     }
 
