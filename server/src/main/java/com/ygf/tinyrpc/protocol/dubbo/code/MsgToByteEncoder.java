@@ -38,14 +38,13 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
         // sessionId
         out.writeInt(msg.getSessionId());
 
+        int pos = out.writerIndex();
+        out.writeInt(0);
+
         // 非rpc请求和响应报文
-        if (msg.getDataLength() == 0) {
+        if (!isRpc(msg)) {
             return;
         }
-
-        int pos = out.writerIndex();
-        // 占位
-        out.writeInt(0);
 
         switch (msg.getType()) {
             case RPC_REQUEST:
@@ -55,7 +54,7 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
                 encodeForResponse(msg, out, pos);
                 break;
             default:
-                logger.error("sessionId {}, session msg's datalength is not 0", msg.getSessionId());
+                logger.error("sessionId {}, session msg's datalength is not 0", msg.getSessionId(), msg.getType());
         }
 
     }
@@ -85,23 +84,23 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
         out.writeBytes(service.getBytes(), 0, service.length());
         length += service.length();
 
-        byte count = (byte)(msg.getParams().size());
-        if (count < 0){
-            logger.warn("sessionId {}, requestId {}, rpc请求中参数个数大于127", msg.getSessionId(), msg.getRequestId());
+        byte count = (byte) (msg.getParams().size());
+        if (count < 0) {
+            logger.warn("sessionId {}, requestId {},rpc请求中参数个数大于127", msg.getSessionId(), msg.getRequestId());
         }
         // 写入参数
         out.writeByte(count);
         length += 1;
 
-        for (Object param: msg.getParams()){
+        for (Object param : msg.getParams()) {
             byte[] bytes = SerializeUtils.objectToByteArray(param);
-            if (bytes == null){
+            if (bytes == null) {
                 logger.error("param {}, obj to byte array failed", param);
                 return;
             }
 
             out.writeShort(bytes.length);
-            out.readBytes(bytes, 0, bytes.length);
+            out.writeBytes(bytes, 0, bytes.length);
             length = length + 2 + bytes.length;
         }
 
@@ -143,17 +142,19 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
         out.writeByte(msg.getResultType());
         length += 1;
 
-        out.writeShort(msg.getTargetClass().length());
+        String target = msg.getTargetClass();
+        out.writeShort(target.length());
+        out.writeBytes(target.getBytes(), 0, target.length());
         length += msg.getTargetClass().length();
 
         Object res = msg.getResult();
-        byte[] bytes = SerializeUtils.objectToByteArray(msg.getResult());
-        if (bytes == null){
+        byte[] bytes = SerializeUtils.objectToByteArray(res);
+        if (bytes == null) {
             logger.error("param {}, obj to byte array failed", res);
             return;
         }
         out.writeShort(bytes.length);
-        out.readBytes(bytes, 0, bytes.length);
+        out.writeBytes(bytes, 0, bytes.length);
         length = length + 2 + bytes.length;
 
         // 更新数据段长度
@@ -170,10 +171,24 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
      * @return
      */
     private boolean isInvalid(Header header) {
-        if (header == null) {
+        if (header == null || header.getType() == 0) {
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * 判断报文是否是rpc请求/rpc响应报文
+     *
+     * @return
+     */
+    private boolean isRpc(Header header) {
+        byte type = header.getType();
+        if (type == RPC_REQUEST || type == RPC_RESPONSE) {
+            return true;
+        }
+
+        return false;
     }
 }
