@@ -1,5 +1,6 @@
 package com.ygf.tinyrpc.protocol.dubbo.message;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,10 +24,12 @@ public class RpcRequestMessage extends Header {
     private List<Object> params;
 
     public RpcRequestMessage() {
+        params = new ArrayList<Object>();
     }
 
     public RpcRequestMessage(Header header) {
         super(header);
+        params = new ArrayList<Object>();
     }
 
     public int getRequestId() {

@@ -28,6 +28,8 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
             logger.warn("msg is null, {}", msg);
             return;
         }
+        // 标记初始位置
+        out.markWriterIndex();
 
         // 协议
         out.writeByte(msg.getProtocol());
@@ -93,17 +95,16 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
         out.writeByte(count);
         length += 1;
         for (Object param : msg.getParams()) {
-            byte[] bytes = SerializeUtils.objectToByteArray(param);
-            if (bytes == null) {
-                logger.error("param {}, obj to byte array failed", param);
+            try {
+                byte[] bytes = SerializeUtils.objectToByteArray(param);
+                out.writeShort(bytes.length);
+                out.writeBytes(bytes, 0, bytes.length);
+                length = length + 2 + bytes.length;
+            }catch (Exception e){
+                out.resetWriterIndex();
                 return;
             }
-
-            out.writeShort(bytes.length);
-            out.writeBytes(bytes, 0, bytes.length);
-            length = length + 2 + bytes.length;
         }
-
 
         // 更新数据段长度
         out.markWriterIndex();
@@ -114,7 +115,7 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
     }
 
     /**
-     * rpc响应是的编码
+     * rpc响应时的编码
      *
      * @param header
      * @param out
@@ -147,11 +148,12 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
         out.writeShort(target.length());
         out.writeBytes(target.getBytes(), 0, target.length());
         length += msg.getTargetClass().length();
-
-        Object res = msg.getResult();
-        byte[] bytes = SerializeUtils.objectToByteArray(res);
-        if (bytes == null) {
-            logger.error("param {}, obj to byte array failed", res);
+        byte[] bytes;
+        try {
+            Object res = msg.getResult();
+            bytes = SerializeUtils.objectToByteArray(res);
+        }catch (Exception e){
+            out.resetWriterIndex();
             return;
         }
         out.writeShort(bytes.length);

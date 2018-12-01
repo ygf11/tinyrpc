@@ -25,38 +25,32 @@ public class SerializeUtils {
      * @param object
      * @return
      */
-    public static byte[] objectToByteArray(Object object) {
-        byte[] bytes = null;
+    public static byte[] objectToByteArray(Object object) throws Exception {
+        byte[] bytes;
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream(bos);
-            oos.writeObject(object);
-            oos.flush();
-            bytes = bos.toByteArray();
-            oos.close();
-            bos.close();
-        } catch (IOException e) {
-            logger.error("object to byte array failed, {}", object);
-        }
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(object);
+        oos.flush();
+        bytes = bos.toByteArray();
+        oos.close();
+        bos.close();
+
         return bytes;
     }
 
     /**
      * byte数组(字节流)转换成对象
+     *
      * @param bytes
      * @return
      */
-    public static Object byteArrayToObject(byte[] bytes) {
-        Object object = null;
+    public static Object byteArrayToObject(byte[] bytes) throws Exception {
+        Object object;
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        try {
-            ObjectInputStream ois = new ObjectInputStream(bis);
-            object = ois.readObject();
-            ois.close();
-            bis.close();
-        } catch (Exception e) {
-            logger.error("byte array to object failed");
-        }
+        ObjectInputStream ois = new ObjectInputStream(bis);
+        object = ois.readObject();
+        ois.close();
+        bis.close();
         return object;
     }
 }

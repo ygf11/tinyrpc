@@ -165,6 +165,7 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
         Object result;
         try {
             result = SerializeUtils.byteArrayToObject(resultArray);
+            msg.setResult(result);
             out.add(msg);
         } catch (Exception e) {
             // 跳过这个报文
