@@ -22,6 +22,13 @@ public class RpcRequestMessage extends Header {
      */
     private List<Object> params;
 
+    public RpcRequestMessage() {
+    }
+
+    public RpcRequestMessage(Header header) {
+        super(header);
+    }
+
     public int getRequestId() {
         return requestId;
     }

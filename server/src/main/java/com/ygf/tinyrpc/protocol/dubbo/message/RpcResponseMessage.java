@@ -28,6 +28,12 @@ public class RpcResponseMessage  extends Header{
      */
     private Object result;
 
+    public RpcResponseMessage(){}
+
+    public RpcResponseMessage(Header header){
+        super(header);
+    }
+
     public Integer getRequestId() {
         return requestId;
     }

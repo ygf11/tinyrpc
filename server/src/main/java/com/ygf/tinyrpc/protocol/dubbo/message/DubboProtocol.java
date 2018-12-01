@@ -2,6 +2,7 @@ package com.ygf.tinyrpc.protocol.dubbo.message;
 
 /**
  * dubbo协议传输的格式
+ *
  * @author theo
  * @date 20181129
  */
@@ -14,6 +15,10 @@ public class DubboProtocol {
      * header段长度
      */
     public static final byte HEADER_LENGTH = 11;
+    /**
+     * 协议+版本长度
+     */
+    public static final byte PROTOCOL_LEN = 2;
 
 
     //以下是请求类型
@@ -24,11 +29,11 @@ public class DubboProtocol {
     /**
      * 响应创建会话
      */
-    public static final byte CREATE_SESSION_RESPONSE= 2;
+    public static final byte CREATE_SESSION_RESPONSE = 2;
     /**
      * 客户端对创建会话的确认
      */
-    public static final byte CREATE_SESSION_ACK= 3;
+    public static final byte CREATE_SESSION_ACK = 3;
     /**
      * 客户端发送的心跳请求
      */

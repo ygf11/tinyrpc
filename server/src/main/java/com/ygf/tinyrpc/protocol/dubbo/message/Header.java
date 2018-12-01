@@ -27,6 +27,15 @@ public class Header {
      */
     private int sessionId;
 
+    public Header(){};
+
+    public Header(Header header){
+        this.protocol = header.getProtocol();
+        this.version = header.getVersion();
+        this.type = header.getType();
+        this.sessionId = header.sessionId;
+    }
+
     public byte getProtocol() {
         return protocol;
     }

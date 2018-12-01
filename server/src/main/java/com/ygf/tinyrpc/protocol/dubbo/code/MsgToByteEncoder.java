@@ -86,12 +86,12 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
 
         byte count = (byte) (msg.getParams().size());
         if (count < 0) {
-            logger.warn("sessionId {}, requestId {},rpc请求中参数个数大于127", msg.getSessionId(), msg.getRequestId());
+            logger.error("sessionId {}, requestId {},rpc请求中参数个数大于127", msg.getSessionId(), msg.getRequestId());
+            return;
         }
         // 写入参数
         out.writeByte(count);
         length += 1;
-
         for (Object param : msg.getParams()) {
             byte[] bytes = SerializeUtils.objectToByteArray(param);
             if (bytes == null) {
@@ -103,6 +103,7 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
             out.writeBytes(bytes, 0, bytes.length);
             length = length + 2 + bytes.length;
         }
+
 
         // 更新数据段长度
         out.markWriterIndex();
