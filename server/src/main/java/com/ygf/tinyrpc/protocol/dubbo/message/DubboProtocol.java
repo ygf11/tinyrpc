@@ -16,6 +16,10 @@ public class DubboProtocol {
      */
     public static final byte HEADER_LENGTH = 11;
     /**
+     * 当前协议版本
+     */
+    public static final byte CURRENT_VERSION = 1;
+    /**
      * 协议+版本长度
      */
     public static final byte PROTOCOL_LEN = 2;
