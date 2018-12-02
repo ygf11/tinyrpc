@@ -166,6 +166,5 @@ public class MsgToEncoderTest {
         byte[] array = new byte[len];
         byteBuf.readBytes(array, 0, len);
         Assert.assertEquals(Integer.valueOf("1"), SerializeUtils.byteArrayToObject(array));
-
     }
 }

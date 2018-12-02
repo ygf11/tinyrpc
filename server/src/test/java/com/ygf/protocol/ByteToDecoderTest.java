@@ -66,11 +66,12 @@ public class ByteToDecoderTest {
 
     /**
      * 反射调用encode方法写入数据
+     *
      * @param in
      * @param msg
      * @throws Exception
      */
-    private void writePacketData(ByteBuf in, Header msg) throws Exception{
+    private void writePacketData(ByteBuf in, Header msg) throws Exception {
         Class[] classes = new Class[3];
         // 参数列表
         classes[0] = ChannelHandlerContext.class;
@@ -113,7 +114,7 @@ public class ByteToDecoderTest {
      * rpc请求报文解码 正常解析
      */
     @Test
-    public void RpcRequestTest() throws Exception{
+    public void RpcRequestTest() throws Exception {
         header.setType(RPC_REQUEST);
         RpcRequestMessage msg = new RpcRequestMessage(header);
         int requestId = IdGenertor.incrementAndGet();
@@ -136,7 +137,7 @@ public class ByteToDecoderTest {
         Assert.assertEquals(msg.getRequestId(), result.getRequestId());
         Assert.assertEquals(msg.getParams().size(), result.getParams().size());
         Assert.assertEquals(msg.getService(), msg.getService());
-        for (int i = 0; i < msg.getParams().size(); ++i){
+        for (int i = 0; i < msg.getParams().size(); ++i) {
             Assert.assertEquals(msg.getParams().get(i), result.getParams().get(i));
         }
     }
@@ -145,13 +146,13 @@ public class ByteToDecoderTest {
      * rpc响应报文解析 正常解析
      */
     @Test
-    public void RpcResponseTest() throws Exception{
+    public void RpcResponseTest() throws Exception {
         header.setType(RPC_RESPONSE);
         RpcResponseMessage msg = new RpcResponseMessage(header);
         int requestId = IdGenertor.incrementAndGet();
         msg.setRequestId(requestId);
         msg.setService("com.ygf.protocol.DubboEncoder.test()");
-        msg.setResultType((byte)1);
+        msg.setResultType((byte) 1);
         msg.setTargetClass("java.lang.Integer");
         msg.setResult(Integer.valueOf("110"));
 
@@ -168,6 +169,58 @@ public class ByteToDecoderTest {
         Assert.assertEquals(msg.getResultType(), result.getResultType());
         Assert.assertEquals(msg.getTargetClass(), result.getTargetClass());
         Assert.assertEquals(msg.getResult(), result.getResult());
+    }
+
+    /**
+     * rpc请求报文解析异常
+     */
+    @Test
+    public void RpcRequestFailTest() throws Exception {
+        header.setType(RPC_REQUEST);
+        RpcRequestMessage msg = new RpcRequestMessage(header);
+        int requestId = IdGenertor.incrementAndGet();
+        msg.setRequestId(requestId);
+        msg.setService("com.ygf.protocol.DubboEncoder.test()");
+        List<Object> params = new ArrayList<Object>();
+        params.add((Integer) 4);
+        params.add((Integer) 5);
+        params.add((Integer) 6);
+        msg.setParams(params);
+
+        writePacketData(in, msg);
+        // 修改参数1 使之不能正常反序列化
+        in.markWriterIndex();
+        byte[] bytes = new byte[81];
+        in.writerIndex(56);
+        in.writeBytes(bytes, 0, 81);
+
+        in.resetWriterIndex();
+        MethodUtils.invokeMethod(decoder, true, "decode", args, classes);
+    }
+
+    /**
+     * rpc响应报文解析异常
+     */
+    @Test
+    public void RpcResponseFailTest() throws Exception {
+        header.setType(RPC_RESPONSE);
+        RpcResponseMessage msg = new RpcResponseMessage(header);
+        int requestId = IdGenertor.incrementAndGet();
+        msg.setRequestId(requestId);
+        msg.setService("com.ygf.protocol.DubboEncoder.test()");
+        msg.setResultType((byte) 1);
+        msg.setTargetClass("java.lang.Integer");
+        msg.setResult(Integer.valueOf("110"));
+
+        writePacketData(in, msg);
+
+        in.markWriterIndex();
+        in.writerIndex(75);
+        byte[] bytes = new byte[81];
+        in.writeBytes(bytes, 0, 81);
+        in.resetWriterIndex();
+
+        MethodUtils.invokeMethod(decoder, true, "decode", args, classes);
     }
 
 }
