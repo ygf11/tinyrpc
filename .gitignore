@@ -10,3 +10,4 @@ logs/
 .DS_Store
 /tiny.ipr
 /tiny.iws
+*.attach_pid*

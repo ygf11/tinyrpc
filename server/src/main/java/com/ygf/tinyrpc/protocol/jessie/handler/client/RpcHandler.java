@@ -7,8 +7,11 @@ import com.ygf.tinyrpc.protocol.jessie.common.Session;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol;
+
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
+
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
+
 import static com.ygf.tinyrpc.protocol.jessie.common.SessionStatus.*;
 
 import io.netty.channel.Channel;
@@ -30,6 +33,10 @@ public class RpcHandler {
      * 与服务器通信的channel
      */
     private Channel channel;
+    /**
+     * 单例会话对象
+     */
+    private Session session = Session.getInstance();
 
     public RpcHandler(Channel channel) {
         this.channel = channel;
@@ -43,7 +50,7 @@ public class RpcHandler {
             logger.warn("connection is not completed");
         }
 
-
+        // TODO 向服务器端发送application字段
         final Header header = new Header();
         header.setProtocol(PROTOCOL);
         header.setVersion(CURRENT_VERSION);
@@ -52,7 +59,6 @@ public class RpcHandler {
 
         writeMsg(header);
 
-        Session session = Session.getInstance();
         session.setStatus(CONNECTING);
     }
 
@@ -66,7 +72,6 @@ public class RpcHandler {
             logger.warn("connection is not completed");
         }
 
-        Session session = Session.getInstance();
         RpcRequestMessage msg = new RpcRequestMessage();
         msg.setProtocol(JessieProtocol.PROTOCOL);
         msg.setVersion(JessieProtocol.CURRENT_VERSION);
@@ -76,7 +81,7 @@ public class RpcHandler {
         msg.setRequestId(invocation.getRequestId());
         String className = invocation.getTarget().getCanonicalName();
         String methodName = invocation.getMethod().getName();
-        msg.setService(className+"."+methodName+"()");
+        msg.setService(className + "." + methodName + "()");
         msg.setParams(Arrays.asList(invocation.getArgs()));
 
         writeMsg(msg);
@@ -93,24 +98,31 @@ public class RpcHandler {
 
     /**
      * 接收服务器的响应
+     *
+     * @param msg
      */
     public void handleResponse(Header msg) {
-        if (msg == null){
+        if (msg == null) {
             logger.warn("msg is null in rpc handler");
             return;
         }
-        switch (msg.getType()){
+
+        switch (msg.getType()) {
             case CREATE_SESSION_RESPONSE:
                 sessionResponse(msg);
                 break;
             case RPC_RESPONSE:
                 rpcResponse(msg);
                 break;
+            default:
+                logger.warn("msg type {}, not support", msg.getType());
         }
     }
 
     /**
      * 处理来自服务器创建会话的响应
+     *
+     * @param msg
      */
     public void sessionResponse(Header msg) {
         final Header ack = new Header();
@@ -124,17 +136,18 @@ public class RpcHandler {
 
         // TODO 启动心跳线程
         assert msg.getSessionId() != 0;
-        Session session = Session.getInstance();
         session.setSessionId(msg.getSessionId());
         session.setStatus(CONNECTED);
     }
 
     /**
      * 处理来自服务器的rpc响应
+     *
+     * @param header
      */
     public void rpcResponse(Header header) {
         boolean isResponse = header instanceof RpcResponseMessage;
-        if (!isResponse){
+        if (!isResponse) {
             logger.warn("msg {] is not a response msg", header);
             return;
         }
@@ -146,7 +159,6 @@ public class RpcHandler {
         result.setResultType(msg.getTargetClass());
         result.setResult(msg.getResult());
 
-        Session session = Session.getInstance();
         session.putResult(requestId, result);
 
         // TODO 更新心跳
@@ -160,10 +172,10 @@ public class RpcHandler {
      *
      * @param msg
      */
-    private void writeMsg(final Header msg){
-        if (channel.eventLoop().inEventLoop()){
+    private void writeMsg(final Header msg) {
+        if (channel.eventLoop().inEventLoop()) {
             channel.write(msg);
-        }else{
+        } else {
             channel.eventLoop().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -172,5 +184,4 @@ public class RpcHandler {
             });
         }
     }
-
 }

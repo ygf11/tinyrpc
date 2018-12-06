@@ -1,4 +1,4 @@
-package com.ygf.protocol;
+package com.ygf.protocol.jessie;
 
 import com.ygf.tinyrpc.common.IdGenertor;
 import com.ygf.tinyrpc.protocol.jessie.code.MsgToByteEncoder;

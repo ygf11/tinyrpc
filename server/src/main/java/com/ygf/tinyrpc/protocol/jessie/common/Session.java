@@ -51,7 +51,7 @@ public class Session {
         this.sessionId = sessionId;
     }
 
-    public RpcResult getResults(Integer requestId) {
+    public RpcResult getResult(Integer requestId) {
         return results.get(requestId);
     }
 
