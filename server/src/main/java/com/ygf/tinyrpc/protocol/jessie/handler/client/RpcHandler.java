@@ -2,9 +2,14 @@ package com.ygf.tinyrpc.protocol.jessie.handler.client;
 
 
 import com.ygf.tinyrpc.common.RpcInvocation;
+import com.ygf.tinyrpc.protocol.jessie.common.Session;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol;
+import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
+import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
+import static com.ygf.tinyrpc.protocol.jessie.common.SessionStatus.*;
+
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,21 +41,17 @@ public class RpcHandler {
             logger.warn("connection is not completed");
         }
 
+
         final Header header = new Header();
-        header.setProtocol(JessieProtocol.PROTOCOL);
-        header.setVersion(JessieProtocol.CURRENT_VERSION);
-        header.setType(JessieProtocol.CREATE_SESSION_REQUEST);
+        header.setProtocol(PROTOCOL);
+        header.setVersion(CURRENT_VERSION);
+        header.setType(CREATE_SESSION_REQUEST);
         header.setSessionId(0);
-        if (channel.eventLoop().inEventLoop()) {
-            channel.write(header);
-        } else {
-            channel.eventLoop().execute(new Runnable() {
-                @Override
-                public void run() {
-                    channel.write(header);
-                }
-            });
-        }
+
+        writeMsg(header);
+
+        Session session = Session.getInstance();
+        session.setStatus(CONNECTING);
     }
 
     /**
@@ -80,23 +81,74 @@ public class RpcHandler {
     /**
      * 接收服务器的响应
      */
-    public void handleResponse() {
-
+    public void handleResponse(Header msg) {
+        if (msg == null){
+            logger.warn("msg is null in rpc handler");
+            return;
+        }
+        switch (msg.getType()){
+            case CREATE_SESSION_RESPONSE:
+                sessionResponse(msg);
+                break;
+            case RPC_RESPONSE:
+                rpcResponse(msg);
+                break;
+        }
     }
 
     /**
      * 处理来自服务器创建会话的响应
      */
-    public void sessionResponse() {
+    public void sessionResponse(Header msg) {
+        final Header ack = new Header();
+        ack.setProtocol(PROTOCOL);
+        ack.setSessionId(msg.getSessionId());
+        ack.setType(CREATE_SESSION_ACK);
+        ack.setVersion(CURRENT_VERSION);
 
+        writeMsg(ack);
+
+
+        // TODO 启动心跳线程
+        assert msg.getSessionId() != 0;
+        Session session = Session.getInstance();
+        session.setSessionId(msg.getSessionId());
+        session.setStatus(CONNECTED);
     }
 
     /**
      * 处理来自服务器的rpc响应
      */
-    public void rpcResponse() {
+    public void rpcResponse(Header header) {
+        boolean isResponse = header instanceof RpcResponseMessage;
+        if (!isResponse){
+            logger.warn("msg {] is not a response msg", header);
+            return;
+        }
+
+        RpcResponseMessage msg = (RpcResponseMessage) header;
+
 
     }
 
+    /**
+     * 两种方式向channel写入消息：
+     * 1. 当前线程在channel注册的eventloop中时，直接在这个线程中执行代码
+     * 2. 当前线程不在channel注册的evetloop时， 提交到这个线程中稍候执行
+     *
+     * @param msg
+     */
+    private void writeMsg(final Header msg){
+        if (channel.eventLoop().inEventLoop()){
+            channel.write(msg);
+        }else{
+            channel.eventLoop().execute(new Runnable() {
+                @Override
+                public void run() {
+                    channel.write(msg);
+                }
+            });
+        }
+    }
 
 }

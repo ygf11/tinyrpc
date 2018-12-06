@@ -29,7 +29,7 @@ public class Session {
         status = SessionStatus.DISCONNECT;
     }
 
-    public Session getInstance(){
+    public static Session getInstance(){
         return instance;
     }
 
@@ -49,11 +49,11 @@ public class Session {
         this.sessionId = sessionId;
     }
 
-    public Map<Integer, Object> getResults() {
-        return results;
+    public Object getResults(Integer requestId) {
+        return results.get(requestId);
     }
 
-    public void setResults(Map<Integer, Object> results) {
-        this.results = results;
+    public void putResult(Integer requestId, Object result) {
+        results.put(requestId, result);
     }
 }
