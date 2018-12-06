@@ -1,5 +1,7 @@
 package com.ygf.tinyrpc.protocol.jessie.common;
 
+import com.ygf.tinyrpc.common.RpcResult;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,7 +23,7 @@ public class Session {
     /**
      * 结果集
      */
-    private Map<Integer, Object> results = new ConcurrentHashMap<Integer, Object>();
+    private Map<Integer, RpcResult> results = new ConcurrentHashMap<Integer, RpcResult>();
 
     private static Session instance = new Session();
 
@@ -49,11 +51,11 @@ public class Session {
         this.sessionId = sessionId;
     }
 
-    public Object getResults(Integer requestId) {
+    public RpcResult getResults(Integer requestId) {
         return results.get(requestId);
     }
 
-    public void putResult(Integer requestId, Object result) {
+    public void putResult(Integer requestId, RpcResult result) {
         results.put(requestId, result);
     }
 }

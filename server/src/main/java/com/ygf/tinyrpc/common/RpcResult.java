@@ -12,30 +12,29 @@ public class RpcResult {
     /**
      * 异常 正常
      */
-    int type;
+    byte type;
     /**
      * 结果类
      */
-    Class resultClass;
+    Class resultType;
     /**
      * 结果对象
      */
     Object result;
 
-    public int getType() {
+    public byte getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(byte type) {
         this.type = type;
     }
-
-    public Class getResultClass() {
-        return resultClass;
+    public Class getResultType() {
+        return resultType;
     }
 
-    public void setResultClass(Class resultClass) {
-        this.resultClass = resultClass;
+    public void setResultType(Class resultType) {
+        this.resultType = resultType;
     }
 
     public Object getResult() {

@@ -9,6 +9,7 @@ import com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol;
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
 import static com.ygf.tinyrpc.protocol.jessie.common.SessionStatus.*;
+import static com.ygf.tinyrpc.common.RpcResponseType.*;
 
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
@@ -140,8 +141,17 @@ public class RpcHandler {
 
         RpcResponseMessage msg = (RpcResponseMessage) header;
         int requestId = msg.getRequestId();
+        byte type = msg.getType();
+        switch (type){
+            case NORMAL:
+                break;
+            case EXCEPTION:
+                break;
 
+        }
     }
+
+    private void
 
     /**
      * 两种方式向channel写入消息：
