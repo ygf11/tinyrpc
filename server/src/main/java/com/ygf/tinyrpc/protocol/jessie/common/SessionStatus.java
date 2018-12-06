@@ -1,4 +1,4 @@
-package com.ygf.tinyrpc.protocol.dubbo.common;
+package com.ygf.tinyrpc.protocol.jessie.common;
 
 /**
  * 会话状态

@@ -1,10 +1,10 @@
 package com.ygf.protocol;
 
 import com.ygf.tinyrpc.common.IdGenertor;
-import com.ygf.tinyrpc.protocol.dubbo.code.MsgToByteEncoder;
-import com.ygf.tinyrpc.protocol.dubbo.message.Header;
-import com.ygf.tinyrpc.protocol.dubbo.message.RpcRequestMessage;
-import com.ygf.tinyrpc.protocol.dubbo.message.RpcResponseMessage;
+import com.ygf.tinyrpc.protocol.jessie.code.MsgToByteEncoder;
+import com.ygf.tinyrpc.protocol.jessie.message.Header;
+import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
+import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
 import com.ygf.tinyrpc.serialize.SerializeUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.UnpooledByteBufAllocator;
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ygf.tinyrpc.protocol.dubbo.message.DubboProtocol.*;
+import static com.ygf.tinyrpc.protocol.jessie.message.DubboProtocol.*;
 
 /**
  * session和heartbeat相关的报文编码测试类

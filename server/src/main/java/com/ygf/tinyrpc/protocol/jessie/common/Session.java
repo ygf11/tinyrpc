@@ -1,4 +1,4 @@
-package com.ygf.tinyrpc.protocol.dubbo.common;
+package com.ygf.tinyrpc.protocol.jessie.common;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,4 +1,4 @@
-package com.ygf.tinyrpc.protocol.dubbo.message;
+package com.ygf.tinyrpc.protocol.jessie.message;
 
 import java.util.ArrayList;
 import java.util.List;

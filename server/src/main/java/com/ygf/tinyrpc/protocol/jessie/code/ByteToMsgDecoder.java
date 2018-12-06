@@ -1,16 +1,15 @@
-package com.ygf.tinyrpc.protocol.dubbo.code;
+package com.ygf.tinyrpc.protocol.jessie.code;
 
-import com.ygf.tinyrpc.protocol.dubbo.message.Header;
-import com.ygf.tinyrpc.protocol.dubbo.message.RpcRequestMessage;
-import com.ygf.tinyrpc.protocol.dubbo.message.RpcResponseMessage;
+import com.ygf.tinyrpc.protocol.jessie.message.Header;
+import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
+import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
+import com.ygf.tinyrpc.protocol.jessie.message.DubboProtocol;
 import com.ygf.tinyrpc.serialize.SerializeUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.ygf.tinyrpc.protocol.dubbo.message.DubboProtocol.*;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         // 报文数据不够
-        if (in.readableBytes() < HEADER_LENGTH) {
+        if (in.readableBytes() < DubboProtocol.HEADER_LENGTH) {
             return;
         }
         // 保留位置 以便回滚
@@ -38,7 +37,7 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
         byte protocol = in.readByte();
 
         // 如果不是dubbo的数据报文  则不进行解析
-        if (protocol != PROTOCOL) {
+        if (protocol != DubboProtocol.PROTOCOL) {
             in.readerIndex(0);
             return;
         }
@@ -51,17 +50,17 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
 
 
         switch (header.getType()) {
-            case RPC_REQUEST:
+            case DubboProtocol.RPC_REQUEST:
                 parseRpcRequestPacket(in, header, out);
                 break;
-            case RPC_RESPONSE:
+            case DubboProtocol.RPC_RESPONSE:
                 parseRpcResponsePacket(in, header, out);
                 break;
-            case CREATE_SESSION_REQUEST:
-            case CREATE_SESSION_RESPONSE:
-            case CREATE_SESSION_ACK:
-            case EXIT_SESSION:
-            case HEARTBEATS:
+            case DubboProtocol.CREATE_SESSION_REQUEST:
+            case DubboProtocol.CREATE_SESSION_RESPONSE:
+            case DubboProtocol.CREATE_SESSION_ACK:
+            case DubboProtocol.EXIT_SESSION:
+            case DubboProtocol.HEARTBEATS:
                 parseGeneralPacket(in, header, out);
                 break;
             default:
@@ -182,6 +181,6 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
      */
     private void skipPacket(ByteBuf in, int length) {
         in.resetReaderIndex();
-        in.readerIndex(in.readerIndex() + HEADER_LENGTH + length);
+        in.readerIndex(in.readerIndex() + DubboProtocol.HEADER_LENGTH + length);
     }
 }

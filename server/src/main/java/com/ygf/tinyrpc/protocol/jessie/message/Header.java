@@ -1,6 +1,4 @@
-package com.ygf.tinyrpc.protocol.dubbo.message;
-
-import static com.ygf.tinyrpc.protocol.dubbo.message.DubboProtocol.*;
+package com.ygf.tinyrpc.protocol.jessie.message;
 
 
 /**

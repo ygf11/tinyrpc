@@ -1,4 +1,4 @@
-package com.ygf.tinyrpc.protocol.dubbo.message;
+package com.ygf.tinyrpc.protocol.jessie.message;
 
 /**
  * rpc响应报文

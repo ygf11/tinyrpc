@@ -1,16 +1,15 @@
-package com.ygf.tinyrpc.protocol.dubbo.code;
+package com.ygf.tinyrpc.protocol.jessie.code;
 
-import com.ygf.tinyrpc.protocol.dubbo.message.RpcRequestMessage;
-import com.ygf.tinyrpc.protocol.dubbo.message.RpcResponseMessage;
+import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
+import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
+import com.ygf.tinyrpc.protocol.jessie.message.DubboProtocol;
 import com.ygf.tinyrpc.serialize.SerializeUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-import com.ygf.tinyrpc.protocol.dubbo.message.Header;
+import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.ygf.tinyrpc.protocol.dubbo.message.DubboProtocol.*;
 
 /**
  * 字节流写入的编码器
@@ -49,10 +48,10 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
         }
 
         switch (msg.getType()) {
-            case RPC_REQUEST:
+            case DubboProtocol.RPC_REQUEST:
                 encodeForRequest(msg, out, pos);
                 break;
-            case RPC_RESPONSE:
+            case DubboProtocol.RPC_RESPONSE:
                 encodeForResponse(msg, out, pos);
                 break;
             default:
@@ -188,7 +187,7 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
      */
     private boolean isRpc(Header header) {
         byte type = header.getType();
-        if (type == RPC_REQUEST || type == RPC_RESPONSE) {
+        if (type == DubboProtocol.RPC_REQUEST || type == DubboProtocol.RPC_RESPONSE) {
             return true;
         }
 
