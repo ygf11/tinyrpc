@@ -16,7 +16,7 @@ public class RpcResult {
     /**
      * 结果类
      */
-    Class resultType;
+    String resultType;
     /**
      * 结果对象
      */
@@ -29,11 +29,11 @@ public class RpcResult {
     public void setType(byte type) {
         this.type = type;
     }
-    public Class getResultType() {
+    public String getResultType() {
         return resultType;
     }
 
-    public void setResultType(Class resultType) {
+    public void setResultType(String resultType) {
         this.resultType = resultType;
     }
 
