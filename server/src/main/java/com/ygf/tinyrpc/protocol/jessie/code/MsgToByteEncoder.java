@@ -2,7 +2,7 @@ package com.ygf.tinyrpc.protocol.jessie.code;
 
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
-import com.ygf.tinyrpc.protocol.jessie.message.DubboProtocol;
+import com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol;
 import com.ygf.tinyrpc.serialize.SerializeUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -48,10 +48,10 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
         }
 
         switch (msg.getType()) {
-            case DubboProtocol.RPC_REQUEST:
+            case JessieProtocol.RPC_REQUEST:
                 encodeForRequest(msg, out, pos);
                 break;
-            case DubboProtocol.RPC_RESPONSE:
+            case JessieProtocol.RPC_RESPONSE:
                 encodeForResponse(msg, out, pos);
                 break;
             default:
@@ -187,7 +187,7 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
      */
     private boolean isRpc(Header header) {
         byte type = header.getType();
-        if (type == DubboProtocol.RPC_REQUEST || type == DubboProtocol.RPC_RESPONSE) {
+        if (type == JessieProtocol.RPC_REQUEST || type == JessieProtocol.RPC_RESPONSE) {
             return true;
         }
 

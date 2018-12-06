@@ -4,7 +4,7 @@ package com.ygf.tinyrpc.protocol.jessie.handler.client;
 import com.ygf.tinyrpc.common.RpcInvocation;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
-import com.ygf.tinyrpc.protocol.jessie.message.DubboProtocol;
+import com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,9 +37,9 @@ public class RpcHandler {
         }
 
         final Header header = new Header();
-        header.setProtocol(DubboProtocol.PROTOCOL);
-        header.setVersion(DubboProtocol.CURRENT_VERSION);
-        header.setType(DubboProtocol.CREATE_SESSION_REQUEST);
+        header.setProtocol(JessieProtocol.PROTOCOL);
+        header.setVersion(JessieProtocol.CURRENT_VERSION);
+        header.setType(JessieProtocol.CREATE_SESSION_REQUEST);
         header.setSessionId(0);
         if (channel.eventLoop().inEventLoop()) {
             channel.write(header);
@@ -64,9 +64,9 @@ public class RpcHandler {
         }
 
         RpcRequestMessage msg = new RpcRequestMessage();
-        msg.setProtocol(DubboProtocol.PROTOCOL);
-        msg.setVersion(DubboProtocol.CURRENT_VERSION);
-        msg.setType(DubboProtocol.RPC_REQUEST);
+        msg.setProtocol(JessieProtocol.PROTOCOL);
+        msg.setVersion(JessieProtocol.CURRENT_VERSION);
+        msg.setType(JessieProtocol.RPC_REQUEST);
 
     }
 

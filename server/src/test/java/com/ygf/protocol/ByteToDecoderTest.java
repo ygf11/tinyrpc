@@ -9,7 +9,7 @@ import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.UnpooledByteBufAllocator;
 
-import static com.ygf.tinyrpc.protocol.jessie.message.DubboProtocol.*;
+import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang3.reflect.MethodUtils;

@@ -3,7 +3,7 @@ package com.ygf.tinyrpc.protocol.jessie.code;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
-import com.ygf.tinyrpc.protocol.jessie.message.DubboProtocol;
+import com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol;
 import com.ygf.tinyrpc.serialize.SerializeUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,7 +28,7 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         // 报文数据不够
-        if (in.readableBytes() < DubboProtocol.HEADER_LENGTH) {
+        if (in.readableBytes() < JessieProtocol.HEADER_LENGTH) {
             return;
         }
         // 保留位置 以便回滚
@@ -37,7 +37,7 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
         byte protocol = in.readByte();
 
         // 如果不是dubbo的数据报文  则不进行解析
-        if (protocol != DubboProtocol.PROTOCOL) {
+        if (protocol != JessieProtocol.PROTOCOL) {
             in.readerIndex(0);
             return;
         }
@@ -50,17 +50,17 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
 
 
         switch (header.getType()) {
-            case DubboProtocol.RPC_REQUEST:
+            case JessieProtocol.RPC_REQUEST:
                 parseRpcRequestPacket(in, header, out);
                 break;
-            case DubboProtocol.RPC_RESPONSE:
+            case JessieProtocol.RPC_RESPONSE:
                 parseRpcResponsePacket(in, header, out);
                 break;
-            case DubboProtocol.CREATE_SESSION_REQUEST:
-            case DubboProtocol.CREATE_SESSION_RESPONSE:
-            case DubboProtocol.CREATE_SESSION_ACK:
-            case DubboProtocol.EXIT_SESSION:
-            case DubboProtocol.HEARTBEATS:
+            case JessieProtocol.CREATE_SESSION_REQUEST:
+            case JessieProtocol.CREATE_SESSION_RESPONSE:
+            case JessieProtocol.CREATE_SESSION_ACK:
+            case JessieProtocol.EXIT_SESSION:
+            case JessieProtocol.HEARTBEATS:
                 parseGeneralPacket(in, header, out);
                 break;
             default:
@@ -181,6 +181,6 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
      */
     private void skipPacket(ByteBuf in, int length) {
         in.resetReaderIndex();
-        in.readerIndex(in.readerIndex() + DubboProtocol.HEADER_LENGTH + length);
+        in.readerIndex(in.readerIndex() + JessieProtocol.HEADER_LENGTH + length);
     }
 }

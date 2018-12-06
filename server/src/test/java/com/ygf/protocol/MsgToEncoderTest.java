@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ygf.tinyrpc.protocol.jessie.message.DubboProtocol.*;
+import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 
 /**
  * session和heartbeat相关的报文编码测试类

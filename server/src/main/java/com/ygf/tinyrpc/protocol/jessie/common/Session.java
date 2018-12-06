@@ -23,7 +23,37 @@ public class Session {
      */
     private Map<Integer, Object> results = new ConcurrentHashMap<Integer, Object>();
 
+    private static Session instance = new Session();
+
     private Session(){
         status = SessionStatus.DISCONNECT;
+    }
+
+    public Session getInstance(){
+        return instance;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public Integer getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(Integer sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public Map<Integer, Object> getResults() {
+        return results;
+    }
+
+    public void setResults(Map<Integer, Object> results) {
+        this.results = results;
     }
 }

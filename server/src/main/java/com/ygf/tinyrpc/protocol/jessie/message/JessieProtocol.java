@@ -6,7 +6,7 @@ package com.ygf.tinyrpc.protocol.jessie.message;
  * @author theo
  * @date 20181129
  */
-public class DubboProtocol {
+public class JessieProtocol {
     /**
      * dubbo协议类型
      */
