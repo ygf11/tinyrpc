@@ -14,6 +14,7 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 
 /**
  * rpc处理逻辑
@@ -64,11 +65,22 @@ public class RpcHandler {
             logger.warn("connection is not completed");
         }
 
+        Session session = Session.getInstance();
         RpcRequestMessage msg = new RpcRequestMessage();
         msg.setProtocol(JessieProtocol.PROTOCOL);
         msg.setVersion(JessieProtocol.CURRENT_VERSION);
         msg.setType(JessieProtocol.RPC_REQUEST);
+        msg.setSessionId(session.getSessionId());
 
+        msg.setRequestId(invocation.getRequestId());
+        String className = invocation.getTarget().getCanonicalName();
+        String methodName = invocation.getMethod().getName();
+        msg.setService(className+"."+methodName+"()");
+        msg.setParams(Arrays.asList(invocation.getArgs()));
+
+        writeMsg(msg);
+
+        // TODO 统计调用信息
     }
 
     /**
@@ -127,7 +139,7 @@ public class RpcHandler {
         }
 
         RpcResponseMessage msg = (RpcResponseMessage) header;
-
+        int requestId = msg.getRequestId();
 
     }
 
