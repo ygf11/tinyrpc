@@ -23,6 +23,10 @@ public class ChildHandler {
      */
     private Channel channel;
 
+    public ChildHandler(Channel channel){
+        this.channel = channel;
+    }
+
     /**
      * 创建会话
      */
