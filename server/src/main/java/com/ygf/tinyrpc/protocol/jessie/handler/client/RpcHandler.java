@@ -170,6 +170,7 @@ public class RpcHandler {
      * 1. 当前线程在channel注册的eventloop中时，直接在这个线程中执行代码
      * 2. 当前线程不在channel注册的evetloop时， 提交到这个线程中稍候执行
      *
+     * TODO 改成抽象类方法 与childhandler共用这个方法
      * @param msg
      */
     private void writeMsg(final Header msg) {

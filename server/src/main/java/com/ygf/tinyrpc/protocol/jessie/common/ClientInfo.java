@@ -1,5 +1,7 @@
 package com.ygf.tinyrpc.protocol.jessie.common;
 
+import io.netty.channel.Channel;
+
 /**
  * 客户端信息
  *
@@ -16,13 +18,17 @@ public class ClientInfo {
      */
     private String appName;
     /**
-     * 对方ip地址
+     * 地址(ip:port)
      */
-    private String ip;
+    private String addr;
     /**
-     * 通信端口
+     * 会话当前状态
      */
-    private Integer port;
+    private int status;
+    /**
+     * 与对方通信的channel
+     */
+    private Channel channel;
 
     public int getSessionId() {
         return sessionId;
@@ -40,19 +46,26 @@ public class ClientInfo {
         this.appName = appName;
     }
 
-    public String getIp() {
-        return ip;
+    public String getAddr() {
+        return addr;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setAddr(String addr) {
+        this.addr = addr;
+    }
+    public int getStatus() {
+        return status;
     }
 
-    public Integer getPort() {
-        return port;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
-    public void setPort(Integer port) {
-        this.port = port;
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
     }
 }
