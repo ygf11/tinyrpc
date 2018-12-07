@@ -6,14 +6,14 @@ package com.ygf.tinyrpc.protocol.jessie.message;
  * @author theo
  * @date 20181207
  */
-public class CreateSessionMessage extends Header {
+public class InitSessionMessage extends Header {
     /**
      * 应用名 客户端一个jvm进程(应用)对应一个会话
      */
     private String appName;
 
-    public CreateSessionMessage(){}
-    public CreateSessionMessage(Header header){
+    public InitSessionMessage(){}
+    public InitSessionMessage(Header header){
         super(header);
     }
 

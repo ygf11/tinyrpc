@@ -71,14 +71,14 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
      * @param saved
      */
     private void encodeForInitSession(Header header, ByteBuf out, int saved) {
-        boolean isInitSession = header instanceof CreateSessionMessage;
+        boolean isInitSession = header instanceof InitSessionMessage;
         if (!isInitSession) {
             logger.warn("class and header type not matched");
             return;
         }
 
         // 写入appName
-        CreateSessionMessage msg = (CreateSessionMessage) header;
+        InitSessionMessage msg = (InitSessionMessage) header;
         int length = 0;
         byte[] appName = msg.getAppName().getBytes();
         out.writeShort(appName.length);

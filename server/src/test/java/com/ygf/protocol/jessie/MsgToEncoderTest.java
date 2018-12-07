@@ -2,7 +2,7 @@ package com.ygf.protocol.jessie;
 
 import com.ygf.tinyrpc.common.IdGenertor;
 import com.ygf.tinyrpc.protocol.jessie.code.MsgToByteEncoder;
-import com.ygf.tinyrpc.protocol.jessie.message.CreateSessionMessage;
+import com.ygf.tinyrpc.protocol.jessie.message.InitSessionMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
@@ -82,7 +82,7 @@ public class MsgToEncoderTest {
      */
     @Test
     public void createSessionTest() throws Exception{
-        CreateSessionMessage msg = new CreateSessionMessage();
+        InitSessionMessage msg = new InitSessionMessage();
         msg.setSessionId(0);
         msg.setProtocol(PROTOCOL);
         msg.setVersion(CURRENT_VERSION);

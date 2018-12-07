@@ -4,6 +4,7 @@ import com.ygf.tinyrpc.common.IdGenertor;
 import com.ygf.tinyrpc.protocol.jessie.code.ByteToMsgDecoder;
 import com.ygf.tinyrpc.protocol.jessie.code.MsgToByteEncoder;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
+import com.ygf.tinyrpc.protocol.jessie.message.InitSessionMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
 import io.netty.buffer.ByteBuf;
@@ -86,12 +87,12 @@ public class ByteToDecoderTest {
     }
 
     /**
-     * 非rpc相关报文解码
+     * 没有数据段报文的解码
      */
     @Test
     public void notRpcPacketTest() throws Exception {
         for (byte i = 1; i < 8; ++i) {
-            if (i == RPC_REQUEST || i == RPC_RESPONSE) {
+            if (i == RPC_REQUEST || i == RPC_RESPONSE || i == CREATE_SESSION_REQUEST) {
                 continue;
             }
             in.clear();
@@ -110,6 +111,25 @@ public class ByteToDecoderTest {
         }
     }
 
+    /**
+     * 创建会话请求报文的解析
+     */
+    @Test
+    public void initSessionTest() throws Exception{
+        header.setType(CREATE_SESSION_REQUEST);
+        InitSessionMessage msg = new InitSessionMessage(header);
+        msg.setAppName("panama-cloud-application");
+
+        writePacketData(in, msg);
+
+        MethodUtils.invokeMethod(decoder, true, "decode", args, classes);
+        InitSessionMessage result = (InitSessionMessage) out.get(0);
+
+        Assert.assertEquals("panama-cloud-application", result.getAppName());
+
+
+
+    }
     /**
      * rpc请求报文解码 正常解析
      */

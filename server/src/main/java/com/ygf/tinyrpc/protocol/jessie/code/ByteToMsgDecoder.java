@@ -1,9 +1,10 @@
 package com.ygf.tinyrpc.protocol.jessie.code;
 
+import com.ygf.tinyrpc.protocol.jessie.message.InitSessionMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
-import com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol;
+import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 import com.ygf.tinyrpc.serialize.SerializeUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,7 +17,7 @@ import java.util.List;
 
 /**
  * 字节流读取的解码器
- *
+ * TODO 异常处理
  * @author theo
  * @date 20181130
  */
@@ -28,7 +29,7 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         // 报文数据不够
-        if (in.readableBytes() < JessieProtocol.HEADER_LENGTH) {
+        if (in.readableBytes() < HEADER_LENGTH) {
             return;
         }
         // 保留位置 以便回滚
@@ -36,37 +37,40 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
 
         byte protocol = in.readByte();
 
-        // 如果不是dubbo的数据报文  则不进行解析
-        if (protocol != JessieProtocol.PROTOCOL) {
+        // 如果不是jessie的数据报文  则不进行解析
+        if (protocol != PROTOCOL) {
             in.readerIndex(0);
             return;
         }
 
         Header header = new Header();
-        header.setProtocol(DUBBO_PROTOCOL);
+        header.setProtocol(PROTOCOL);
         header.setVersion(in.readByte());
         header.setType(in.readByte());
         header.setSessionId(in.readInt());
 
 
         switch (header.getType()) {
-            case JessieProtocol.RPC_REQUEST:
+            case RPC_REQUEST:
                 parseRpcRequestPacket(in, header, out);
                 break;
-            case JessieProtocol.RPC_RESPONSE:
+            case RPC_RESPONSE:
                 parseRpcResponsePacket(in, header, out);
                 break;
-            case JessieProtocol.CREATE_SESSION_REQUEST:
-            case JessieProtocol.CREATE_SESSION_RESPONSE:
-            case JessieProtocol.CREATE_SESSION_ACK:
-            case JessieProtocol.EXIT_SESSION:
-            case JessieProtocol.HEARTBEATS:
+            case CREATE_SESSION_REQUEST:
+                parseInitSessionPackedt(in, header, out);
+                break;
+            case CREATE_SESSION_RESPONSE:
+            case CREATE_SESSION_ACK:
+            case EXIT_SESSION:
+            case HEARTBEATS:
                 parseGeneralPacket(in, header, out);
                 break;
             default:
-                logger.error("dubbo not support type");
+                logger.error("jessie not support type {}", header.getType());
         }
     }
+
 
     /**
      * 处理通用的msg
@@ -79,6 +83,26 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
         assert length == 0;
         out.add(header);
     }
+
+    /**
+     * 解析创建会话的报文
+     * @param in
+     * @param header
+     * @param out
+     */
+    private void parseInitSessionPackedt(ByteBuf in, Header header, List<Object> out){
+        int length = in.readInt();
+        // 报文数据不够
+        if (in.readableBytes() < length){
+            in.resetReaderIndex();
+            return;
+        }
+        String appName = readString(in);
+        InitSessionMessage msg = new InitSessionMessage(header);
+        msg.setAppName(appName);
+        out.add(msg);
+    }
+
 
     /**
      * 解析rpc请求报文
@@ -98,11 +122,7 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
         }
 
         msg.setRequestId(in.readInt());
-
-        int serviceLength = in.readShort();
-        byte[] serviceArray = new byte[serviceLength];
-        in.readBytes(serviceArray, 0, serviceLength);
-        msg.setService(new String(serviceArray));
+        msg.setService(readString(in));
 
         byte paramSize = in.readByte();
 
@@ -144,18 +164,11 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
 
         msg.setRequestId(in.readInt());
 
-        short serviceLength = in.readShort();
-        byte[] serviceArray = new byte[serviceLength];
-        in.readBytes(serviceArray, 0, serviceLength);
-        msg.setService(new String(serviceArray));
+        msg.setService(readString(in));
 
-        byte resultType = in.readByte();
-        msg.setResultType(resultType);
+        msg.setResultType(in.readByte());
 
-        short targetLen = in.readShort();
-        byte[] targetArray = new byte[targetLen];
-        in.readBytes(targetArray, 0, targetLen);
-        msg.setTargetClass(new String(targetArray));
+        msg.setTargetClass(readString(in));
 
         short resultLen = in.readShort();
         byte[] resultArray = new byte[resultLen];
@@ -181,6 +194,18 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
      */
     private void skipPacket(ByteBuf in, int length) {
         in.resetReaderIndex();
-        in.readerIndex(in.readerIndex() + JessieProtocol.HEADER_LENGTH + length);
+        in.readerIndex(in.readerIndex() + HEADER_LENGTH + length);
+    }
+
+    /**
+     * 从二进制报文中读取String, 格式为len+String
+     * @param in
+     * @return
+     */
+    private String readString(ByteBuf in){
+        short len = in.readShort();
+        byte[] array = new byte[len];
+        in.readBytes(array, 0, len);
+        return new String(array);
     }
 }
