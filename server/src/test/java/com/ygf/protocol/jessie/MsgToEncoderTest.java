@@ -2,6 +2,7 @@ package com.ygf.protocol.jessie;
 
 import com.ygf.tinyrpc.common.IdGenertor;
 import com.ygf.tinyrpc.protocol.jessie.code.MsgToByteEncoder;
+import com.ygf.tinyrpc.protocol.jessie.message.CreateSessionMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
@@ -57,12 +58,12 @@ public class MsgToEncoderTest {
     }
 
     /**
-     * 无数据段报文验证 type=1,2,3,4,7
+     * 无数据段报文验证 type=2,3,4,7
      */
     @Test
     public void notRpcRequest() throws Exception {
         for (byte i = 1; i < 8; ++i) {
-            if (i == RPC_REQUEST || i == RPC_RESPONSE) {
+            if (i == RPC_REQUEST || i == RPC_RESPONSE || i == CREATE_SESSION_REQUEST) {
                 continue;
             }
             header.setType(i);
@@ -74,6 +75,31 @@ public class MsgToEncoderTest {
             Assert.assertEquals(0, byteBuf.readInt());
             Assert.assertEquals(0, byteBuf.readInt());
         }
+    }
+
+    /**
+     * 创建会话的请求报文验证
+     */
+    @Test
+    public void createSessionTest() throws Exception{
+        CreateSessionMessage msg = new CreateSessionMessage();
+        msg.setSessionId(0);
+        msg.setProtocol(PROTOCOL);
+        msg.setVersion(CURRENT_VERSION);
+        msg.setType(CREATE_SESSION_REQUEST);
+        msg.setAppName("panama-cloud-application");
+
+        args[1] = msg;
+        MethodUtils.invokeMethod(encoder, true, "encode", args, classes);
+        Assert.assertEquals(PROTOCOL, byteBuf.readByte());
+        Assert.assertEquals(CURRENT_VERSION, byteBuf.readByte());
+        Assert.assertEquals(CREATE_SESSION_REQUEST, byteBuf.readByte());
+        Assert.assertEquals(0, byteBuf.readInt());
+        int length = byteBuf.readInt();
+        byte[] appName = new byte[byteBuf.readShort()];
+        byteBuf.readBytes(appName, 0, appName.length);
+        Assert.assertEquals("panama-cloud-application", new String(appName));
+        Assert.assertEquals(2 + appName.length, length);
     }
 
     /**

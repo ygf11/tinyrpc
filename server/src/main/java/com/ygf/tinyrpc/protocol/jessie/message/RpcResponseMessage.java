@@ -6,7 +6,7 @@ package com.ygf.tinyrpc.protocol.jessie.message;
  * @author theo
  * @date 20181130
  */
-public class RpcResponseMessage  extends Header{
+public class RpcResponseMessage extends Header {
     /**
      * 表示rpc请求的id
      */
@@ -28,9 +28,10 @@ public class RpcResponseMessage  extends Header{
      */
     private Object result;
 
-    public RpcResponseMessage(){}
+    public RpcResponseMessage() {
+    }
 
-    public RpcResponseMessage(Header header){
+    public RpcResponseMessage(Header header) {
         super(header);
     }
 
@@ -73,8 +74,6 @@ public class RpcResponseMessage  extends Header{
     public void setResult(Object result) {
         this.result = result;
     }
-
-
 
 
 }

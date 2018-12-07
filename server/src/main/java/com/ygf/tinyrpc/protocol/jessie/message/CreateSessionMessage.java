@@ -12,6 +12,11 @@ public class CreateSessionMessage extends Header {
      */
     private String appName;
 
+    public CreateSessionMessage(){}
+    public CreateSessionMessage(Header header){
+        super(header);
+    }
+
     public String getAppName() {
         return appName;
     }

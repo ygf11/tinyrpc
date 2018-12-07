@@ -64,7 +64,7 @@ public class RpcHandler extends AbstractHandler {
      *
      * @param invocation
      */
-    public void RpcRequest(RpcInvocation invocation) {
+    public void rpcRequest(RpcInvocation invocation) {
         if (channel == null) {
             logger.warn("connection is not completed");
         }
