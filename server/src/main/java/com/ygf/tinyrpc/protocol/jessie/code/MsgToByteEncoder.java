@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 字节流写入的编码器
+ * TODO 抛异常的逻辑
  *
  * @author theo
  * @date 20181130
