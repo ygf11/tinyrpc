@@ -11,10 +11,18 @@ import io.netty.channel.Channel;
  */
 public abstract class AbstractHandler {
 
+    /**
+     * 通信的channel
+     */
     protected Channel channel;
     public AbstractHandler(Channel channel){
         this.channel = channel;
     }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
 
     /**
      * 两种方式向channel写入消息：
@@ -36,4 +44,6 @@ public abstract class AbstractHandler {
             });
         }
     }
+
+
 }
