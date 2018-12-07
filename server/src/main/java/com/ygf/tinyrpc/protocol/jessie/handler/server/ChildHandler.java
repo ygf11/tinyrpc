@@ -3,6 +3,7 @@ package com.ygf.tinyrpc.protocol.jessie.handler.server;
 import com.ygf.tinyrpc.common.IdGenertor;
 import com.ygf.tinyrpc.protocol.jessie.common.ClientInfo;
 import com.ygf.tinyrpc.protocol.jessie.common.SessionManager;
+import com.ygf.tinyrpc.protocol.jessie.handler.AbstractHandler;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
@@ -28,17 +29,14 @@ import java.net.InetSocketAddress;
  * @author theo
  * @date 20181202
  */
-public class ChildHandler {
+public class ChildHandler extends AbstractHandler {
 
     private static Logger logger = LoggerFactory.getLogger(ChildHandler.class);
-    /**
-     * 与客户端通信的channel
-     * TODO 采用所有连接共用一个ChildHandler的模式
-     */
-    private Channel channel;
+
+    //TODO 采用所有连接共用一个ChildHandler的模式
 
     public ChildHandler(Channel channel) {
-        this.channel = channel;
+        super(channel);
     }
 
     /**

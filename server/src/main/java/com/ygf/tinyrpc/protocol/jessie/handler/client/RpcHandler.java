@@ -4,6 +4,7 @@ package com.ygf.tinyrpc.protocol.jessie.handler.client;
 import com.ygf.tinyrpc.common.RpcInvocation;
 import com.ygf.tinyrpc.common.RpcResult;
 import com.ygf.tinyrpc.protocol.jessie.common.Session;
+import com.ygf.tinyrpc.protocol.jessie.handler.AbstractHandler;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol;
@@ -26,20 +27,16 @@ import java.util.Arrays;
  * @author theo
  * @date 20181202
  */
-public class RpcHandler {
+public class RpcHandler extends AbstractHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcHandler.class);
-    /**
-     * 与服务器通信的channel
-     */
-    private Channel channel;
     /**
      * 单例会话对象
      */
     private Session session = Session.getInstance();
 
     public RpcHandler(Channel channel) {
-        this.channel = channel;
+        super(channel);
     }
 
     /**
@@ -163,26 +160,5 @@ public class RpcHandler {
 
         // TODO 更新心跳
 
-    }
-
-    /**
-     * 两种方式向channel写入消息：
-     * 1. 当前线程在channel注册的eventloop中时，直接在这个线程中执行代码
-     * 2. 当前线程不在channel注册的evetloop时， 提交到这个线程中稍候执行
-     *
-     * TODO 改成抽象类方法 与childhandler共用这个方法
-     * @param msg
-     */
-    private void writeMsg(final Header msg) {
-        if (channel.eventLoop().inEventLoop()) {
-            channel.write(msg);
-        } else {
-            channel.eventLoop().execute(new Runnable() {
-                @Override
-                public void run() {
-                    channel.write(msg);
-                }
-            });
-        }
     }
 }
