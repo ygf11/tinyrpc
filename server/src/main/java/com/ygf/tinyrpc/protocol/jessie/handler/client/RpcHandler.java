@@ -36,53 +36,6 @@ public class RpcHandler extends AbstractHandler {
     }
 
     /**
-     * 发送创建会话请求
-     */
-    public void createSession() {
-        if (channel == null) {
-            logger.warn("connection is not completed");
-        }
-
-        // TODO 向服务器端发送application字段
-        final InitSessionMessage msg = new InitSessionMessage();
-        msg.setProtocol(PROTOCOL);
-        msg.setVersion(CURRENT_VERSION);
-        msg.setType(CREATE_SESSION_REQUEST);
-        msg.setSessionId(0);
-
-        writeMsg(msg);
-
-        session.setStatus(CONNECTING);
-    }
-
-    /**
-     * 发送rpc请求
-     *
-     * @param invocation
-     */
-    public void rpcRequest(RpcInvocation invocation) {
-        if (channel == null) {
-            logger.warn("connection is not completed");
-        }
-
-        RpcRequestMessage msg = new RpcRequestMessage();
-        msg.setProtocol(JessieProtocol.PROTOCOL);
-        msg.setVersion(JessieProtocol.CURRENT_VERSION);
-        msg.setType(JessieProtocol.RPC_REQUEST);
-        msg.setSessionId(session.getSessionId());
-
-        msg.setRequestId(invocation.getRequestId());
-        String className = invocation.getTarget().getCanonicalName();
-        String methodName = invocation.getMethod().getName();
-        msg.setService(className + "." + methodName + "()");
-        msg.setParams(Arrays.asList(invocation.getArgs()));
-
-        writeMsg(msg);
-
-        // TODO 统计调用信息
-    }
-
-    /**
      * 发送退出会话的请求
      */
     public void exit() {
