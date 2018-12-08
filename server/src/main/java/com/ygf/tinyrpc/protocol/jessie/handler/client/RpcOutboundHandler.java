@@ -18,13 +18,14 @@ import java.util.List;
 
 /**
  * 将出站请求转化为编码器可以编码的请求对象
+ * TODO
  *
  * @author theo
  * @date 20181208
  */
 public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
 
-    private static Logger logger = LoggerFactory.getLogger(RpcOutboundHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(RpcOutboundHandler.class);
 
     @Override
     protected void encode(ChannelHandlerContext ctx, OutboundMsg msg, List<Object> out) throws Exception {

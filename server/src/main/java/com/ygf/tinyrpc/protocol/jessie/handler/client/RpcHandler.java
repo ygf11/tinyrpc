@@ -58,7 +58,7 @@ public class RpcHandler extends AbstractHandler {
                 sessionResponse(msg);
                 break;
             case RPC_RESPONSE:
-                rpcResponse(msg);
+                //rpcResponse(msg);
                 break;
             default:
                 logger.warn("msg type {}, not support", msg.getType());
@@ -75,30 +75,5 @@ public class RpcHandler extends AbstractHandler {
         assert msg.getSessionId() != 0;
         session.setSessionId(msg.getSessionId());
         session.setStatus(CONNECTED);
-    }
-
-    /**
-     * 处理来自服务器的rpc响应
-     *
-     * @param header
-     */
-    public void rpcResponse(Header header) {
-        boolean isResponse = header instanceof RpcResponseMessage;
-        if (!isResponse) {
-            logger.warn("msg {] is not a response msg", header);
-            return;
-        }
-
-        RpcResponseMessage msg = (RpcResponseMessage) header;
-        int requestId = msg.getRequestId();
-        RpcResult result = new RpcResult();
-        result.setType(msg.getResultType());
-        result.setResultType(msg.getTargetClass());
-        result.setResult(msg.getResult());
-
-        session.putResult(requestId, result);
-
-        // TODO 更新心跳
-
     }
 }
