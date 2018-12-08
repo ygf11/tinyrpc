@@ -61,7 +61,7 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
                 parseInitSessionPackedt(in, header, out);
                 break;
             case CREATE_SESSION_RESPONSE:
-            case CREATE_SESSION_ACK:
+            //case CREATE_SESSION_ACK:
             case EXIT_SESSION:
             case HEARTBEATS:
                 parseGeneralPacket(in, header, out);

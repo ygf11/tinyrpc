@@ -54,8 +54,6 @@ public class ChildHandler extends AbstractHandler {
             case CREATE_SESSION_REQUEST:
                 createSession(msg);
                 break;
-            case CREATE_SESSION_ACK:
-                break;
             case RPC_REQUEST:
                 break;
             case EXIT_SESSION:

@@ -55,7 +55,7 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
                 encodeForInitSession(msg, out, pos);
                 break;
             case CREATE_SESSION_RESPONSE:
-            case CREATE_SESSION_ACK:
+            //case CREATE_SESSION_ACK:
                 break;
             default:
                 logger.error("type {} not support", msg.getType());

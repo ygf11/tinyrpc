@@ -5,13 +5,9 @@ import com.ygf.tinyrpc.common.RpcInvocation;
 import com.ygf.tinyrpc.common.RpcResult;
 import com.ygf.tinyrpc.protocol.jessie.common.Session;
 import com.ygf.tinyrpc.protocol.jessie.handler.AbstractHandler;
-import com.ygf.tinyrpc.protocol.jessie.message.Header;
-import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
-import com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol;
+import com.ygf.tinyrpc.protocol.jessie.message.*;
 
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
-
-import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
 
 import static com.ygf.tinyrpc.protocol.jessie.common.SessionStatus.*;
 
@@ -48,13 +44,13 @@ public class RpcHandler extends AbstractHandler {
         }
 
         // TODO 向服务器端发送application字段
-        final Header header = new Header();
-        header.setProtocol(PROTOCOL);
-        header.setVersion(CURRENT_VERSION);
-        header.setType(CREATE_SESSION_REQUEST);
-        header.setSessionId(0);
+        final InitSessionMessage msg = new InitSessionMessage();
+        msg.setProtocol(PROTOCOL);
+        msg.setVersion(CURRENT_VERSION);
+        msg.setType(CREATE_SESSION_REQUEST);
+        msg.setSessionId(0);
 
-        writeMsg(header);
+        writeMsg(msg);
 
         session.setStatus(CONNECTING);
     }
@@ -122,15 +118,6 @@ public class RpcHandler extends AbstractHandler {
      * @param msg
      */
     public void sessionResponse(Header msg) {
-        final Header ack = new Header();
-        ack.setProtocol(PROTOCOL);
-        ack.setSessionId(msg.getSessionId());
-        ack.setType(CREATE_SESSION_ACK);
-        ack.setVersion(CURRENT_VERSION);
-
-        writeMsg(ack);
-
-
         // TODO 启动心跳线程
         assert msg.getSessionId() != 0;
         session.setSessionId(msg.getSessionId());

@@ -37,7 +37,7 @@ public class JessieProtocol {
     /**
      * 客户端对创建会话的确认
      */
-    public static final byte CREATE_SESSION_ACK = 3;
+    //public static final byte CREATE_SESSION_ACK = 3;
     /**
      * 客户端发送的心跳请求
      */
