@@ -68,6 +68,7 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
         // TODO 启动心跳线程
         assert msg.getSessionId() != 0;
         rpcClient.handleSessionInit(service, msg.getSessionId());
+        logger.info("sessionId {}", msg.getSessionId());
     }
 
     /**
@@ -89,8 +90,9 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
         result.setResultType(msg.getTargetClass());
         result.setResult(msg.getResult());
 
+        logger.info("service {} requestId {} result {}", service, requestId, result);
+        rpcClient.handleRpcResponse(service, requestId, result);
         //session.putResult(requestId, result);
-
         // TODO 更新心跳
         // TODO 提交任务
     }

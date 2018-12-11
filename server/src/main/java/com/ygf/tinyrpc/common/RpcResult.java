@@ -44,4 +44,12 @@ public class RpcResult {
     public void setResult(Object result) {
         this.result = result;
     }
+
+    @Override
+    public String toString() {
+        String t = type == 1 ? "normal" : "exception";
+        return "type: " + (type == 1 ? "normal" : "exception")+" "
+                + "returnType: " + resultType + " "
+                + "result: " + result;
+    }
 }

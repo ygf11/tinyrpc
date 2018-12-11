@@ -92,6 +92,7 @@ public class RpcClient extends AbstractClient {
         Session session = sessionMap.get(service);
         session.setStatus(CONNECTED);
         session.setSessionId(sessionId);
+        logger.info("sessionId {}", sessionId);
         // TODO 开始心跳
     }
 
