@@ -23,6 +23,15 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcInboundHandler.class);
 
+    /**
+     * 连接对应的服务
+     */
+    private Class service;
+
+    public RpcInboundHandler(Class service){
+        super();
+        this.service = service;
+    }
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object message) throws Exception {
         boolean isHeader = message instanceof Header;
@@ -58,7 +67,7 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        Session session = Session.getInstance();
+        //Session session = Session.getInstance();
         RpcResponseMessage msg = (RpcResponseMessage) header;
         int requestId = msg.getRequestId();
         RpcResult result = new RpcResult();
@@ -66,7 +75,7 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
         result.setResultType(msg.getTargetClass());
         result.setResult(msg.getResult());
 
-        session.putResult(requestId, result);
+        //session.putResult(requestId, result);
 
         // TODO 更新心跳
         // TODO 提交任务
@@ -78,7 +87,7 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
      * @param msg
      */
     private void sessionResponse(Header msg) {
-        Session session = Session.getInstance();
+        //Session session = Session.getInstance();
         // TODO 启动心跳线程
         // TODO 提交任务
         assert msg.getSessionId() != 0;

@@ -6,12 +6,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 会话单例类
+ * 会话类
  *
  * @author theo
  * @date 20181202
  */
 public class Session {
+    /**
+     * 对应服务类
+     */
+    private Class service;
     /**
      * 会话当前状态
      */
@@ -25,14 +29,8 @@ public class Session {
      */
     private Map<Integer, RpcResult> results = new ConcurrentHashMap<Integer, RpcResult>();
 
-    private static Session instance = new Session();
-
-    private Session(){
+    public Session() {
         status = SessionStatus.DISCONNECT;
-    }
-
-    public static Session getInstance(){
-        return instance;
     }
 
     public int getStatus() {
@@ -57,5 +55,13 @@ public class Session {
 
     public void putResult(Integer requestId, RpcResult result) {
         results.put(requestId, result);
+    }
+
+    public Class getService() {
+        return service;
+    }
+
+    public void setService(Class service) {
+        this.service = service;
     }
 }

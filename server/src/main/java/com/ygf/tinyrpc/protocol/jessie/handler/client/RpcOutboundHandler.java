@@ -26,7 +26,15 @@ import java.util.List;
 public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcOutboundHandler.class);
+    /**
+     * 连接对应的服务
+     */
+    private Class service;
 
+    public RpcOutboundHandler(Class service){
+        super();
+        this.service = service;
+    }
     @Override
     protected void encode(ChannelHandlerContext ctx, OutboundMsg msg, List<Object> out) throws Exception {
         switch (msg.getType()) {
@@ -86,12 +94,12 @@ public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
         }
         // rpc请求参数
         RpcInvocation invocation = (RpcInvocation) arg;
-        Session session = Session.getInstance();
+        //Session session = Session.getInstance();
         RpcRequestMessage req = new RpcRequestMessage();
         req.setProtocol(JessieProtocol.PROTOCOL);
         req.setVersion(JessieProtocol.CURRENT_VERSION);
         req.setType(JessieProtocol.RPC_REQUEST);
-        req.setSessionId(session.getSessionId());
+        //req.setSessionId(session.getSessionId());
 
         req.setRequestId(invocation.getRequestId());
         String className = invocation.getTarget().getCanonicalName();

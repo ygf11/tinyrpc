@@ -25,7 +25,7 @@ public class RpcClient extends AbstractClient {
     /**
      * 单例会话对象
      */
-    private Session session = Session.getInstance();
+    private Session session = new Session();
 
     public RpcClient(Channel channel) {
         super(channel);

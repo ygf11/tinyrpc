@@ -36,8 +36,8 @@ public class AbstractClient {
      * TODO 改成抽象类方法 与childhandler共用这个方法
      * @param msg
      */
-    protected void writeMsg(Class service, OutboundMsg msg) {
-        Channel channel = channelMap.get(service);
+    protected void writeMsg(Class service, final OutboundMsg msg) {
+        final  Channel channel = channelMap.get(service);
         if (channel.eventLoop().inEventLoop()) {
             channel.write(msg);
         } else {

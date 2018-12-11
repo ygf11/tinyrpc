@@ -4,9 +4,11 @@ import com.ygf.tinyrpc.common.RpcResult;
 
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 
+import com.ygf.tinyrpc.protocol.jessie.common.Session;
 import com.ygf.tinyrpc.rpc.AbstractClient;
 import com.ygf.tinyrpc.rpc.OutboundMsg;
 import com.ygf.tinyrpc.rpc.service.ServiceDiscovery;
+import static com.ygf.tinyrpc.protocol.jessie.common.SessionStatus.*;
 import io.netty.channel.Channel;
 
 import java.util.Map;
@@ -31,6 +33,10 @@ public class RpcClent extends AbstractClient {
      * rpc结果
      */
     private Map<Integer, RpcResult> results = new ConcurrentHashMap<Integer, RpcResult>();
+    /**
+     * 保存服务对应的会话
+     */
+    private Map<Class, Session> sessionMap = new ConcurrentHashMap<Class, Session>();
     /**
      * 应用级别的配置
      */
@@ -65,10 +71,22 @@ public class RpcClent extends AbstractClient {
         msg.setType(CREATE_SESSION_REQUEST);
         msg.setArg(appName);
         writeMsg(service, msg);
+
+        Session session = new Session();
+        session.setStatus(CONNECTING);
     }
 
-    public void handleSessionInit(){
-
+    /**
+     * 处理来自服务器端会话响应
+     *
+     * @param service
+     * @param sessionId
+     */
+    public void handleSessionInit(Class service, Integer sessionId){
+        Session session = sessionMap.get(service);
+        session.setStatus(CONNECTED);
+        session.setSessionId(sessionId);
+        // TODO 开始心跳
     }
 
 
