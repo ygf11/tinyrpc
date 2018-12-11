@@ -1,10 +1,8 @@
 package com.ygf.tinyrpc.protocol.jessie.handler.client;
 
 
-import com.ygf.tinyrpc.common.RpcInvocation;
-import com.ygf.tinyrpc.common.RpcResult;
 import com.ygf.tinyrpc.protocol.jessie.common.Session;
-import com.ygf.tinyrpc.protocol.jessie.handler.AbstractHandler;
+import com.ygf.tinyrpc.protocol.jessie.handler.AbstractClient;
 import com.ygf.tinyrpc.protocol.jessie.message.*;
 
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
@@ -15,23 +13,21 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-
 /**
  * rpc处理逻辑
  *
  * @author theo
  * @date 20181202
  */
-public class RpcHandler extends AbstractHandler {
+public class RpcClient extends AbstractClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(RpcHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(RpcClient.class);
     /**
      * 单例会话对象
      */
     private Session session = Session.getInstance();
 
-    public RpcHandler(Channel channel) {
+    public RpcClient(Channel channel) {
         super(channel);
     }
 

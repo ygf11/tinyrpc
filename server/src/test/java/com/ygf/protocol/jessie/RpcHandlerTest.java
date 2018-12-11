@@ -2,7 +2,7 @@ package com.ygf.protocol.jessie;
 
 import com.ygf.tinyrpc.common.RpcResult;
 import com.ygf.tinyrpc.protocol.jessie.common.Session;
-import com.ygf.tinyrpc.protocol.jessie.handler.client.RpcHandler;
+import com.ygf.tinyrpc.protocol.jessie.handler.client.RpcClient;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
 import io.netty.channel.Channel;
@@ -28,7 +28,7 @@ import static com.ygf.tinyrpc.common.RpcResponseType.*;
  */
 public class RpcHandlerTest{
 
-    private RpcHandler handler;
+    private RpcClient handler;
     private EventLoop eventLoop;
     private Channel channel;
 
@@ -36,7 +36,7 @@ public class RpcHandlerTest{
     public void setup(){
         channel = Mockito.mock(Channel.class);
         eventLoop = Mockito.mock(DefaultEventLoop.class);
-        handler = new RpcHandler(channel);
+        handler = new RpcClient(channel);
     }
 
     /**

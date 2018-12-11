@@ -1,6 +1,8 @@
 package com.ygf.tinyrpc.rpc.client;
 
 import com.ygf.tinyrpc.common.RpcResult;
+import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
+import com.ygf.tinyrpc.rpc.OutboundMsg;
 import com.ygf.tinyrpc.rpc.service.ServiceDiscovery;
 
 import java.nio.channels.Channel;
@@ -35,7 +37,13 @@ public class RpcClent {
      */
     private ServiceDiscovery serviceDiscovery;
 
+    public RpcClent(){}
 
+    public void initSession(String appName){
+        OutboundMsg msg = new OutboundMsg();
+        msg.setType(CREATE_SESSION_REQUEST);
+        msg.setArg(appName);
+    }
 
 
 

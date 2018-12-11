@@ -9,13 +9,14 @@ import io.netty.channel.Channel;
  * @author theo
  * @date 20181207
  */
-public abstract class AbstractHandler {
+public abstract class AbstractClient {
 
     /**
      * 通信的channel
      */
     protected Channel channel;
-    public AbstractHandler(Channel channel){
+    
+    public AbstractClient(Channel channel){
         this.channel = channel;
     }
 
