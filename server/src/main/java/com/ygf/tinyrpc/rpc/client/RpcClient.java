@@ -123,7 +123,6 @@ public class RpcClient extends AbstractClient {
         invocation.setArgs(args);
 
         OutboundMsg msg = new OutboundMsg();
-        msg.setSessionId(session.getSessionId());
         msg.setType(RPC_REQUEST);
         msg.setArg(invocation);
         writeMsg(service, msg);

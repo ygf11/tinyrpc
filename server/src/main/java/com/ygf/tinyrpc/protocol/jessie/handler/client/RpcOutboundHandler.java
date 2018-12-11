@@ -7,13 +7,16 @@ import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
 import com.ygf.tinyrpc.rpc.OutboundMsg;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 将出站请求转化为编码器可以编码的请求对象
@@ -103,6 +106,7 @@ public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
         String className = invocation.getTarget().getCanonicalName();
         String methodName = invocation.getMethod().getName();
         req.setService(className + "." + methodName + "()");
+
         req.setParams(Arrays.asList(invocation.getArgs()));
 
         out.add(req);

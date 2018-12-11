@@ -10,7 +10,7 @@ public class OutboundMsg {
     /**
      * rpc请求/响应所的会话
      */
-    private Integer sessionId;
+    //private Integer sessionId;
     /**
      * 请求类型
      */
@@ -19,14 +19,6 @@ public class OutboundMsg {
      * 请求参数对象
      */
     private Object arg;
-
-    public Integer getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(Integer sessionId) {
-        this.sessionId = sessionId;
-    }
 
     public byte getType() {
         return type;
