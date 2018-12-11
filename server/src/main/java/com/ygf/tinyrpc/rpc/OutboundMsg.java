@@ -8,10 +8,6 @@ package com.ygf.tinyrpc.rpc;
  */
 public class OutboundMsg {
     /**
-     * rpc请求/响应所的会话
-     */
-    //private Integer sessionId;
-    /**
      * 请求类型
      */
     private byte type;
@@ -34,5 +30,10 @@ public class OutboundMsg {
 
     public void setArg(Object arg) {
         this.arg = arg;
+    }
+
+    @Override
+    public String toString() {
+        return type + " " + arg;
     }
 }

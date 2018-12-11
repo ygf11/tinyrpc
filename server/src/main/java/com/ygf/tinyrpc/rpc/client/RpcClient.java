@@ -73,6 +73,7 @@ public class RpcClient extends AbstractClient {
         OutboundMsg msg = new OutboundMsg();
         msg.setType(CREATE_SESSION_REQUEST);
         msg.setArg(appName);
+        logger.info("outboundMsg {}", msg);
         writeMsg(service, msg);
 
         Session session = new Session();
@@ -92,8 +93,12 @@ public class RpcClient extends AbstractClient {
         Session session = sessionMap.get(service);
         session.setStatus(CONNECTED);
         session.setSessionId(sessionId);
-        logger.info("sessionId {}", sessionId);
+
+        logger.info("sessionId: {}", sessionId);
+        // 唤醒等待线程
+        notify(service);
         // TODO 开始心跳
+        logger.info("after notify");
     }
 
 
@@ -159,10 +164,23 @@ public class RpcClient extends AbstractClient {
      * @param sync
      */
     private void waitForServer(Object sync) {
-        try {
-            sync.wait();
-        } catch (InterruptedException e) {
-            logger.error("interrupt when waiting for server");
+        synchronized (sync) {
+            try {
+                sync.wait();
+            } catch (InterruptedException e) {
+                logger.error("interrupt when waiting for server");
+            }
+        }
+    }
+
+    /**
+     * 唤醒对应等待的线程
+     *
+     * @param sync
+     */
+    private void notify(Object sync) {
+        synchronized (sync) {
+            sync.notify();
         }
     }
 }
