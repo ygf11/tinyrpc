@@ -13,6 +13,6 @@ public class RpcConnector {
     /**
      * 保存ip到对应连接的映射  用于解决单连接问题
      */
-    private static final  Map<String, RpcConnector> connectorMap = new ConcurrentHashMap<String, RpcConnector>();
+    private static Map<String, RpcConnector> connectorMap = new ConcurrentHashMap<String, RpcConnector>();
 
 }
