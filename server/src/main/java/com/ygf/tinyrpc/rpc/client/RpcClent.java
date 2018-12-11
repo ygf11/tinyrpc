@@ -1,6 +1,11 @@
 package com.ygf.tinyrpc.rpc.client;
 
-import io.netty.channel.Channel;
+import com.ygf.tinyrpc.common.RpcResult;
+import com.ygf.tinyrpc.rpc.service.ServiceDiscovery;
+
+import java.nio.channels.Channel;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 消费者端协议无关的通信类
@@ -10,7 +15,28 @@ import io.netty.channel.Channel;
  */
 public class RpcClent {
     /**
-     * netty通信channel
+     * 具体服务到对应配置的映射
      */
-    private Channel channel;
+    private final Map<Class, Object> services = new ConcurrentHashMap<Class, Object>();
+    /**
+     * 服务请求通道
+     */
+    private final Map<Class, Channel> pipe = new ConcurrentHashMap<Class, Channel>();
+    /**
+     * rpc结果
+     */
+    private final Map<Integer, RpcResult> results = new ConcurrentHashMap<Integer, RpcResult>();
+    /**
+     * 应用级别的配置
+     */
+    private Object config;
+    /**
+     * 服务发现模块
+     */
+    private ServiceDiscovery serviceDiscovery;
+
+
+
+
+
 }
