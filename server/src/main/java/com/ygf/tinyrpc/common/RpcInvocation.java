@@ -11,6 +11,10 @@ import java.lang.reflect.Method;
  */
 public class RpcInvocation {
     /**
+     * 请求所在的sessionId
+     */
+    private Integer sessionId;
+    /**
      * rpc请求标识
      */
     private Integer requestId;
@@ -70,5 +74,11 @@ public class RpcInvocation {
     public void setArgs(Object[] args) {
         this.args = args;
     }
+    public Integer getSessionId() {
+        return sessionId;
+    }
 
+    public void setSessionId(Integer sessionId) {
+        this.sessionId = sessionId;
+    }
 }

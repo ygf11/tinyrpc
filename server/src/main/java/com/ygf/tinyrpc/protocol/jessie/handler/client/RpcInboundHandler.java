@@ -1,11 +1,11 @@
 package com.ygf.tinyrpc.protocol.jessie.handler.client;
 
 import com.ygf.tinyrpc.common.RpcResult;
-import com.ygf.tinyrpc.protocol.jessie.common.Session;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import com.ygf.tinyrpc.rpc.client.RpcClient;
 
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 
@@ -27,10 +27,14 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
      * 连接对应的服务
      */
     private Class service;
-
-    public RpcInboundHandler(Class service){
+    /**
+     * rpcClient
+     */
+    private RpcClient rpcClient;
+    public RpcInboundHandler(Class service, RpcClient rpcClient){
         super();
         this.service = service;
+        this.rpcClient = rpcClient;
     }
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object message) throws Exception {
@@ -56,6 +60,17 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
     }
 
     /**
+     * 解析session响应
+     *
+     * @param msg
+     */
+    private void sessionResponse(Header msg) {
+        // TODO 启动心跳线程
+        assert msg.getSessionId() != 0;
+        rpcClient.handleSessionInit(service, msg.getSessionId());
+    }
+
+    /**
      * 解析rpc响应
      *
      * @param header
@@ -67,7 +82,6 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        //Session session = Session.getInstance();
         RpcResponseMessage msg = (RpcResponseMessage) header;
         int requestId = msg.getRequestId();
         RpcResult result = new RpcResult();
@@ -81,19 +95,7 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
         // TODO 提交任务
     }
 
-    /**
-     * 解析session响应
-     *
-     * @param msg
-     */
-    private void sessionResponse(Header msg) {
-        //Session session = Session.getInstance();
-        // TODO 启动心跳线程
-        // TODO 提交任务
-        assert msg.getSessionId() != 0;
-        //session.setSessionId(msg.getSessionId());
-        //session.setStatus(CONNECTED);
-    }
+
 
 
 }

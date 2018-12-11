@@ -1,7 +1,6 @@
 package com.ygf.tinyrpc.protocol.jessie.handler.client;
 
 import com.ygf.tinyrpc.common.RpcInvocation;
-import com.ygf.tinyrpc.protocol.jessie.common.Session;
 import com.ygf.tinyrpc.protocol.jessie.message.InitSessionMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
@@ -94,12 +93,11 @@ public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
         }
         // rpc请求参数
         RpcInvocation invocation = (RpcInvocation) arg;
-        //Session session = Session.getInstance();
         RpcRequestMessage req = new RpcRequestMessage();
         req.setProtocol(JessieProtocol.PROTOCOL);
         req.setVersion(JessieProtocol.CURRENT_VERSION);
         req.setType(JessieProtocol.RPC_REQUEST);
-        //req.setSessionId(session.getSessionId());
+        req.setSessionId(invocation.getSessionId());
 
         req.setRequestId(invocation.getRequestId());
         String className = invocation.getTarget().getCanonicalName();
