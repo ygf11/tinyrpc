@@ -4,7 +4,9 @@ import com.ygf.tinyrpc.protocol.jessie.message.InitSessionMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
+
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
+
 import com.ygf.tinyrpc.serialize.SerializeUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -12,12 +14,14 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 /**
  * 字节流读取的解码器
- * TODO 异常处理
+ * TODO 异常处理 客户端和服务器端编码解码代码分离
+ *
  * @author theo
  * @date 20181130
  */
@@ -61,7 +65,7 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
                 parseInitSessionPackedt(in, header, out);
                 break;
             case CREATE_SESSION_RESPONSE:
-            //case CREATE_SESSION_ACK:
+                //case CREATE_SESSION_ACK:
             case EXIT_SESSION:
             case HEARTBEATS:
                 parseGeneralPacket(in, header, out);
@@ -86,14 +90,15 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
 
     /**
      * 解析创建会话的报文
+     *
      * @param in
      * @param header
      * @param out
      */
-    private void parseInitSessionPackedt(ByteBuf in, Header header, List<Object> out){
+    private void parseInitSessionPackedt(ByteBuf in, Header header, List<Object> out) {
         int length = in.readInt();
         // 报文数据不够
-        if (in.readableBytes() < length){
+        if (in.readableBytes() < length) {
             in.resetReaderIndex();
             return;
         }
@@ -124,22 +129,13 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
         msg.setRequestId(in.readInt());
         msg.setService(readString(in));
 
-        byte paramSize = in.readByte();
-
-        for (byte i = 0; i < paramSize; ++i) {
-            short len = in.readShort();
-            byte[] bytes = new byte[len];
-            in.readBytes(bytes, 0, len);
-            Object param = null;
-            try {
-                param = SerializeUtils.byteArrayToObject(bytes);
-                msg.getParams().add(param);
-            } catch (Exception e) {
-                // 跳过这个报文
-                skipPacket(in, length);
-                logger.error("byte array to obj error: {}", e);
-                return;
-            }
+        // 解析参数值
+        try{
+            msg.setParamTypes(readList(in));
+            msg.setParams(readList(in));
+        }catch (Exception e){
+            skipPacket(in, length);
+            return;
         }
 
         out.add(msg);
@@ -199,13 +195,42 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
 
     /**
      * 从二进制报文中读取String, 格式为len+String
+     *
      * @param in
      * @return
      */
-    private String readString(ByteBuf in){
+    private String readString(ByteBuf in) {
         short len = in.readShort();
         byte[] array = new byte[len];
         in.readBytes(array, 0, len);
         return new String(array);
     }
+
+    /**
+     * 读取一个列表
+     *
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    private List readList(ByteBuf in) throws Exception {
+        List list = new ArrayList();
+        byte paramSize = in.readByte();
+
+        for (byte i = 0; i < paramSize; ++i) {
+            short len = in.readShort();
+            byte[] bytes = new byte[len];
+            in.readBytes(bytes, 0, len);
+            Object param = null;
+            param = SerializeUtils.byteArrayToObject(bytes);
+            list.add(param);
+            // 跳过这个报文
+            //skipPacket(in, length);
+            //logger.error("byte array to obj error: {}", e);
+            //return;
+        }
+
+        return list;
+    }
+
 }

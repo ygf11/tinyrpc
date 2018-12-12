@@ -92,7 +92,10 @@ public class ByteToDecoderTest {
     @Test
     public void notRpcPacketTest() throws Exception {
         for (byte i = 1; i < 8; ++i) {
-            if (i == RPC_REQUEST || i == RPC_RESPONSE || i == CREATE_SESSION_REQUEST) {
+            boolean needSkip = i == RPC_REQUEST || i == RPC_RESPONSE
+                    || i == CREATE_SESSION_REQUEST || i == CREATE_SESSION_ACK;
+
+            if (needSkip) {
                 continue;
             }
             in.clear();
@@ -115,7 +118,7 @@ public class ByteToDecoderTest {
      * 创建会话请求报文的解析
      */
     @Test
-    public void initSessionTest() throws Exception{
+    public void initSessionTest() throws Exception {
         header.setType(CREATE_SESSION_REQUEST);
         InitSessionMessage msg = new InitSessionMessage(header);
         msg.setAppName("panama-cloud-application");
@@ -128,8 +131,8 @@ public class ByteToDecoderTest {
         Assert.assertEquals("panama-cloud-application", result.getAppName());
 
 
-
     }
+
     /**
      * rpc请求报文解码 正常解析
      */
@@ -140,6 +143,11 @@ public class ByteToDecoderTest {
         int requestId = IdGenertor.incrementAndGet();
         msg.setRequestId(requestId);
         msg.setService("com.ygf.protocol.DubboEncoder.test()");
+        List<String> paramTypes = new ArrayList<>();
+        paramTypes.add(Integer.class.getCanonicalName());
+        paramTypes.add(Integer.class.getCanonicalName());
+        paramTypes.add(Integer.class.getCanonicalName());
+        msg.setParamTypes(paramTypes);
         List<Object> params = new ArrayList<Object>();
         params.add((Integer) 4);
         params.add((Integer) 5);
@@ -156,10 +164,16 @@ public class ByteToDecoderTest {
         Assert.assertEquals(msg.getSessionId(), result.getSessionId());
         Assert.assertEquals(msg.getRequestId(), result.getRequestId());
         Assert.assertEquals(msg.getParams().size(), result.getParams().size());
+        Assert.assertEquals(msg.getParamTypes().size(), result.getParamTypes().size());
         Assert.assertEquals(msg.getService(), msg.getService());
         for (int i = 0; i < msg.getParams().size(); ++i) {
             Assert.assertEquals(msg.getParams().get(i), result.getParams().get(i));
         }
+        for (int i = 0; i < msg.getParamTypes().size(); ++i){
+            logger.info("class type: {}", result.getParamTypes().get(i));
+            Assert.assertEquals(msg.getParamTypes().get(i), result.getParamTypes().get(i));
+        }
+
     }
 
     /**
@@ -201,6 +215,11 @@ public class ByteToDecoderTest {
         int requestId = IdGenertor.incrementAndGet();
         msg.setRequestId(requestId);
         msg.setService("com.ygf.protocol.DubboEncoder.test()");
+        List<String> paramTypes = new ArrayList<>();
+        paramTypes.add(Integer.class.getCanonicalName());
+        paramTypes.add(Integer.class.getCanonicalName());
+        paramTypes.add(Integer.class.getCanonicalName());
+        msg.setParamTypes(paramTypes);
         List<Object> params = new ArrayList<Object>();
         params.add((Integer) 4);
         params.add((Integer) 5);
