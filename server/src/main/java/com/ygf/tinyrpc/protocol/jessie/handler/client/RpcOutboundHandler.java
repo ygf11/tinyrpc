@@ -7,16 +7,14 @@ import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
 import com.ygf.tinyrpc.rpc.OutboundMsg;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
-import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 将出站请求转化为编码器可以编码的请求对象
@@ -33,10 +31,11 @@ public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
      */
     private Class service;
 
-    public RpcOutboundHandler(Class service){
+    public RpcOutboundHandler(Class service) {
         super();
         this.service = service;
     }
+
     @Override
     protected void encode(ChannelHandlerContext ctx, OutboundMsg msg, List<Object> out) throws Exception {
         switch (msg.getType()) {
@@ -109,6 +108,9 @@ public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
 
         req.setParams(Arrays.asList(invocation.getArgs()));
 
+        List<String> paramTypes = transfer(invocation.getParamTypes());
+        req.setParamTypes(paramTypes);
+
         out.add(req);
         // TODO 统计调用信息
     }
@@ -133,5 +135,18 @@ public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
 
     }
 
+    /**
+     * 将参数类型转换成它的类名
+     *
+     * @param paramTypes
+     * @return
+     */
+    private List<String> transfer(Class[] paramTypes) {
+        List<String> res = new ArrayList<String>();
+        for (int i = 0; i < paramTypes.length; ++i){
+            res.add(paramTypes[i].getCanonicalName());
+        }
 
+        return res;
+    }
 }

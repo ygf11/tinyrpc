@@ -29,7 +29,7 @@ public class RpcInvocation {
     /**
      * 方法参数类型数组
      */
-    private Class[] classes;
+    private Class[] paramTypes;
     /**
      * 方法参数值对象数组
      */
@@ -37,6 +37,14 @@ public class RpcInvocation {
 
     public Integer getRequestId() {
         return requestId;
+    }
+
+    public Class[] getParamTypes() {
+        return paramTypes;
+    }
+
+    public void setParamTypes(Class[] paramTypes) {
+        this.paramTypes = paramTypes;
     }
 
     public void setRequestId(Integer requestId) {
@@ -59,13 +67,6 @@ public class RpcInvocation {
         this.method = method;
     }
 
-    public Class[] getClasses() {
-        return classes;
-    }
-
-    public void setClasses(Class[] classes) {
-        this.classes = classes;
-    }
 
     public Object[] getArgs() {
         return args;
@@ -74,11 +75,20 @@ public class RpcInvocation {
     public void setArgs(Object[] args) {
         this.args = args;
     }
+
     public Integer getSessionId() {
         return sessionId;
     }
 
     public void setSessionId(Integer sessionId) {
         this.sessionId = sessionId;
+    }
+
+    @Override
+    public String toString() {
+        return "sessionId: " + sessionId +
+                "requestId: " + requestId +
+                "target: " + target.getCanonicalName() +
+                "method: " + method.getName();
     }
 }

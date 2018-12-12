@@ -115,8 +115,7 @@ public class RpcClient extends AbstractClient {
     public void rpcRequest(Class service, Method method, Object[] args) {
         // 创建rpcInvocation
         // 写入channel
-        // 以questId作为监视器进行等待
-
+        // 以一个对象作为监视器进行等待
         RpcInvocation invocation = new RpcInvocation();
         Session session = sessionMap.get(service);
         invocation.setSessionId(session.getSessionId());
@@ -125,7 +124,7 @@ public class RpcClient extends AbstractClient {
         invocation.setTarget(service);
         invocation.setMethod(method);
         invocation.setArgs(args);
-
+        invocation.setParamTypes(method.getParameterTypes());
         OutboundMsg msg = new OutboundMsg();
         msg.setType(RPC_REQUEST);
         msg.setArg(invocation);

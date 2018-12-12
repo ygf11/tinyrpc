@@ -11,9 +11,11 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
  * 字节流写入的编码器
- * TODO 抛异常的逻辑
+ * TODO 抛异常的逻辑 服务器客户端编码解码代码拆分
  *
  * @author theo
  * @date 20181130
@@ -55,7 +57,7 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
                 encodeForInitSession(msg, out, pos);
                 break;
             case CREATE_SESSION_RESPONSE:
-            //case CREATE_SESSION_ACK:
+                //case CREATE_SESSION_ACK:
                 break;
             default:
                 logger.error("type {} not support", msg.getType());
@@ -79,7 +81,7 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
 
         // 写入appName
         InitSessionMessage msg = (InitSessionMessage) header;
-        int length = 0;
+        int length;
         byte[] appName = msg.getAppName().getBytes();
         out.writeShort(appName.length);
         out.writeBytes(appName, 0, appName.length);
@@ -102,30 +104,26 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
             return;
         }
 
-        int length = 0;
+        int length;
         RpcRequestMessage msg = (RpcRequestMessage) header;
         // 写入requestId和service
         length = writeRpcBaseInfo(msg.getRequestId(), msg.getService(), out);
 
-        byte count = (byte) (msg.getParams().size());
+        // 写入参数类型列表
+        int count = writeListInfo(msg.getParamTypes(), out);
         if (count < 0) {
-            logger.error("sessionId {}, requestId {},rpc请求中参数个数大于127", msg.getSessionId(), msg.getRequestId());
+            logger.error("write parameter types error!");
             return;
         }
-        // 写入参数
-        out.writeByte(count);
-        length += 1;
-        for (Object param : msg.getParams()) {
-            try {
-                byte[] bytes = SerializeUtils.objectToByteArray(param);
-                out.writeShort(bytes.length);
-                out.writeBytes(bytes, 0, bytes.length);
-                length = length + 2 + bytes.length;
-            } catch (Exception e) {
-                out.resetWriterIndex();
-                return;
-            }
+        length += count;
+
+        // 写入参数值列表
+        count = writeListInfo(msg.getParams(), out);
+        if (count < 0){
+            logger.error("write parameters error!");
+            return;
         }
+        length += count;
 
         updateLength(out, length, saved);
 
@@ -145,7 +143,7 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
             return;
         }
 
-        int length = 0;
+        int length;
         RpcResponseMessage msg = (RpcResponseMessage) header;
         // 写入requestId和service
         length = writeRpcBaseInfo(msg.getRequestId(), msg.getService(), out);
@@ -200,6 +198,34 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
         out.writeShort(bytes.length);
         out.writeBytes(bytes, 0, bytes.length);
         return 6 + bytes.length;
+    }
+
+    /**
+     * 向out写入一个list，并且返回当前写入的字节数
+     *
+     * @param list
+     * @param out
+     * @return
+     */
+    private int writeListInfo(List list, ByteBuf out) {
+        byte count = (byte) (list.size());
+        // 写入参数
+        out.writeByte(count);
+        int length = 1;
+
+        for (Object param : list) {
+            try {
+                byte[] bytes = SerializeUtils.objectToByteArray(param);
+                out.writeShort(bytes.length);
+                out.writeBytes(bytes, 0, bytes.length);
+                length = length + 2 + bytes.length;
+            } catch (Exception e) {
+                out.resetWriterIndex();
+                return -1;
+            }
+        }
+
+        return length;
     }
 
 
