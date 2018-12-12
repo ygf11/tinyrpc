@@ -224,10 +224,6 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
             Object param = null;
             param = SerializeUtils.byteArrayToObject(bytes);
             list.add(param);
-            // 跳过这个报文
-            //skipPacket(in, length);
-            //logger.error("byte array to obj error: {}", e);
-            //return;
         }
 
         return list;
