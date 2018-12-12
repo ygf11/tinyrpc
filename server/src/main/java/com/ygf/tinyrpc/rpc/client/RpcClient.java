@@ -128,6 +128,9 @@ public class RpcClient extends AbstractClient {
         OutboundMsg msg = new OutboundMsg();
         msg.setType(RPC_REQUEST);
         msg.setArg(invocation);
+
+        logger.info("invocation: {}", invocation);
+
         writeMsg(service, msg);
 
         // 等待服务器响应
@@ -145,8 +148,10 @@ public class RpcClient extends AbstractClient {
     public void handleRpcResponse(Class service, Integer requestId, RpcResult result) {
         Session session = sessionMap.get(service);
         session.putResult(requestId, result);
+        logger.info("session: {}", session);
         // 唤醒对应rpc等待线程
-        waitObjects.get(requestId).notify();
+        Object sync = waitObjects.get(requestId);
+        notify(sync);
     }
 
     public void handleHeartBeat() {

@@ -8,4 +8,5 @@ package com.ygf.protocol.jessie.api;
  */
 public interface Service {
     void test();
+    void test(int a, String b);
 }
