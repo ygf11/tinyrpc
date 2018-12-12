@@ -1,29 +1,31 @@
-package com.ygf.tinyrpc.protocol.jessie.handler;
+package com.ygf.tinyrpc.rpc;
 
-import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import io.netty.channel.Channel;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
- * RpcHandler和ChildHandler的公共父类，有一个writeMsg()到的公共方法
+ * sender抽象类， 主要提供channel的注册和写入
  *
  * @author theo
- * @date 20181207
+ * @date 20181211
  */
-public abstract class AbstractClient {
+public class AbstractWriter {
+    /**
+     * 服务到通信channel的映射
+     */
+    private final Map<Class, Channel> channelMap = new ConcurrentHashMap<Class, Channel>();
 
     /**
-     * 通信的channel
+     * 注册channel
+     * TODO 更新channel时的保护操作
+     * @param service
+     * @param channel
      */
-    protected Channel channel;
-    
-    public AbstractClient(Channel channel){
-        this.channel = channel;
+    public void resgiterChannel(Class service, Channel channel) {
+        channelMap.put(service, channel);
     }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
 
     /**
      * 两种方式向channel写入消息：
@@ -33,7 +35,8 @@ public abstract class AbstractClient {
      * TODO 改成抽象类方法 与childhandler共用这个方法
      * @param msg
      */
-    protected void writeMsg(final Header msg) {
+    protected void writeMsg(Class service, final OutboundMsg msg) {
+        final  Channel channel = channelMap.get(service);
         if (channel.eventLoop().inEventLoop()) {
             channel.write(msg);
         } else {
@@ -45,6 +48,5 @@ public abstract class AbstractClient {
             });
         }
     }
-
 
 }
