@@ -98,7 +98,6 @@ public class RpcClient extends AbstractClient {
         // 唤醒等待线程
         notify(service);
         // TODO 开始心跳
-        logger.info("after notify");
     }
 
 

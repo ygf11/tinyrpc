@@ -97,4 +97,8 @@ public class RpcClientTest {
 
         Thread.sleep(20000);
     }
+
+    public void rpcRequest(){
+
+    }
 }
