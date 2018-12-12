@@ -114,7 +114,14 @@ public class MsgToEncoderTest {
         request.setType(RPC_REQUEST);
         request.setRequestId(IdGenertor.incrementAndGet());
         request.setService("com.ygf.protocol.DubboEncoder.test()");
-        List<Object> params = new ArrayList<Object>();
+
+        List<String> paramTypes = new ArrayList<>();
+        paramTypes.add(Integer.class.getCanonicalName());
+        paramTypes.add(Integer.class.getCanonicalName());
+        paramTypes.add(Integer.class.getCanonicalName());
+        request.setParamTypes(paramTypes);
+
+        List<Object> params = new ArrayList<>();
         params.add((Integer) 4);
         params.add((Integer) 5);
         params.add((Integer) 6);
@@ -135,8 +142,18 @@ public class MsgToEncoderTest {
         Assert.assertEquals("com.ygf.protocol.DubboEncoder.test()".length(), serviceLength);
         Assert.assertEquals("com.ygf.protocol.DubboEncoder.test()", new String(bytes));
 
+        // 参数类型验证
         Assert.assertEquals(3, byteBuf.readByte());
+        for (int i = 0; i < 3; ++i){
+            short len = byteBuf.readShort();
+            byte[] array = new byte[len];
+            byteBuf.readBytes(array, 0, len);
+            Assert.assertEquals(Integer.class.getCanonicalName(),
+                    SerializeUtils.byteArrayToObject(array));
+        }
 
+        // 参数验证
+        Assert.assertEquals(3, byteBuf.readByte());
         for (int i = 4; i < 7; ++i) {
             short len = byteBuf.readShort();
             byte[] array = new byte[len];
