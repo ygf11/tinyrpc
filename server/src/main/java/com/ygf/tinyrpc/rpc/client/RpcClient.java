@@ -27,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 20181209
  */
 public class RpcClient extends AbstractWriter {
-
     private static Logger logger = LoggerFactory.getLogger(RpcClient.class);
     /**
      * 具体服务到对应配置的映射

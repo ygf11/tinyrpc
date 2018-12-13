@@ -3,7 +3,6 @@ package com.ygf.tinyrpc.protocol.jessie.handler.client;
 import com.ygf.tinyrpc.common.RpcResult;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import com.ygf.tinyrpc.rpc.client.RpcClient;
@@ -12,9 +11,6 @@ import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 
 /**
  * 客户端处理入站事件的处理器
@@ -35,13 +31,11 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
      * rpcClient
      */
     private RpcClient rpcClient;
-
-    public RpcInboundHandler(Class service, RpcClient rpcClient) {
+    public RpcInboundHandler(Class service, RpcClient rpcClient){
         super();
         this.service = service;
         this.rpcClient = rpcClient;
     }
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object message) throws Exception {
         boolean isHeader = message instanceof Header;
@@ -103,18 +97,7 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
         // TODO 提交任务
     }
 
-    /**
-     * 获取服务器的地址(ip:port)
-     *
-     * @return
-     */
-    private String getServerAddr(ChannelHandlerContext ctx) {
-        Channel channel = ctx.channel();
-        InetSocketAddress address = (InetSocketAddress)channel.remoteAddress();
-        String addr = address.getAddress().getHostAddress();
-        int port =((InetSocketAddress) channel.remoteAddress()).getPort();
-        return null;
-    }
+
 
 
 }

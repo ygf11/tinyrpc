@@ -23,7 +23,7 @@ public class AbstractWriter {
      * @param service
      * @param channel
      */
-    public void registerChannel(Class service, Channel channel) {
+    public void resgiterChannel(Class service, Channel channel) {
         channelMap.put(service, channel);
     }
 

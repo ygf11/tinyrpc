@@ -15,7 +15,7 @@ public class Session {
     /**
      * 对应服务类
      */
-    //private Class service;
+    private Class service;
     /**
      * 会话当前状态
      */
@@ -32,7 +32,6 @@ public class Session {
     public Session() {
         status = SessionStatus.DISCONNECT;
     }
-
 
     public int getStatus() {
         return status;
@@ -58,12 +57,11 @@ public class Session {
         results.put(requestId, result);
     }
 
-    /*
     public Class getService() {
         return service;
     }
 
     public void setService(Class service) {
         this.service = service;
-    }*/
+    }
 }

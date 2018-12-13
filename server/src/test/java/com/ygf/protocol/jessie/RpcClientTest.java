@@ -36,7 +36,7 @@ public class RpcClientTest {
     public void setup() {
         rpcClient = new RpcClient();
         channel = mock(Channel.class);
-        rpcClient.registerChannel(Service.class, channel);
+        rpcClient.resgiterChannel(Service.class, channel);
     }
 
     /**
