@@ -1,7 +1,7 @@
 package com.ygf.tinyrpc.rpc.server;
 
+import com.ygf.tinyrpc.protocol.jessie.common.Session;
 import com.ygf.tinyrpc.rpc.AbstractWriter;
-import com.ygf.tinyrpc.rpc.InboundMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -37,6 +37,10 @@ public class RpcChildServer extends AbstractWriter {
      * spring上下文
      */
     private ApplicationContext applicationContext;
+    /**
+     * 保存消费者地址到对应session的映射
+     */
+    private Map<String, Session> sessionMap = new ConcurrentHashMap<String, Session>();
 
     /**
      * 处理创建会话请求
