@@ -143,8 +143,8 @@ public class RpcClient extends AbstractWriter {
      * @param service
      * @param result
      */
-    public void handleRpcResponse(Class service, Integer requestId, RpcResult result) {
-        Session session = sessionMap.get(service);
+    public void handleRpcResponse(String addr, Integer requestId, RpcResult result) {
+        Session session = sessionMap.get(addr);
         session.putResult(requestId, result);
         logger.info("session: {}", session);
         // 唤醒对应rpc等待线程
@@ -179,7 +179,7 @@ public class RpcClient extends AbstractWriter {
      *
      * @param sync
      */
-    private void notify(Object sync) {
+    public void notify(Object sync) {
         synchronized (sync) {
             sync.notify();
         }

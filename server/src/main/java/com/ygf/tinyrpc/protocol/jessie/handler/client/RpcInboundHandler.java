@@ -25,19 +25,13 @@ import java.net.InetSocketAddress;
 public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcInboundHandler.class);
-
-    /**
-     * 连接对应的服务
-     */
-    private Class service;
     /**
      * rpcClient
      */
     private RpcClient rpcClient;
 
-    public RpcInboundHandler(Class service, RpcClient rpcClient) {
+    public RpcInboundHandler(RpcClient rpcClient) {
         super();
-        this.service = service;
         this.rpcClient = rpcClient;
     }
 
@@ -50,12 +44,14 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
         }
 
         Header msg = (Header) message;
+        String addr = getServerAddr(ctx.channel());
+
         switch (msg.getType()) {
             case RPC_RESPONSE:
-                rpcResponse(msg);
+                rpcResponse(msg, addr);
                 break;
             case CREATE_SESSION_RESPONSE:
-                sessionResponse(msg, ctx.channel());
+                sessionResponse(msg, addr);
                 break;
             case HEARTBEATS:
                 break;
@@ -69,12 +65,11 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
      *
      * @param msg
      */
-    private void sessionResponse(Header msg, Channel channel) {
+    private void sessionResponse(Header msg, String addr) {
         // TODO 启动心跳线程
         assert msg.getSessionId() != 0;
-        String addr = getServerAddr(channel);
         rpcClient.handleSessionInit(addr, msg.getSessionId());
-        logger.info("sessionId {}", msg.getSessionId());
+        logger.info("sessionId {}, addr:{}", msg.getSessionId(), addr);
     }
 
     /**
@@ -82,7 +77,7 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
      *
      * @param header
      */
-    private void rpcResponse(Header header) {
+    private void rpcResponse(Header header, String addr) {
         boolean isResponse = header instanceof RpcResponseMessage;
         if (!isResponse) {
             logger.warn("msg {] is not a rpc response msg", header);
@@ -96,8 +91,8 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
         result.setResultType(msg.getTargetClass());
         result.setResult(msg.getResult());
 
-        logger.info("service {} requestId {} result {}", service, requestId, result);
-        rpcClient.handleRpcResponse(service, requestId, result);
+        logger.info("addr: {}, requestId:{}, result:{}", addr, requestId, result);
+        rpcClient.handleRpcResponse(addr, requestId, result);
         // TODO 更新心跳
         // TODO 提交任务
     }
