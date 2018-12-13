@@ -7,21 +7,26 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.InetSocketAddress;
 
 /**
  * echo handler
+ *
  * @author theo
  * @Date 20181127
  */
-public class EchoClientHandler extends ChannelInboundHandlerAdapter{
-    InternalLogger logger = InternalLoggerFactory.getInstance(getClass());
+public class EchoClientHandler extends ChannelInboundHandlerAdapter {
+    private static Logger logger = LoggerFactory.getLogger(EchoClientHandler.class);
 
     public final ByteBuf firstMessage;
 
-    public EchoClientHandler(){
+    public EchoClientHandler() {
         firstMessage = Unpooled.buffer(ClientMain.SIZE);
-        for (int i = 0; i < ClientMain.SIZE; ++i){
-            firstMessage.writeByte((byte)i);
+        for (int i = 0; i < ClientMain.SIZE; ++i) {
+            firstMessage.writeByte((byte) i);
         }
     }
 
@@ -29,11 +34,13 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter{
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         logger.info("active:", ctx);
         ctx.writeAndFlush(firstMessage);
+
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ctx.write(msg);
+        getServerAddr(ctx);
     }
 
     @Override
@@ -45,5 +52,14 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter{
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
         ctx.close();
+    }
+
+    private String getServerAddr(ChannelHandlerContext ctx) {
+        InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+        String addr = socketAddress.getAddress().getHostAddress();
+        int port = socketAddress.getPort();
+        logger.info("ip:{} port:{}", addr, port);
+        return addr + ":" + port;
+
     }
 }
