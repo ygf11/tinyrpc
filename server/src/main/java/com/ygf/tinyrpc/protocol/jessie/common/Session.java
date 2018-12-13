@@ -6,7 +6,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 会话类
+ * 客户端会话类 会话会在三个地方被修改：
+ * 1. TCP连接之后 创建会话对象
+ * 2. 客户端接收响应会话  修改会话状态
+ * 3. 销毁会话  清除会话
+ *
+ * 所以这三个地方需要加独占锁
  *
  * @author theo
  * @date 20181202

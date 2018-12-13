@@ -3,6 +3,7 @@ package com.ygf.tinyrpc.protocol.jessie.handler.client;
 import com.ygf.tinyrpc.common.RpcResult;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import com.ygf.tinyrpc.rpc.client.RpcClient;
@@ -11,6 +12,8 @@ import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.InetSocketAddress;
 
 /**
  * 客户端处理入站事件的处理器
@@ -31,11 +34,13 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
      * rpcClient
      */
     private RpcClient rpcClient;
-    public RpcInboundHandler(Class service, RpcClient rpcClient){
+
+    public RpcInboundHandler(Class service, RpcClient rpcClient) {
         super();
         this.service = service;
         this.rpcClient = rpcClient;
     }
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object message) throws Exception {
         boolean isHeader = message instanceof Header;
@@ -50,7 +55,7 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
                 rpcResponse(msg);
                 break;
             case CREATE_SESSION_RESPONSE:
-                sessionResponse(msg);
+                sessionResponse(msg, ctx.channel());
                 break;
             case HEARTBEATS:
                 break;
@@ -64,10 +69,11 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
      *
      * @param msg
      */
-    private void sessionResponse(Header msg) {
+    private void sessionResponse(Header msg, Channel channel) {
         // TODO 启动心跳线程
         assert msg.getSessionId() != 0;
-        rpcClient.handleSessionInit(service, msg.getSessionId());
+        String addr = getServerAddr(channel);
+        rpcClient.handleSessionInit(addr, msg.getSessionId());
         logger.info("sessionId {}", msg.getSessionId());
     }
 
@@ -92,12 +98,22 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
 
         logger.info("service {} requestId {} result {}", service, requestId, result);
         rpcClient.handleRpcResponse(service, requestId, result);
-        //session.putResult(requestId, result);
         // TODO 更新心跳
         // TODO 提交任务
     }
 
-
+    /**
+     * 获取对方的地址
+     *
+     * @param channel
+     * @return
+     */
+    private String getServerAddr(Channel channel) {
+        InetSocketAddress socketAddress = (InetSocketAddress) channel.remoteAddress();
+        String ip = socketAddress.getAddress().getHostAddress();
+        int port = socketAddress.getPort();
+        return ip + ":" + port;
+    }
 
 
 }

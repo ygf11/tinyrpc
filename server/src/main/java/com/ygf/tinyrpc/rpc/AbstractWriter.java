@@ -1,5 +1,6 @@
 package com.ygf.tinyrpc.rpc;
 
+import com.ygf.tinyrpc.protocol.jessie.common.Session;
 import io.netty.channel.Channel;
 
 import java.util.Map;
@@ -15,16 +16,16 @@ public class AbstractWriter {
     /**
      * 服务到通信channel的映射
      */
-    private final Map<Class, Channel> channelMap = new ConcurrentHashMap<Class, Channel>();
+    private final Map<Session, Channel> channelMap = new ConcurrentHashMap<Session, Channel>();
 
     /**
      * 注册channel
      * TODO 更新channel时的保护操作
-     * @param service
+     * @param session
      * @param channel
      */
-    public void resgiterChannel(Class service, Channel channel) {
-        channelMap.put(service, channel);
+    public void registerChannel(Session session, Channel channel) {
+        channelMap.put(session, channel);
     }
 
     /**
@@ -33,10 +34,10 @@ public class AbstractWriter {
      * 2. 当前线程不在channel注册的evetloop时， 提交到这个线程中稍候执行
      *
      * TODO 改成抽象类方法 与childhandler共用这个方法
-     * @param msg
+     * @param session
      */
-    protected void writeMsg(Class service, final OutboundMsg msg) {
-        final  Channel channel = channelMap.get(service);
+    protected void writeMsg(Session session, final OutboundMsg msg) {
+        final  Channel channel = channelMap.get(session);
         if (channel.eventLoop().inEventLoop()) {
             channel.write(msg);
         } else {

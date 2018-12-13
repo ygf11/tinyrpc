@@ -3,9 +3,7 @@ package com.ygf.tinyrpc.rpc.client;
 import com.ygf.tinyrpc.common.IdGenertor;
 import com.ygf.tinyrpc.common.RpcInvocation;
 import com.ygf.tinyrpc.common.RpcResult;
-
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
-
 import com.ygf.tinyrpc.protocol.jessie.common.Session;
 import com.ygf.tinyrpc.rpc.AbstractWriter;
 import com.ygf.tinyrpc.rpc.OutboundMsg;
@@ -33,13 +31,17 @@ public class RpcClient extends AbstractWriter {
      */
     private Map<Class, Object> services = new ConcurrentHashMap<Class, Object>();
     /**
-     * 保存服务对应的会话
+     * 保存服务提供者所在地址-->服务会话的映射
      */
-    private Map<Class, Session> sessionMap = new ConcurrentHashMap<Class, Session>();
+    private Map<String, Map<Class, Session>> acceptSessions  = new ConcurrentHashMap<String, Map<Class, Session>>();
     /**
-     * rpc请求为同步时的等待对象
+     * 保存通信地址-->session的映射
+      */
+    private Map<String, Session>  sessionMap = new ConcurrentHashMap<String, Session>();
+    /**
+     * 为rpc请求同步时的监视器对象
      */
-    private Map<Integer, Object> waitObjects = new ConcurrentHashMap<Integer, Object>();
+    private Map<Integer, Object> rpcWaiters = new ConcurrentHashMap<Integer, Object>();
     /**
      * 应用级别的配置
      */
@@ -65,7 +67,7 @@ public class RpcClient extends AbstractWriter {
      * @param service
      * @param appName
      */
-    public void initSession(Class service, String appName) {
+    public void initSession(Session session, String appName) {
         // 服务发现
         // 负载均衡
         // 建立连接(单连接时 要在rpcConnector中判断是否存在对应连接  存在则不需要建立连接)
@@ -74,13 +76,10 @@ public class RpcClient extends AbstractWriter {
         msg.setType(CREATE_SESSION_REQUEST);
         msg.setArg(appName);
         logger.info("outboundMsg {}", msg);
-        writeMsg(service, msg);
-
-        Session session = new Session();
-        session.setStatus(CONNECTING);
+        writeMsg(session, msg);
 
         // waiting
-        waitForServer(service);
+        waitForServer(session);
     }
 
     /**
@@ -89,14 +88,14 @@ public class RpcClient extends AbstractWriter {
      * @param service
      * @param sessionId
      */
-    public void handleSessionInit(Class service, Integer sessionId) {
-        Session session = sessionMap.get(service);
+    public void handleSessionInit(String addr, Integer sessionId) {
+        Session session = sessionMap.get(addr);
         session.setStatus(CONNECTED);
         session.setSessionId(sessionId);
 
         logger.info("sessionId: {}", sessionId);
         // 唤醒等待线程
-        notify(service);
+        notify(session);
         // TODO 开始心跳
     }
 
@@ -112,16 +111,15 @@ public class RpcClient extends AbstractWriter {
      * @param method
      * @param args
      */
-    public void rpcRequest(Class service, Method method, Object[] args) {
+    public void rpcRequest(Session session, Method method, Object[] args) {
         // 创建rpcInvocation
         // 写入channel
         // 以一个对象作为监视器进行等待
         RpcInvocation invocation = new RpcInvocation();
-        Session session = sessionMap.get(service);
         invocation.setSessionId(session.getSessionId());
         Integer requestId = IdGenertor.incrementAndGet();
         invocation.setRequestId(requestId);
-        invocation.setTarget(service);
+        invocation.setTarget(session.getService());
         invocation.setMethod(method);
         invocation.setArgs(args);
         invocation.setParamTypes(method.getParameterTypes());
@@ -131,12 +129,12 @@ public class RpcClient extends AbstractWriter {
 
         logger.info("invocation: {}", invocation);
 
-        writeMsg(service, msg);
+        writeMsg(session, msg);
 
         // 等待服务器响应
         Object sync = new Object();
-        waitObjects.put(requestId, sync);
-        waitForServer(requestId);
+        rpcWaiters.put(requestId, sync);
+        waitForServer(sync);
     }
 
     /**
@@ -150,7 +148,7 @@ public class RpcClient extends AbstractWriter {
         session.putResult(requestId, result);
         logger.info("session: {}", session);
         // 唤醒对应rpc等待线程
-        Object sync = waitObjects.get(requestId);
+        Object sync = rpcWaiters.get(requestId);
         notify(sync);
     }
 
