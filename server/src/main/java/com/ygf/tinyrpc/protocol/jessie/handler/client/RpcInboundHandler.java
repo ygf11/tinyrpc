@@ -1,6 +1,7 @@
 package com.ygf.tinyrpc.protocol.jessie.handler.client;
 
 import com.ygf.tinyrpc.common.RpcResult;
+import com.ygf.tinyrpc.protocol.jessie.handler.AbstractRpcInboundHandler;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
 import io.netty.channel.Channel;
@@ -22,7 +23,7 @@ import java.net.InetSocketAddress;
  * @author theo
  * @date 20181208
  */
-public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
+public class RpcInboundHandler extends AbstractRpcInboundHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcInboundHandler.class);
     /**
@@ -97,18 +98,6 @@ public class RpcInboundHandler extends ChannelInboundHandlerAdapter {
         // TODO 提交任务
     }
 
-    /**
-     * 获取对方的地址
-     *
-     * @param channel
-     * @return
-     */
-    private String getServerAddr(Channel channel) {
-        InetSocketAddress socketAddress = (InetSocketAddress) channel.remoteAddress();
-        String ip = socketAddress.getAddress().getHostAddress();
-        int port = socketAddress.getPort();
-        return ip + ":" + port;
-    }
 
 
 }

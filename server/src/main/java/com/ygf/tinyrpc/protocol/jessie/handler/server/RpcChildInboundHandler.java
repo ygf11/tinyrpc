@@ -1,12 +1,18 @@
 package com.ygf.tinyrpc.protocol.jessie.handler.server;
 
+import com.ygf.tinyrpc.common.RpcInvocation;
+import com.ygf.tinyrpc.protocol.jessie.handler.AbstractRpcInboundHandler;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.InitSessionMessage;
+import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
 import com.ygf.tinyrpc.rpc.server.RpcChildServer;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.InetSocketAddress;
 
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.CREATE_SESSION_REQUEST;
@@ -17,13 +23,18 @@ import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.CREATE_SESS
  * @author theo
  * @date 20181213
  */
-public class RpcChildInboundHandler extends ChannelInboundHandlerAdapter {
+public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
 
     private static Logger logger = LoggerFactory.getLogger(RpcChildInboundHandler.class);
     /**
      * rpcChildServer
      */
     private RpcChildServer server;
+
+    public RpcChildInboundHandler(RpcChildServer server){
+        super();
+        this.server = server;
+    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -35,6 +46,7 @@ public class RpcChildInboundHandler extends ChannelInboundHandlerAdapter {
 
         Header header = (Header) msg;
         byte type = header.getType();
+        String addr = getServerAddr(ctx.channel());
         switch (type) {
             case RPC_REQUEST:
                 break;
@@ -43,6 +55,7 @@ public class RpcChildInboundHandler extends ChannelInboundHandlerAdapter {
             case HEARTBEATS:
                 break;
             case CREATE_SESSION_REQUEST:
+                handleSessionInit(header, addr);
                 break;
             default:
                 logger.error("not supported request type:{}", type);
@@ -55,7 +68,7 @@ public class RpcChildInboundHandler extends ChannelInboundHandlerAdapter {
      * @param header
      * @param addr
      */
-    private void createSession(Header header, String addr) {
+    private void handleSessionInit(Header header, String addr) {
         boolean isInitSession = header instanceof InitSessionMessage;
         if (!isInitSession){
             logger.warn("msg is not a session init msg");
@@ -63,10 +76,28 @@ public class RpcChildInboundHandler extends ChannelInboundHandlerAdapter {
         }
 
         InitSessionMessage msg = (InitSessionMessage) header;
-        //server.handleSessionInit(msg.getAppName());
+        server.handleSessionInit(addr, msg.getAppName());
 
         // TODO更新心跳
     }
 
+    /**
+     * 处理rpc请求
+     *
+     * @param header
+     * @param addr
+     */
+    private void HandlerRpcRequest(Header header, String addr){
+        boolean isRpcRequest = header instanceof RpcRequestMessage;
+        if (!isRpcRequest){
+            logger.warn("msg is not a rpc request msg");
+            return;
+        }
+
+        RpcRequestMessage msg = (RpcRequestMessage) header;
+        RpcInvocation invocation = new RpcInvocation();
+        invocation.setSessionId(msg.getSessionId());
+
+    }
 
 }
