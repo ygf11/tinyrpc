@@ -77,7 +77,6 @@ public class RpcOutboundHandlerTest {
         invocation.setRequestId(500);
         invocation.setTarget(Integer.class);
         invocation.setMethod(Integer.class.getMethod("toString"));
-        invocation.setParamTypes(new Class[0]);
         Object[] params = new Object[0];
         invocation.setArgs(params);
         msg.setType(RPC_REQUEST);
