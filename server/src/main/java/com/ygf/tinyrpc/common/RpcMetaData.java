@@ -18,9 +18,13 @@ public class RpcMetaData {
      */
     private Integer requestId;
     /**
-     * 服务名：权限定类名+方法名
+     * 服务权限定类名
      */
     private String service;
+    /**
+     * 服务方法名
+     */
+    private String method;
     /**
      * 方法参数类型
      */
@@ -29,6 +33,65 @@ public class RpcMetaData {
      * 方法参数值
      */
     private List<Object> args;
+
+    public Integer getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(Integer sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public Integer getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(Integer requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
+    }
+
+    public List<String> getParamTypes() {
+        return paramTypes;
+    }
+
+    public void setParamTypes(List<String> paramTypes) {
+        this.paramTypes = paramTypes;
+    }
+
+    public List<Object> getArgs() {
+        return args;
+    }
+
+    public void setArgs(List<Object> args) {
+        this.args = args;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    @Override
+    public String toString() {
+        return "sessionId: " + sessionId +
+                " requestId: " + requestId +
+                " service: " + service +
+                " method: " + method +
+                " paramTypes: " + paramTypes +
+                " args: " + args;
+
+    }
 
 
 }

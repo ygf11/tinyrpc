@@ -91,13 +91,9 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
 
         RpcRequestMessage msg = (RpcRequestMessage) header;
         RpcInvocation invocation = new RpcInvocation();
-        invocation.setSessionId(msg.getSessionId());
-        invocation.setRequestId(msg.getRequestId());
-        invocation.setTarget(Class.forName(msg.getService()));
-
-    }
-
-    private Class getService(RpcRequestMessage msg){
+        //invocation.setSessionId(msg.getSessionId());
+        //invocation.setRequestId(msg.getRequestId());
+        //invocation.setTarget(Class.forName(msg.getService()));
 
     }
 

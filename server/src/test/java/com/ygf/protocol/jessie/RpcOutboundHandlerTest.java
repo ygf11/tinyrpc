@@ -2,6 +2,7 @@ package com.ygf.protocol.jessie;
 
 import com.ygf.protocol.jessie.api.Service;
 import com.ygf.tinyrpc.common.RpcInvocation;
+import com.ygf.tinyrpc.common.RpcMetaData;
 import com.ygf.tinyrpc.protocol.jessie.handler.client.RpcOutboundHandler;
 import com.ygf.tinyrpc.protocol.jessie.message.InitSessionMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
@@ -38,7 +39,7 @@ public class RpcOutboundHandlerTest {
         classes[0] = ChannelHandlerContext.class;
         classes[1] = OutboundMsg.class;
         classes[2] = List.class;
-        out = new ArrayList<>();
+        out = new ArrayList<Object>();
         args = new Object[3];
         args[0] = null;
         args[1] = null;
@@ -72,15 +73,23 @@ public class RpcOutboundHandlerTest {
     @Test
     public void rpcRequest() throws Exception {
         OutboundMsg msg = new OutboundMsg();
-        RpcInvocation invocation = new RpcInvocation();
-        invocation.setSessionId(123);
-        invocation.setRequestId(500);
-        invocation.setTarget(Integer.class);
-        invocation.setMethod(Integer.class.getMethod("toString"));
-        Object[] params = new Object[0];
-        invocation.setArgs(params);
+        RpcMetaData metaData = new RpcMetaData();
+        metaData.setSessionId(123);
+        metaData.setRequestId(500);
+        metaData.setService("com.ygf.Service");
+        metaData.setMethod("test");
+        List<String> paramTypes = new ArrayList<String>();
+        paramTypes.add("java.lang.Integer");
+        paramTypes.add("java.lang.String");
+        paramTypes.add("java.lang.String");
+        metaData.setParamTypes(paramTypes);
+        List<Object> params = new ArrayList<Object>();
+        params.add(1);
+        params.add("2");
+        params.add("3");
+        metaData.setArgs(params);
         msg.setType(RPC_REQUEST);
-        msg.setArg(invocation);
+        msg.setArg(metaData);
         args[1] = msg;
         MethodUtils.invokeMethod(handler, true, "encode", args, classes);
 
@@ -90,8 +99,10 @@ public class RpcOutboundHandlerTest {
         Assert.assertEquals(RPC_REQUEST, message.getType());
         Assert.assertEquals(123, message.getSessionId());
         Assert.assertEquals(500, message.getRequestId());
-        Assert.assertEquals(Integer.class.getCanonicalName() + "." +"toString()", message.getService());
-        Assert.assertEquals(0, message.getParams().size());
-
+        Assert.assertEquals( "com.ygf.Service:test", message.getService());
+        Assert.assertEquals(3, message.getParams().size());
+        Assert.assertEquals(Integer.class.getCanonicalName(), message.getParamTypes().get(0));
+        Assert.assertEquals(String.class.getCanonicalName(), message.getParamTypes().get(1));
+        Assert.assertEquals(String.class.getCanonicalName(), message.getParamTypes().get(2));
     }
 }

@@ -11,14 +11,6 @@ import java.lang.reflect.Method;
  */
 public class RpcInvocation {
     /**
-     * 请求所在的sessionId
-     */
-    private Integer sessionId;
-    /**
-     * rpc请求标识
-     */
-    private Integer requestId;
-    /**
      * 目标服务接口类
      */
     private Class target;
@@ -30,14 +22,6 @@ public class RpcInvocation {
      * 方法参数值对象数组
      */
     private Object[] args;
-
-    public Integer getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(Integer requestId) {
-        this.requestId = requestId;
-    }
 
     public Class getTarget() {
         return target;
@@ -55,7 +39,6 @@ public class RpcInvocation {
         this.method = method;
     }
 
-
     public Object[] getArgs() {
         return args;
     }
@@ -64,19 +47,9 @@ public class RpcInvocation {
         this.args = args;
     }
 
-    public Integer getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(Integer sessionId) {
-        this.sessionId = sessionId;
-    }
-
     @Override
     public String toString() {
-        return "sessionId: " + sessionId +
-                "requestId: " + requestId +
-                "target: " + target.getCanonicalName() +
+        return "target: " + target.getCanonicalName() +
                 "method: " + method.getName();
     }
 }

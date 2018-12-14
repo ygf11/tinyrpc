@@ -55,7 +55,7 @@ public class RpcClientTest {
         when(channel.eventLoop()).thenReturn(eventLoop);
         when(eventLoop.inEventLoop()).thenReturn(Boolean.TRUE);
         when(channel.write(any(OutboundMsg.class))).thenReturn(null);
-        String appName = "spring-cloud";
+        final String appName = "spring-cloud";
         new Thread(new Runnable() {
             @Override
             public void run() {

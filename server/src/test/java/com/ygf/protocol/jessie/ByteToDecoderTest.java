@@ -143,7 +143,7 @@ public class ByteToDecoderTest {
         int requestId = IdGenertor.incrementAndGet();
         msg.setRequestId(requestId);
         msg.setService("com.ygf.protocol.DubboEncoder.test()");
-        List<String> paramTypes = new ArrayList<>();
+        List<String> paramTypes = new ArrayList<String>();
         paramTypes.add(Integer.class.getCanonicalName());
         paramTypes.add(Integer.class.getCanonicalName());
         paramTypes.add(Integer.class.getCanonicalName());
@@ -215,7 +215,7 @@ public class ByteToDecoderTest {
         int requestId = IdGenertor.incrementAndGet();
         msg.setRequestId(requestId);
         msg.setService("com.ygf.protocol.DubboEncoder.test()");
-        List<String> paramTypes = new ArrayList<>();
+        List<String> paramTypes = new ArrayList<String>();
         paramTypes.add(Integer.class.getCanonicalName());
         paramTypes.add(Integer.class.getCanonicalName());
         paramTypes.add(Integer.class.getCanonicalName());

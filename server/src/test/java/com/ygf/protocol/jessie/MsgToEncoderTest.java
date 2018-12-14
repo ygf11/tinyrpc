@@ -115,13 +115,13 @@ public class MsgToEncoderTest {
         request.setRequestId(IdGenertor.incrementAndGet());
         request.setService("com.ygf.protocol.DubboEncoder.test()");
 
-        List<String> paramTypes = new ArrayList<>();
+        List<String> paramTypes = new ArrayList<String>();
         paramTypes.add(Integer.class.getCanonicalName());
         paramTypes.add(Integer.class.getCanonicalName());
         paramTypes.add(Integer.class.getCanonicalName());
         request.setParamTypes(paramTypes);
 
-        List<Object> params = new ArrayList<>();
+        List<Object> params = new ArrayList<Object>();
         params.add((Integer) 4);
         params.add((Integer) 5);
         params.add((Integer) 6);

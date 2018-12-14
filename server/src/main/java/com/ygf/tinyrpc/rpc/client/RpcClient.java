@@ -2,6 +2,7 @@ package com.ygf.tinyrpc.rpc.client;
 
 import com.ygf.tinyrpc.common.IdGenertor;
 import com.ygf.tinyrpc.common.RpcInvocation;
+import com.ygf.tinyrpc.common.RpcMetaData;
 import com.ygf.tinyrpc.common.RpcResult;
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 import com.ygf.tinyrpc.protocol.jessie.common.Session;
@@ -15,6 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -115,18 +119,19 @@ public class RpcClient extends AbstractWriter {
         // 创建rpcInvocation
         // 写入channel
         // 以一个对象作为监视器进行等待
-        RpcInvocation invocation = new RpcInvocation();
-        invocation.setSessionId(session.getSessionId());
+        RpcMetaData metaData = new RpcMetaData();
         Integer requestId = IdGenertor.incrementAndGet();
-        invocation.setRequestId(requestId);
-        invocation.setTarget(session.getService());
-        invocation.setMethod(method);
-        invocation.setArgs(args);
+        metaData.setSessionId(session.getSessionId());
+        metaData.setRequestId(requestId);
+        metaData.setService(session.getService().getCanonicalName());
+        metaData.setMethod(method.getName());
+        metaData.setArgs(Arrays.asList(args));
+        metaData.setParamTypes(transfer(method.getParameterTypes()));
         OutboundMsg msg = new OutboundMsg();
         msg.setType(RPC_REQUEST);
-        msg.setArg(invocation);
+        msg.setArg(metaData);
 
-        logger.info("invocation: {}", invocation);
+        logger.info("metadata: {}", metaData);
 
         writeMsg(session, msg);
 
@@ -183,4 +188,20 @@ public class RpcClient extends AbstractWriter {
             sync.notify();
         }
     }
+
+    /**
+     * 将参数类型转换成它的类名
+     *
+     * @param paramTypes
+     * @return
+     */
+    private List<String> transfer(Class[] paramTypes) {
+        List<String> res = new ArrayList<String>();
+        for (int i = 0; i < paramTypes.length; ++i){
+            res.add(paramTypes[i].getCanonicalName());
+        }
+
+        return res;
+    }
+
 }

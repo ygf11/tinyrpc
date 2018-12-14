@@ -1,6 +1,6 @@
 package com.ygf.tinyrpc.protocol.jessie.handler.client;
 
-import com.ygf.tinyrpc.common.RpcInvocation;
+import com.ygf.tinyrpc.common.RpcMetaData;
 import com.ygf.tinyrpc.protocol.jessie.message.InitSessionMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
@@ -9,12 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -50,7 +45,6 @@ public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
                 rpcRequest(msg, out);
                 break;
             case HEARTBEATS:
-
                 break;
             default:
                 logger.error("jessie not supported outbound type {}", msg.getType());
@@ -89,28 +83,23 @@ public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
      */
     private void rpcRequest(OutboundMsg msg, List<Object> out) {
         Object arg = msg.getArg();
-        boolean isInvoker = arg instanceof RpcInvocation;
+        boolean isInvoker = arg instanceof RpcMetaData;
         if (!isInvoker) {
             logger.error("type {} not matched arg {}", msg.getType(), arg);
             return;
         }
         // rpc请求参数
-        RpcInvocation invocation = (RpcInvocation) arg;
+        RpcMetaData metaData = (RpcMetaData) arg;
         RpcRequestMessage req = new RpcRequestMessage();
         req.setProtocol(JessieProtocol.PROTOCOL);
         req.setVersion(JessieProtocol.CURRENT_VERSION);
         req.setType(JessieProtocol.RPC_REQUEST);
-        req.setSessionId(invocation.getSessionId());
+        req.setSessionId(metaData.getSessionId());
 
-        req.setRequestId(invocation.getRequestId());
-        String className = invocation.getTarget().getCanonicalName();
-        String methodName = invocation.getMethod().getName();
-        req.setService(className + ":" + methodName);
-
-        Method method = invocation.getMethod();
-        req.setParams(Arrays.asList(invocation.getArgs()));
-        List<String> paramTypes = transfer(method.getParameterTypes());
-        req.setParamTypes(paramTypes);
+        req.setRequestId(metaData.getRequestId());
+        req.setService(getServiceName(metaData));
+        req.setParamTypes(metaData.getParamTypes());
+        req.setParams(metaData.getArgs());;
 
         out.add(req);
         // TODO 统计调用信息
@@ -137,17 +126,15 @@ public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
     }
 
     /**
-     * 将参数类型转换成它的类名
+     * 组成服务名(类名+":"+方法名)
      *
-     * @param paramTypes
+     * @param rpcMetaData
      * @return
      */
-    private List<String> transfer(Class[] paramTypes) {
-        List<String> res = new ArrayList<String>();
-        for (int i = 0; i < paramTypes.length; ++i){
-            res.add(paramTypes[i].getCanonicalName());
-        }
-
-        return res;
+    private String getServiceName(RpcMetaData rpcMetaData) {
+        String className = rpcMetaData.getService();
+        String methodName = rpcMetaData.getMethod();
+        return className + ":" + methodName;
     }
+
 }
