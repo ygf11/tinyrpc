@@ -4,6 +4,8 @@ import com.ygf.tinyrpc.common.IdGenerator;
 import com.ygf.tinyrpc.common.RpcMetaData;
 import com.ygf.tinyrpc.common.RpcResult;
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
+
+import com.ygf.tinyrpc.common.InitParams;
 import com.ygf.tinyrpc.protocol.jessie.common.Session;
 import com.ygf.tinyrpc.rpc.AbstractWriter;
 import com.ygf.tinyrpc.rpc.OutboundMsg;
@@ -81,7 +83,8 @@ public class RpcClient extends AbstractWriter {
         // 创建会话
         OutboundMsg msg = new OutboundMsg();
         msg.setType(CREATE_SESSION_REQUEST);
-        msg.setArg(appName);
+        String service = getServiceName(session);
+        msg.setArg(new InitParams(service, appName));
         logger.info("outboundMsg {}", msg);
         writeMsg(session, msg);
 
@@ -208,4 +211,14 @@ public class RpcClient extends AbstractWriter {
         return res;
     }
 
+    /**
+     * 根据session获取对应的服务名
+     *
+     * @param session
+     * @return
+     */
+    private String getServiceName(Session session){
+        Class service = session.getService();
+        return service.getCanonicalName();
+    }
 }

@@ -62,7 +62,7 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
                 parseRpcResponsePacket(in, header, out);
                 break;
             case CREATE_SESSION_REQUEST:
-                parseInitSessionPackedt(in, header, out);
+                parseInitSessionPacket(in, header, out);
                 break;
             case CREATE_SESSION_RESPONSE:
                 //case CREATE_SESSION_ACK:
@@ -95,16 +95,19 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
      * @param header
      * @param out
      */
-    private void parseInitSessionPackedt(ByteBuf in, Header header, List<Object> out) {
+    private void parseInitSessionPacket(ByteBuf in, Header header, List<Object> out) {
         int length = in.readInt();
         // 报文数据不够
         if (in.readableBytes() < length) {
             in.resetReaderIndex();
             return;
         }
+        String service = readString(in);
         String appName = readString(in);
         InitSessionMessage msg = new InitSessionMessage(header);
+        msg.setService(service);
         msg.setAppName(appName);
+
         out.add(msg);
     }
 
@@ -127,13 +130,14 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
         }
 
         msg.setRequestId(in.readInt());
-        msg.setService(readString(in));
+        msg.setMethod(readString(in));
 
+        int count = in.readByte();
         // 解析参数值
-        try{
-            msg.setParamTypes(readList(in));
-            msg.setParams(readList(in));
-        }catch (Exception e){
+        try {
+            msg.setParamTypes(readList(in, count));
+            msg.setParams(readList(in, count));
+        } catch (Exception e) {
             skipPacket(in, length);
             return;
         }
@@ -158,14 +162,14 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
             return;
         }
 
+        // requestId
         msg.setRequestId(in.readInt());
-
-        msg.setService(readString(in));
-
+        // resultType
         msg.setResultType(in.readByte());
+        // resultClass
+        msg.setResultClass(readString(in));
 
-        msg.setTargetClass(readString(in));
-
+        // result
         short resultLen = in.readShort();
         byte[] resultArray = new byte[resultLen];
         in.readBytes(resultArray, 0, resultLen);
@@ -213,11 +217,10 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
      * @return
      * @throws Exception
      */
-    private List readList(ByteBuf in) throws Exception {
+    private List readList(ByteBuf in, int count) throws Exception {
         List list = new ArrayList();
-        byte paramSize = in.readByte();
 
-        for (byte i = 0; i < paramSize; ++i) {
+        for (byte i = 0; i < count; ++i) {
             short len = in.readShort();
             byte[] bytes = new byte[len];
             in.readBytes(bytes, 0, len);

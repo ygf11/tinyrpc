@@ -82,10 +82,8 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
         // 写入appName
         InitSessionMessage msg = (InitSessionMessage) header;
         int length;
-        byte[] appName = msg.getAppName().getBytes();
-        out.writeShort(appName.length);
-        out.writeBytes(appName, 0, appName.length);
-        length = 2 + appName.length;
+        length = writeString(msg.getService(), out);
+        length += writeString(msg.getAppName(), out);
 
         updateLength(out, length, saved);
     }
@@ -106,11 +104,22 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
 
         int length;
         RpcRequestMessage msg = (RpcRequestMessage) header;
-        // 写入requestId和service
-        length = writeRpcBaseInfo(msg.getRequestId(), msg.getService(), out);
+        // requestId
+        out.writeInt(msg.getRequestId());
+        length = 4;
+        // 目标方法
+        length += writeString(msg.getMethod(), out);
 
         // 写入参数类型列表
-        int count = writeListInfo(msg.getParamTypes(), out);
+        byte paramSize = (byte) msg.getParams().size();
+        if (paramSize < 0){
+            logger.error("param count illegal");
+            return;
+        }
+
+        out.writeByte(paramSize);
+        int count = 1;
+        count += writeListInfo(msg.getParamTypes(), out);
         if (count < 0) {
             logger.error("write parameter types error!");
             return;
@@ -119,7 +128,7 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
 
         // 写入参数值列表
         count = writeListInfo(msg.getParams(), out);
-        if (count < 0){
+        if (count < 0) {
             logger.error("write parameters error!");
             return;
         }
@@ -145,16 +154,15 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
 
         int length;
         RpcResponseMessage msg = (RpcResponseMessage) header;
-        // 写入requestId和service
-        length = writeRpcBaseInfo(msg.getRequestId(), msg.getService(), out);
-
+        // 写入requestId和resultType
+        out.writeInt(msg.getRequestId());
+        length = 4;
         out.writeByte(msg.getResultType());
         length += 1;
 
-        String target = msg.getTargetClass();
-        out.writeShort(target.length());
-        out.writeBytes(target.getBytes(), 0, target.length());
-        length += msg.getTargetClass().length();
+        // 写入结果类型
+        length += writeString(msg.getResultClass(), out);
+        // 写入结果
         byte[] bytes;
         try {
             Object res = msg.getResult();
@@ -184,6 +192,7 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
         return true;
     }
 
+
     /**
      * 向out中写入rpc请求基本信息，服务名和请求id
      *
@@ -201,6 +210,44 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
     }
 
     /**
+     * 向out写入一个字节的数据，返回写入的长度
+     *
+     * @param data
+     * @param out
+     * @return
+     */
+    private int writeByte(byte data, ByteBuf out) {
+        out.writeByte(data);
+        return 1;
+    }
+
+    /**
+     * 向out写入int类型的数据，返回写入的长度
+     *
+     * @param data
+     * @param out
+     * @return
+     */
+    private int writeInt(int data, ByteBuf out) {
+        out.writeInt(data);
+        return 4;
+    }
+
+    /**
+     * 向out写入一个字符串 返回写入的长度
+     *
+     * @param str
+     * @param out
+     * @return
+     */
+    private int writeString(String data, ByteBuf out) {
+        byte[] bytes = data.getBytes();
+        out.writeShort(bytes.length);
+        out.writeBytes(bytes, 0, bytes.length);
+        return 2 + bytes.length;
+    }
+
+    /**
      * 向out写入一个list，并且返回当前写入的字节数
      *
      * @param list
@@ -210,8 +257,7 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
     private int writeListInfo(List list, ByteBuf out) {
         byte count = (byte) (list.size());
         // 写入参数
-        out.writeByte(count);
-        int length = 1;
+        int length = 0;
 
         for (Object param : list) {
             try {

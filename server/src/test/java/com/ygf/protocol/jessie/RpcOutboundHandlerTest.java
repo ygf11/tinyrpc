@@ -99,7 +99,7 @@ public class RpcOutboundHandlerTest {
         Assert.assertEquals(RPC_REQUEST, message.getType());
         Assert.assertEquals(123, message.getSessionId());
         Assert.assertEquals(500, message.getRequestId());
-        Assert.assertEquals( "com.ygf.Service:test", message.getService());
+        Assert.assertEquals( "com.ygf.Service:test", message.getMethod());
         Assert.assertEquals(3, message.getParams().size());
         Assert.assertEquals(Integer.class.getCanonicalName(), message.getParamTypes().get(0));
         Assert.assertEquals(String.class.getCanonicalName(), message.getParamTypes().get(1));

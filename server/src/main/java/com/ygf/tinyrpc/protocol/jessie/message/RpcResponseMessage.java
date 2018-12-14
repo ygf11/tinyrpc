@@ -22,7 +22,7 @@ public class RpcResponseMessage extends Header {
     /**
      * 结果的全限定类名(当type为2时，是一个异常类名)
      */
-    private String targetClass;
+    private String resultClass;
     /**
      * 结果对象
      */
@@ -59,14 +59,6 @@ public class RpcResponseMessage extends Header {
         this.resultType = resultType;
     }
 
-    public String getTargetClass() {
-        return targetClass;
-    }
-
-    public void setTargetClass(String targetClass) {
-        this.targetClass = targetClass;
-    }
-
     public Object getResult() {
         return result;
     }
@@ -75,5 +67,11 @@ public class RpcResponseMessage extends Header {
         this.result = result;
     }
 
+    public String getResultClass() {
+        return resultClass;
+    }
 
+    public void setResultClass(String resultClass) {
+        this.resultClass = resultClass;
+    }
 }

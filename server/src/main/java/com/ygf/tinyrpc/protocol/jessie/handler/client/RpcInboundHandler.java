@@ -86,7 +86,7 @@ public class RpcInboundHandler extends AbstractRpcInboundHandler {
         int requestId = msg.getRequestId();
         RpcResult result = new RpcResult();
         result.setType(msg.getResultType());
-        result.setResultType(msg.getTargetClass());
+        result.setResultType(msg.getResultClass());
         result.setResult(msg.getResult());
 
         logger.info("addr: {}, requestId:{}, result:{}", addr, requestId, result);

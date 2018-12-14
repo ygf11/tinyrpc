@@ -73,7 +73,7 @@ public class RpcInboundHandlerTest {
         msg.setType(RPC_RESPONSE);
         msg.setSessionId(123);
         msg.setRequestId(50);
-        msg.setTargetClass(Integer.class.getCanonicalName());
+        msg.setResultClass(Integer.class.getCanonicalName());
         msg.setService(service.getCanonicalName());
         msg.setResultType(NORMAL);
         msg.setResult(100);

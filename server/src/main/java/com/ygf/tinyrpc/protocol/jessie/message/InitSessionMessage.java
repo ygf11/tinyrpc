@@ -11,6 +11,10 @@ public class InitSessionMessage extends Header {
      * 应用名 客户端一个jvm进程(应用)对应一个会话
      */
     private String appName;
+    /**
+     * 对应的应用
+     */
+    private String service;
 
     public InitSessionMessage(){}
     public InitSessionMessage(Header header){
@@ -24,4 +28,13 @@ public class InitSessionMessage extends Header {
     public void setAppName(String appName) {
         this.appName = appName;
     }
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
+    }
+
 }

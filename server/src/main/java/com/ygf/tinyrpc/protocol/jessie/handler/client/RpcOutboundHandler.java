@@ -1,6 +1,7 @@
 package com.ygf.tinyrpc.protocol.jessie.handler.client;
 
 import com.ygf.tinyrpc.common.RpcMetaData;
+import com.ygf.tinyrpc.common.InitParams;
 import com.ygf.tinyrpc.protocol.jessie.message.InitSessionMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcRequestMessage;
@@ -59,18 +60,21 @@ public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
      */
     public void createSession(OutboundMsg msg, List<Object> out) {
         Object arg = msg.getArg();
-        boolean isAppName = arg instanceof String;
-        if (!isAppName) {
+        boolean isInit = arg instanceof InitParams;
+        if (!isInit) {
             logger.error("type {} not matched arg {}", msg.getType(), arg);
             return;
         }
+
+        InitParams params = (InitParams) arg;
 
         final InitSessionMessage req = new InitSessionMessage();
         req.setProtocol(PROTOCOL);
         req.setVersion(CURRENT_VERSION);
         req.setType(CREATE_SESSION_REQUEST);
-        req.setSessionId(0);
-        req.setAppName((String) arg);
+        //req.setSessionId(0);
+        req.setAppName(params.getAppName());
+        req.setService(params.getService());
 
         out.add(req);
     }
@@ -97,7 +101,7 @@ public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
         req.setSessionId(metaData.getSessionId());
 
         req.setRequestId(metaData.getRequestId());
-        req.setService(getServiceName(metaData));
+        req.setMethod(getServiceName(metaData));
         req.setParamTypes(metaData.getParamTypes());
         req.setParams(metaData.getArgs());;
 

@@ -142,7 +142,7 @@ public class ByteToDecoderTest {
         RpcRequestMessage msg = new RpcRequestMessage(header);
         int requestId = 1;
         msg.setRequestId(requestId);
-        msg.setService("com.ygf.protocol.DubboEncoder.test()");
+        msg.setMethod("com.ygf.protocol.DubboEncoder.test()");
         List<String> paramTypes = new ArrayList<String>();
         paramTypes.add(Integer.class.getCanonicalName());
         paramTypes.add(Integer.class.getCanonicalName());
@@ -165,7 +165,7 @@ public class ByteToDecoderTest {
         Assert.assertEquals(msg.getRequestId(), result.getRequestId());
         Assert.assertEquals(msg.getParams().size(), result.getParams().size());
         Assert.assertEquals(msg.getParamTypes().size(), result.getParamTypes().size());
-        Assert.assertEquals(msg.getService(), msg.getService());
+        Assert.assertEquals(msg.getMethod(), result.getMethod());
         for (int i = 0; i < msg.getParams().size(); ++i) {
             Assert.assertEquals(msg.getParams().get(i), result.getParams().get(i));
         }
@@ -187,7 +187,7 @@ public class ByteToDecoderTest {
         msg.setRequestId(requestId);
         msg.setService("com.ygf.protocol.DubboEncoder.test()");
         msg.setResultType((byte) 1);
-        msg.setTargetClass("java.lang.Integer");
+        msg.setResultClass("java.lang.Integer");
         msg.setResult(Integer.valueOf("110"));
 
         writePacketData(in, msg);
@@ -201,7 +201,7 @@ public class ByteToDecoderTest {
         Assert.assertEquals(msg.getRequestId(), result.getRequestId());
         Assert.assertEquals(msg.getService(), result.getService());
         Assert.assertEquals(msg.getResultType(), result.getResultType());
-        Assert.assertEquals(msg.getTargetClass(), result.getTargetClass());
+        Assert.assertEquals(msg.getResultClass(), result.getResultClass());
         Assert.assertEquals(msg.getResult(), result.getResult());
     }
 
@@ -214,7 +214,7 @@ public class ByteToDecoderTest {
         RpcRequestMessage msg = new RpcRequestMessage(header);
         int requestId = 1;
         msg.setRequestId(requestId);
-        msg.setService("com.ygf.protocol.DubboEncoder.test()");
+        msg.setMethod("com.ygf.protocol.DubboEncoder.test()");
         List<String> paramTypes = new ArrayList<String>();
         paramTypes.add(Integer.class.getCanonicalName());
         paramTypes.add(Integer.class.getCanonicalName());
@@ -248,7 +248,7 @@ public class ByteToDecoderTest {
         msg.setRequestId(requestId);
         msg.setService("com.ygf.protocol.DubboEncoder.test()");
         msg.setResultType((byte) 1);
-        msg.setTargetClass("java.lang.Integer");
+        msg.setResultClass("java.lang.Integer");
         msg.setResult(Integer.valueOf("110"));
 
         writePacketData(in, msg);

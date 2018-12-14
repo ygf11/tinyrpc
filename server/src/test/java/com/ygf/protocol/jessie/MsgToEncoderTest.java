@@ -112,8 +112,8 @@ public class MsgToEncoderTest {
         request.setVersion((byte) 1);
         request.setSessionId(0);
         request.setType(RPC_REQUEST);
-        request.setRequestId(IdGenerator.incrementAndGet());
-        request.setService("com.ygf.protocol.DubboEncoder.test()");
+        request.setRequestId(1);
+        request.setMethod("com.ygf.protocol.DubboEncoder.test()");
 
         List<String> paramTypes = new ArrayList<String>();
         paramTypes.add(Integer.class.getCanonicalName());
@@ -172,11 +172,11 @@ public class MsgToEncoderTest {
         response.setVersion((byte) 1);
         response.setType(RPC_RESPONSE);
         response.setSessionId(0);
-        int requestId = IdGenerator.incrementAndGet();
+        int requestId = 1;
         response.setRequestId(requestId);
         response.setService("com.ygf.protocol.DubboEncoder.test()");
         response.setResultType((byte) 1);
-        response.setTargetClass("java.lang.Integer");
+        response.setResultClass("java.lang.Integer");
         response.setResult((Integer.valueOf("1")));
 
         args[1] = response;

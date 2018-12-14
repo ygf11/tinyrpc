@@ -15,10 +15,10 @@ public class RpcRequestMessage extends Header {
      */
     private int requestId;
     /**
-     * 服务名(全限定类名+方法名)
+     * 目标方法(全限定类名+方法名)
      */
-    private String service;
-   /**
+    private String method;
+    /**
      * 方法参数类型
      */
     private List<String> paramTypes;
@@ -45,14 +45,6 @@ public class RpcRequestMessage extends Header {
         this.requestId = requestId;
     }
 
-    public String getService() {
-        return service;
-    }
-
-    public void setService(String service) {
-        this.service = service;
-    }
-
     public List<Object> getParams() {
         return params;
     }
@@ -68,6 +60,14 @@ public class RpcRequestMessage extends Header {
 
     public void setParamTypes(List<String> paramTypes) {
         this.paramTypes = paramTypes;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 
 
