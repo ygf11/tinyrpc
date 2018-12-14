@@ -105,7 +105,7 @@ public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
         req.setRequestId(invocation.getRequestId());
         String className = invocation.getTarget().getCanonicalName();
         String methodName = invocation.getMethod().getName();
-        req.setService(className + "." + methodName + "()");
+        req.setService(className + ":" + methodName);
 
         Method method = invocation.getMethod();
         req.setParams(Arrays.asList(invocation.getArgs()));
