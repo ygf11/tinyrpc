@@ -27,24 +27,12 @@ public class RpcInvocation {
      */
     private Method method;
     /**
-     * 方法参数类型数组
-     */
-    private Class[] paramTypes;
-    /**
      * 方法参数值对象数组
      */
     private Object[] args;
 
     public Integer getRequestId() {
         return requestId;
-    }
-
-    public Class[] getParamTypes() {
-        return paramTypes;
-    }
-
-    public void setParamTypes(Class[] paramTypes) {
-        this.paramTypes = paramTypes;
     }
 
     public void setRequestId(Integer requestId) {

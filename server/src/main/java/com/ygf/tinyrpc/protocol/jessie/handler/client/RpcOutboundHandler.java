@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -106,9 +107,9 @@ public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
         String methodName = invocation.getMethod().getName();
         req.setService(className + "." + methodName + "()");
 
+        Method method = invocation.getMethod();
         req.setParams(Arrays.asList(invocation.getArgs()));
-
-        List<String> paramTypes = transfer(invocation.getParamTypes());
+        List<String> paramTypes = transfer(method.getParameterTypes());
         req.setParamTypes(paramTypes);
 
         out.add(req);

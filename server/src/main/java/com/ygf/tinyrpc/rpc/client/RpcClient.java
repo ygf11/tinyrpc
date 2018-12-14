@@ -122,7 +122,6 @@ public class RpcClient extends AbstractWriter {
         invocation.setTarget(session.getService());
         invocation.setMethod(method);
         invocation.setArgs(args);
-        invocation.setParamTypes(method.getParameterTypes());
         OutboundMsg msg = new OutboundMsg();
         msg.setType(RPC_REQUEST);
         msg.setArg(invocation);
