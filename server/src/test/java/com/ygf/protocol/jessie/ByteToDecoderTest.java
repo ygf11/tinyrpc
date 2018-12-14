@@ -140,7 +140,7 @@ public class ByteToDecoderTest {
     public void RpcRequestTest() throws Exception {
         header.setType(RPC_REQUEST);
         RpcRequestMessage msg = new RpcRequestMessage(header);
-        int requestId = IdGenerator.incrementAndGet();
+        int requestId = 1;
         msg.setRequestId(requestId);
         msg.setService("com.ygf.protocol.DubboEncoder.test()");
         List<String> paramTypes = new ArrayList<String>();
@@ -183,7 +183,7 @@ public class ByteToDecoderTest {
     public void RpcResponseTest() throws Exception {
         header.setType(RPC_RESPONSE);
         RpcResponseMessage msg = new RpcResponseMessage(header);
-        int requestId = IdGenerator.incrementAndGet();
+        int requestId = 1;
         msg.setRequestId(requestId);
         msg.setService("com.ygf.protocol.DubboEncoder.test()");
         msg.setResultType((byte) 1);
@@ -212,7 +212,7 @@ public class ByteToDecoderTest {
     public void RpcRequestFailTest() throws Exception {
         header.setType(RPC_REQUEST);
         RpcRequestMessage msg = new RpcRequestMessage(header);
-        int requestId = IdGenerator.incrementAndGet();
+        int requestId = 1;
         msg.setRequestId(requestId);
         msg.setService("com.ygf.protocol.DubboEncoder.test()");
         List<String> paramTypes = new ArrayList<String>();
@@ -244,7 +244,7 @@ public class ByteToDecoderTest {
     public void RpcResponseFailTest() throws Exception {
         header.setType(RPC_RESPONSE);
         RpcResponseMessage msg = new RpcResponseMessage(header);
-        int requestId = IdGenerator.incrementAndGet();
+        int requestId = 1;
         msg.setRequestId(requestId);
         msg.setService("com.ygf.protocol.DubboEncoder.test()");
         msg.setResultType((byte) 1);
