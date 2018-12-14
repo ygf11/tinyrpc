@@ -9,8 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author theo
  * @date 20181128
  */
-public class IdGenertor {
-    private static AtomicInteger GENERATOR = new AtomicInteger();
+public class IdGenerator {
+    private AtomicInteger GENERATOR = new AtomicInteger();
 
     /**
      * 自增id生成器 当达到最大后返回0
@@ -18,7 +18,7 @@ public class IdGenertor {
      *
      * @return
      */
-    public static int incrementAndGet() {
+    private int incrementAndGet() {
         int current;
         int next;
         do {
@@ -27,5 +27,14 @@ public class IdGenertor {
         } while (!GENERATOR.compareAndSet(current, next));
 
         return next;
+    }
+
+    /**
+     * 生成一个id
+     *
+     * @return
+     */
+    public int get() {
+        return incrementAndGet();
     }
 }

@@ -1,6 +1,7 @@
 package com.ygf.tinyrpc.protocol.jessie.handler.server;
 
 import com.ygf.tinyrpc.common.RpcInvocation;
+import com.ygf.tinyrpc.common.RpcMetaData;
 import com.ygf.tinyrpc.protocol.jessie.handler.AbstractRpcInboundHandler;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.InitSessionMessage;
@@ -90,7 +91,9 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
         }
 
         RpcRequestMessage msg = (RpcRequestMessage) header;
-        RpcInvocation invocation = new RpcInvocation();
+        RpcMetaData metaData = new RpcMetaData();
+        metaData.setSessionId(msg.getSessionId());
+
         //invocation.setSessionId(msg.getSessionId());
         //invocation.setRequestId(msg.getRequestId());
         //invocation.setTarget(Class.forName(msg.getService()));

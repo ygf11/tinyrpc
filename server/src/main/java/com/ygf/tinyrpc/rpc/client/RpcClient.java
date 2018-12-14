@@ -1,7 +1,6 @@
 package com.ygf.tinyrpc.rpc.client;
 
-import com.ygf.tinyrpc.common.IdGenertor;
-import com.ygf.tinyrpc.common.RpcInvocation;
+import com.ygf.tinyrpc.common.IdGenerator;
 import com.ygf.tinyrpc.common.RpcMetaData;
 import com.ygf.tinyrpc.common.RpcResult;
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
@@ -54,6 +53,10 @@ public class RpcClient extends AbstractWriter {
      * 服务发现模块
      */
     private ServiceDiscovery serviceDiscovery;
+    /**
+     * 用于生成requestId
+     */
+    private final IdGenerator REQUESTID = new IdGenerator();
 
     public RpcClient() {
     }
@@ -120,7 +123,8 @@ public class RpcClient extends AbstractWriter {
         // 写入channel
         // 以一个对象作为监视器进行等待
         RpcMetaData metaData = new RpcMetaData();
-        Integer requestId = IdGenertor.incrementAndGet();
+        // 获取一个新的requestId
+        Integer requestId = REQUESTID.get();
         metaData.setSessionId(session.getSessionId());
         metaData.setRequestId(requestId);
         metaData.setService(session.getService().getCanonicalName());

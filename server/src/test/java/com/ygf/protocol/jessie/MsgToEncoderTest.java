@@ -1,6 +1,6 @@
 package com.ygf.protocol.jessie;
 
-import com.ygf.tinyrpc.common.IdGenertor;
+import com.ygf.tinyrpc.common.IdGenerator;
 import com.ygf.tinyrpc.protocol.jessie.code.MsgToByteEncoder;
 import com.ygf.tinyrpc.protocol.jessie.message.InitSessionMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
@@ -112,7 +112,7 @@ public class MsgToEncoderTest {
         request.setVersion((byte) 1);
         request.setSessionId(0);
         request.setType(RPC_REQUEST);
-        request.setRequestId(IdGenertor.incrementAndGet());
+        request.setRequestId(IdGenerator.incrementAndGet());
         request.setService("com.ygf.protocol.DubboEncoder.test()");
 
         List<String> paramTypes = new ArrayList<String>();
@@ -172,7 +172,7 @@ public class MsgToEncoderTest {
         response.setVersion((byte) 1);
         response.setType(RPC_RESPONSE);
         response.setSessionId(0);
-        int requestId = IdGenertor.incrementAndGet();
+        int requestId = IdGenerator.incrementAndGet();
         response.setRequestId(requestId);
         response.setService("com.ygf.protocol.DubboEncoder.test()");
         response.setResultType((byte) 1);
