@@ -40,6 +40,9 @@ public class ByteToDecoderTest {
     private Class[] classes;
     private Object[] args;
     private List<Object> out;
+    private String service = "com.ygf.Service";
+    private String appName = "panama-cloud";
+    private String method = "com.ygf.Service:test";
 
     @Before
     public void setup() {
@@ -121,14 +124,16 @@ public class ByteToDecoderTest {
     public void initSessionTest() throws Exception {
         header.setType(CREATE_SESSION_REQUEST);
         InitSessionMessage msg = new InitSessionMessage(header);
-        msg.setAppName("panama-cloud-application");
+        msg.setAppName(appName);
+        msg.setService(service);
 
         writePacketData(in, msg);
 
         MethodUtils.invokeMethod(decoder, true, "decode", args, classes);
         InitSessionMessage result = (InitSessionMessage) out.get(0);
 
-        Assert.assertEquals("panama-cloud-application", result.getAppName());
+        Assert.assertEquals(service, result.getService());
+        Assert.assertEquals(appName, result.getAppName());
 
 
     }
@@ -142,7 +147,7 @@ public class ByteToDecoderTest {
         RpcRequestMessage msg = new RpcRequestMessage(header);
         int requestId = 1;
         msg.setRequestId(requestId);
-        msg.setMethod("com.ygf.protocol.DubboEncoder.test()");
+        msg.setMethod(method);
         List<String> paramTypes = new ArrayList<String>();
         paramTypes.add(Integer.class.getCanonicalName());
         paramTypes.add(Integer.class.getCanonicalName());
@@ -214,7 +219,7 @@ public class ByteToDecoderTest {
         RpcRequestMessage msg = new RpcRequestMessage(header);
         int requestId = 1;
         msg.setRequestId(requestId);
-        msg.setMethod("com.ygf.protocol.DubboEncoder.test()");
+        msg.setMethod(method);
         List<String> paramTypes = new ArrayList<String>();
         paramTypes.add(Integer.class.getCanonicalName());
         paramTypes.add(Integer.class.getCanonicalName());

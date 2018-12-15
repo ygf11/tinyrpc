@@ -12,10 +12,8 @@ import static com.ygf.tinyrpc.common.RpcResponseType.*;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import static org.mockito.Mockito.*;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 /**

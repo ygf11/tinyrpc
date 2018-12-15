@@ -1,6 +1,5 @@
 package com.ygf.protocol.jessie;
 
-import com.ygf.tinyrpc.common.IdGenerator;
 import com.ygf.tinyrpc.protocol.jessie.code.MsgToByteEncoder;
 import com.ygf.tinyrpc.protocol.jessie.message.InitSessionMessage;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
@@ -36,6 +35,8 @@ public class MsgToEncoderTest {
     private ByteBuf byteBuf;
     private Class[] classes;
     private Object[] args;
+    private String service = "com.ygf.Service";
+    private String method = "com.ygf.Service:test";
 
     @Before
     public void setup() {
@@ -45,6 +46,7 @@ public class MsgToEncoderTest {
         header.setProtocol(PROTOCOL);
         header.setSessionId(0);
         header.setVersion((byte) 0);
+
         // 参数列表
         classes = new Class[3];
         classes[0] = ChannelHandlerContext.class;
@@ -82,24 +84,30 @@ public class MsgToEncoderTest {
      */
     @Test
     public void createSessionTest() throws Exception{
-        InitSessionMessage msg = new InitSessionMessage();
+        InitSessionMessage msg = new InitSessionMessage(header);
         msg.setSessionId(0);
         msg.setProtocol(PROTOCOL);
         msg.setVersion(CURRENT_VERSION);
         msg.setType(CREATE_SESSION_REQUEST);
         msg.setAppName("panama-cloud-application");
-
+        msg.setService(service);
         args[1] = msg;
         MethodUtils.invokeMethod(encoder, true, "encode", args, classes);
         Assert.assertEquals(PROTOCOL, byteBuf.readByte());
         Assert.assertEquals(CURRENT_VERSION, byteBuf.readByte());
         Assert.assertEquals(CREATE_SESSION_REQUEST, byteBuf.readByte());
+        // sessionId
         Assert.assertEquals(0, byteBuf.readInt());
+        // requestId
         int length = byteBuf.readInt();
-        byte[] appName = new byte[byteBuf.readShort()];
-        byteBuf.readBytes(appName, 0, appName.length);
-        Assert.assertEquals("panama-cloud-application", new String(appName));
-        Assert.assertEquals(2 + appName.length, length);
+        // service
+        byte[] bytes = new byte[byteBuf.readShort()];
+        byteBuf.readBytes(bytes, 0, bytes.length);
+        Assert.assertEquals(service, new String(bytes));
+        // appName
+        bytes = new byte[byteBuf.readShort()];
+        byteBuf.readBytes(bytes, 0, bytes.length);
+        Assert.assertEquals("panama-cloud-application", new String(bytes));
     }
 
     /**
@@ -113,7 +121,7 @@ public class MsgToEncoderTest {
         request.setSessionId(0);
         request.setType(RPC_REQUEST);
         request.setRequestId(1);
-        request.setMethod("com.ygf.protocol.DubboEncoder.test()");
+        request.setMethod(method);
 
         List<String> paramTypes = new ArrayList<String>();
         paramTypes.add(Integer.class.getCanonicalName());
@@ -139,8 +147,8 @@ public class MsgToEncoderTest {
         int serviceLength = byteBuf.readShort();
         byte[] bytes = new byte[serviceLength];
         byteBuf.readBytes(bytes, 0, serviceLength);
-        Assert.assertEquals("com.ygf.protocol.DubboEncoder.test()".length(), serviceLength);
-        Assert.assertEquals("com.ygf.protocol.DubboEncoder.test()", new String(bytes));
+        Assert.assertEquals(method.length(), serviceLength);
+        Assert.assertEquals(method, new String(bytes));
 
         // 参数类型验证
         Assert.assertEquals(3, byteBuf.readByte());
@@ -153,7 +161,7 @@ public class MsgToEncoderTest {
         }
 
         // 参数验证
-        Assert.assertEquals(3, byteBuf.readByte());
+        //Assert.assertEquals(3, byteBuf.readByte());
         for (int i = 4; i < 7; ++i) {
             short len = byteBuf.readShort();
             byte[] array = new byte[len];
@@ -171,10 +179,9 @@ public class MsgToEncoderTest {
         response.setProtocol(PROTOCOL);
         response.setVersion((byte) 1);
         response.setType(RPC_RESPONSE);
-        response.setSessionId(0);
+        response.setSessionId(123);
         int requestId = 1;
         response.setRequestId(requestId);
-        response.setService("com.ygf.protocol.DubboEncoder.test()");
         response.setResultType((byte) 1);
         response.setResultClass("java.lang.Integer");
         response.setResult((Integer.valueOf("1")));
@@ -185,26 +192,23 @@ public class MsgToEncoderTest {
         Assert.assertEquals(PROTOCOL, byteBuf.readByte());
         Assert.assertEquals((byte) 1, byteBuf.readByte());
         Assert.assertEquals(RPC_RESPONSE, byteBuf.readByte());
-        Assert.assertEquals(0, byteBuf.readInt());
+        Assert.assertEquals(123, byteBuf.readInt());
 
         int length = byteBuf.readInt();
-
+        // requestid
         Assert.assertEquals(requestId, byteBuf.readInt());
-        int serviceLength = byteBuf.readShort();
-        byte[] bytes = new byte[serviceLength];
-        byteBuf.readBytes(bytes, 0, serviceLength);
-        Assert.assertEquals("com.ygf.protocol.DubboEncoder.test()".length(), serviceLength);
-        Assert.assertEquals("com.ygf.protocol.DubboEncoder.test()", new String(bytes));
+        // resultType
         Assert.assertEquals(1, byteBuf.readByte());
 
-
+        // resultClass
         int resultLen = byteBuf.readShort();
-        bytes = new byte[resultLen];
+        byte[] bytes = new byte[resultLen];
         byteBuf.readBytes(bytes, 0, resultLen);
 
         Assert.assertEquals("java.lang.Integer".length(), resultLen);
         Assert.assertEquals("java.lang.Integer", new String(bytes));
 
+        // result
         int len = byteBuf.readShort();
         byte[] array = new byte[len];
         byteBuf.readBytes(array, 0, len);

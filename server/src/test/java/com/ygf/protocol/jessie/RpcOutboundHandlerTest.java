@@ -1,7 +1,7 @@
 package com.ygf.protocol.jessie;
 
 import com.ygf.protocol.jessie.api.Service;
-import com.ygf.tinyrpc.common.RpcInvocation;
+import com.ygf.tinyrpc.common.InitParams;
 import com.ygf.tinyrpc.common.RpcMetaData;
 import com.ygf.tinyrpc.protocol.jessie.handler.client.RpcOutboundHandler;
 import com.ygf.tinyrpc.protocol.jessie.message.InitSessionMessage;
@@ -30,6 +30,8 @@ public class RpcOutboundHandlerTest {
     private List<Object> out;
     private Object[] args;
     private Class[] classes;
+    private String serviceName = "com.ygf.Service";
+    private String appName = "spring-cloud";
 
     @Before
     public void setup() {
@@ -55,7 +57,8 @@ public class RpcOutboundHandlerTest {
     public void sessionRequest() throws Exception {
         OutboundMsg msg = new OutboundMsg();
         msg.setType(CREATE_SESSION_REQUEST);
-        msg.setArg("spring-cloud");
+        InitParams params = new InitParams(serviceName, appName);
+        msg.setArg(params);
         args[1] = msg;
         MethodUtils.invokeMethod(handler, true, "encode", args, classes);
 
@@ -64,7 +67,8 @@ public class RpcOutboundHandlerTest {
         Assert.assertEquals(CURRENT_VERSION, (long) message.getVersion());
         Assert.assertEquals(CREATE_SESSION_REQUEST, message.getType());
         Assert.assertEquals(0, message.getSessionId());
-        Assert.assertEquals("spring-cloud", message.getAppName());
+        Assert.assertEquals(appName, message.getAppName());
+        Assert.assertEquals(serviceName, message.getService());
     }
 
     /**
@@ -99,7 +103,7 @@ public class RpcOutboundHandlerTest {
         Assert.assertEquals(RPC_REQUEST, message.getType());
         Assert.assertEquals(123, message.getSessionId());
         Assert.assertEquals(500, message.getRequestId());
-        Assert.assertEquals( "com.ygf.Service:test", message.getMethod());
+        Assert.assertEquals("com.ygf.Service:test", message.getMethod());
         Assert.assertEquals(3, message.getParams().size());
         Assert.assertEquals(Integer.class.getCanonicalName(), message.getParamTypes().get(0));
         Assert.assertEquals(String.class.getCanonicalName(), message.getParamTypes().get(1));
