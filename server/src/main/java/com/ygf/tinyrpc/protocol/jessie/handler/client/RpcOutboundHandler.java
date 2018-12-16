@@ -23,14 +23,9 @@ import java.util.List;
 public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcOutboundHandler.class);
-    /**
-     * 连接对应的服务
-     */
-    private Class service;
 
     public RpcOutboundHandler(Class service) {
         super();
-        this.service = service;
     }
 
     @Override

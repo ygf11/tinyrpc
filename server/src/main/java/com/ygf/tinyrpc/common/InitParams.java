@@ -16,10 +16,14 @@ public class InitParams {
      */
     private String appName;
 
+    public InitParams(){};
+
     public InitParams(String service, String appName){
         this.service = service;
         this.appName = appName;
     }
+
+
     public String getService() {
         return service;
     }

@@ -1,5 +1,6 @@
 package com.ygf.tinyrpc.protocol.jessie.handler.server;
 
+import com.ygf.tinyrpc.common.InitParams;
 import com.ygf.tinyrpc.common.RpcInvocation;
 import com.ygf.tinyrpc.common.RpcMetaData;
 import com.ygf.tinyrpc.protocol.jessie.handler.AbstractRpcInboundHandler;
@@ -15,6 +16,7 @@ import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 
 /**
  * provider端处理入站消息(读消息)的处理器
+ * // 异常处理
  *
  * @author theo
  * @date 20181213
@@ -27,7 +29,7 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
      */
     private RpcChildServer server;
 
-    public RpcChildInboundHandler(RpcChildServer server){
+    public RpcChildInboundHandler(RpcChildServer server) {
         super();
         this.server = server;
     }
@@ -64,15 +66,15 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
      * @param header
      * @param addr
      */
-    private void handleSessionInit(Header header, String addr) {
+    private void handleSessionInit(Header header, String addr) throws Exception{
         boolean isInitSession = header instanceof InitSessionMessage;
-        if (!isInitSession){
+        if (!isInitSession) {
             logger.warn("msg is not a session init msg");
             return;
         }
 
         InitSessionMessage msg = (InitSessionMessage) header;
-        server.handleSessionInit(addr, msg.getAppName());
+        server.handleSessionInit(addr, msg.getService(), msg.getAppName());
 
         // TODO更新心跳
     }
@@ -83,9 +85,9 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
      * @param header
      * @param addr
      */
-    private void HandlerRpcRequest(Header header, String addr){
+    private void HandlerRpcRequest(Header header, String addr) {
         boolean isRpcRequest = header instanceof RpcRequestMessage;
-        if (!isRpcRequest){
+        if (!isRpcRequest) {
             logger.warn("msg is not a rpc request msg");
             return;
         }

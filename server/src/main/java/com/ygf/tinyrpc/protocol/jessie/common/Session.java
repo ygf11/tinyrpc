@@ -20,7 +20,7 @@ public class Session {
     /**
      * 对应服务类
      */
-    private Class service;
+    private Class  service;
     /**
      * 会话当前状态
      */
