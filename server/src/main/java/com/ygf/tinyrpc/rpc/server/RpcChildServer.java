@@ -1,14 +1,18 @@
 package com.ygf.tinyrpc.rpc.server;
 
 import com.ygf.tinyrpc.common.IdGenerator;
+import com.ygf.tinyrpc.common.RpcMetaData;
+import com.ygf.tinyrpc.common.ServerRpcResult;
 import com.ygf.tinyrpc.protocol.jessie.common.ServerSession;
-import com.ygf.tinyrpc.protocol.jessie.common.Session;
 import com.ygf.tinyrpc.rpc.AbstractWriter;
+import com.ygf.tinyrpc.rpc.Exception.RpcException;
 import com.ygf.tinyrpc.rpc.OutboundMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -64,11 +68,11 @@ public class RpcChildServer extends AbstractWriter {
         session.setAppName(appName);
 
         Class cz = findClass(service);
-        session.setService(findClass(service));
+        session.setService(cz);
 
         session.setStatus(CONNECTED);
-
-
+        // 发送session响应消息
+        responseSessionInit(session);
     }
 
     /**
@@ -76,12 +80,77 @@ public class RpcChildServer extends AbstractWriter {
      *
      * @param session
      */
-    private  void responseSessionInit(ServerSession session){
+    private void responseSessionInit(ServerSession session) {
         OutboundMsg msg = new OutboundMsg();
         msg.setType(CREATE_SESSION_RESPONSE);
         msg.setArg(session.getSessionId());
 
         writeMsg(session, msg);
+    }
+
+    /**
+     * 处理rpc请求
+     * // TODO rpcMetaData只需要传个方法名就好了
+     * // TODO 当调用出现异常时抛出rpcException
+     *
+     * @param addr
+     * @param metaData
+     */
+    public void handleRpcRequest(String addr, RpcMetaData metaData) throws Exception {
+        ServerSession session = sessionMap.get(addr);
+        Class cz = findClass(metaData.getService());
+        Class[] paramTypes = findClasses(metaData.getParamTypes());
+        Method method = cz.getMethod(metaData.getMethod(), paramTypes);
+
+        // spring上下文中获取目标服务对象
+        Object service = applicationContext.getBean(session.getService());
+
+        // 调用目标方法
+        Class type = null;
+        Object result = null;
+        try {
+            result = method.invoke(service, metaData.getArgs());
+        } catch (Exception e) {
+            logger.error("exception when invoke method:{}", e);
+            type = RpcException.class;
+        }
+
+        ServerRpcResult rpcResult = new ServerRpcResult();
+        rpcResult.setRequestId(metaData.getRequestId());
+        Class returnType = type == null ? method.getReturnType() : type;
+        rpcResult.setResultType(returnType);
+        rpcResult.setResult(result);
+
+
+    }
+
+    /**
+     * 将rpc调用结果写入channel
+     *
+     * @param session
+     * @param result
+     */
+    private void responseRpcRequest(ServerSession session, ServerRpcResult result) {
+        OutboundMsg msg = new OutboundMsg();
+        msg.setType(RPC_RESPONSE);
+        msg.setArg(result);
+        writeMsg(session, msg);
+
+    }
+
+    /**
+     * 获取一个class的列表
+     *
+     * @param list
+     * @return
+     */
+    private Class[] findClasses(List<String> list) throws ClassNotFoundException {
+        Class[] result = new Class[list.size()];
+        for (int i = 0; i < list.size(); ++i) {
+            result[i] = findClass(list.get(i));
+        }
+
+        return result;
     }
 
 
@@ -91,7 +160,7 @@ public class RpcChildServer extends AbstractWriter {
      * @param service
      * @return
      */
-    private Class findClass(String service) throws ClassNotFoundException{
+    private Class findClass(String service) throws ClassNotFoundException {
         Class cz = null;
         Thread current = Thread.currentThread();
         ClassLoader loader = current.getContextClassLoader();

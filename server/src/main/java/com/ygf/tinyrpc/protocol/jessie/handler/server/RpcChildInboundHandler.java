@@ -45,6 +45,7 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
         String addr = getServerAddr(ctx.channel());
         switch (type) {
             case RPC_REQUEST:
+                handlerRpcRequest(header, addr);
                 break;
             case EXIT_SESSION:
                 break;
@@ -83,7 +84,7 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
      * @param header
      * @param addr
      */
-    private void HandlerRpcRequest(Header header, String addr) {
+    private void handlerRpcRequest(Header header, String addr) {
         boolean isRpcRequest = header instanceof RpcRequestMessage;
         if (!isRpcRequest) {
             logger.warn("msg is not a rpc request msg");
@@ -93,11 +94,23 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
         RpcRequestMessage msg = (RpcRequestMessage) header;
         RpcMetaData metaData = new RpcMetaData();
         metaData.setSessionId(msg.getSessionId());
+        metaData.setRequestId(msg.getRequestId());
+        metaData.setService(msg.getMethod());
 
-        //invocation.setSessionId(msg.getSessionId());
-        //invocation.setRequestId(msg.getRequestId());
-        //invocation.setTarget(Class.forName(msg.getService()));
+        // 设置服务名+方法
+        String[] service= msg.getMethod().split(":");
+        // TODO 异常处理
+        if (service.length != 2){
+            logger.error("class:method:{} error", msg.getMethod());
+            return;
+        }
+        metaData.setService(service[0]);
+        metaData.setService(service[1]);
+
+        metaData.setParamTypes(msg.getParamTypes());
+        metaData.setArgs(msg.getParams());
 
     }
+
 
 }
