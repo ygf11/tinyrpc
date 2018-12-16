@@ -33,7 +33,7 @@ public class RpcChildOutboundHandler extends MessageToMessageEncoder<OutboundMsg
             case RPC_RESPONSE:
                 break;
             case CREATE_SESSION_RESPONSE:
-                sessionresponse(msg, out);
+                sessionResponse(msg, out);
                 break;
             default:
                 logger.error("outbound type: {}, jessie not support", type);
@@ -48,7 +48,13 @@ public class RpcChildOutboundHandler extends MessageToMessageEncoder<OutboundMsg
 
     }
 
-    private void sessionresponse(OutboundMsg msg, List<Object> out) {
+    /**
+     * 编码session响应消息
+     *
+     * @param msg
+     * @param out
+     */
+    private void sessionResponse(OutboundMsg msg, List<Object> out) {
         boolean isInteger = msg.getArg() instanceof Integer;
         if (!isInteger) {
             logger.error("outbound type and args not matched");
