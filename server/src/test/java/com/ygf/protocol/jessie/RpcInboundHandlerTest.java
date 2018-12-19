@@ -72,7 +72,6 @@ public class RpcInboundHandlerTest {
         msg.setRequestId(50);
         msg.setResultClass(Integer.class.getCanonicalName());
         msg.setService(service.getCanonicalName());
-        msg.setResultType(NORMAL);
         msg.setResult(100);
         handler.channelRead(ctx, msg);
     }

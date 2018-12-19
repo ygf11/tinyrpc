@@ -10,6 +10,10 @@ package com.ygf.tinyrpc.common;
  */
 public class RpcResult {
     /**
+     * 这个请求所属session的sessionId
+     */
+    private Integer sessionId;
+    /**
      * rpc响应对应的请求的id
      */
     private Integer requestId;
@@ -21,6 +25,16 @@ public class RpcResult {
      * 结果对象
      */
     private Object result;
+
+
+    public Integer getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(Integer sessionId) {
+        this.sessionId = sessionId;
+    }
+
 
     public Integer getRequestId() {
         return requestId;

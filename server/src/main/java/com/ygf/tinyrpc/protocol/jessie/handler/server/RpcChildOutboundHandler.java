@@ -28,15 +28,18 @@ public class RpcChildOutboundHandler extends MessageToMessageEncoder<OutboundMsg
 
     @Override
     protected void encode(ChannelHandlerContext ctx, OutboundMsg msg, List<Object> out) throws Exception {
+        Header header = new Header();
+        header.setProtocol(PROTOCOL);
+        header.setVersion(CURRENT_VERSION);
         byte type = msg.getType();
         switch (type) {
             case HEARTBEATS:
                 break;
             case RPC_RESPONSE:
-                rpcResponse(msg, out);
+                rpcResponse(header, msg, out);
                 break;
             case CREATE_SESSION_RESPONSE:
-                sessionResponse(msg, out);
+                sessionResponse(header, msg, out);
                 break;
             default:
                 logger.error("outbound type: {}, jessie not support", type);
@@ -57,16 +60,13 @@ public class RpcChildOutboundHandler extends MessageToMessageEncoder<OutboundMsg
      * @param msg
      * @param out
      */
-    private void sessionResponse(OutboundMsg msg, List<Object> out) {
+    private void sessionResponse(Header header, OutboundMsg msg, List<Object> out) {
         boolean isInteger = msg.getArg() instanceof Integer;
         if (!isInteger) {
             logger.error("outbound type and args not matched");
             return;
         }
         Integer sessionId = (Integer) msg.getArg();
-        Header header = new Header();
-        header.setProtocol(PROTOCOL);
-        header.setVersion(CURRENT_VERSION);
         header.setSessionId(sessionId);
         header.setType(CREATE_SESSION_RESPONSE);
 
@@ -79,7 +79,7 @@ public class RpcChildOutboundHandler extends MessageToMessageEncoder<OutboundMsg
      * @param msg
      * @param out
      */
-    private void rpcResponse(OutboundMsg msg, List<Object> out) {
+    private void rpcResponse(Header header, OutboundMsg msg, List<Object> out) {
         Object args = msg.getArg();
         boolean isRpc = args instanceof RpcResult;
         if (!isRpc) {
@@ -88,9 +88,13 @@ public class RpcChildOutboundHandler extends MessageToMessageEncoder<OutboundMsg
         }
 
         RpcResult result = (RpcResult) args;
-        RpcResponseMessage header = new RpcResponseMessage();
-        header.setRequestId(result.getRequestId());
-        //header.setResultType(NORMAL);
+        RpcResponseMessage responseMessage = new RpcResponseMessage(header);
+        responseMessage.setType(RPC_RESPONSE);
+        responseMessage.setRequestId(result.getRequestId());
+        responseMessage.setResultClass(result.getResultType());
+        responseMessage.setResult(result.getResult());
+        responseMessage.setSessionId(result.getSessionId());
+        out.add(responseMessage);
 
     }
 }
