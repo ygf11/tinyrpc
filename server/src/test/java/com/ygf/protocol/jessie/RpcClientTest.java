@@ -11,7 +11,6 @@ import io.netty.channel.EventLoop;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import static com.ygf.tinyrpc.protocol.jessie.common.SessionStatus.*;
-import static com.ygf.tinyrpc.common.RpcResponseType.*;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.junit.Before;
@@ -164,7 +163,6 @@ public class RpcClientTest {
         Integer requestId = 123;
         RpcResult result = new RpcResult();
         result.setResult(100);
-        result.setType(NORMAL);
         result.setResultType(Integer.class.getCanonicalName());
 
         Field field = FieldUtils.getField(RpcClient.class, "sessionMap", true);

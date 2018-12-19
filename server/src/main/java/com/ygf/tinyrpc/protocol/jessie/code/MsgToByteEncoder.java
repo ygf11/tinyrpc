@@ -157,8 +157,9 @@ public class MsgToByteEncoder extends MessageToByteEncoder<Header> {
         // 写入requestId和resultType
         out.writeInt(msg.getRequestId());
         length = 4;
-        out.writeByte(msg.getResultType());
-        length += 1;
+        // 结果类型(正常/异常 不需要 可以根据class进行判断)
+        //out.writeByte(msg.getResultType());
+        //length += 1;
 
         // 写入结果类型
         length += writeString(msg.getResultClass(), out);

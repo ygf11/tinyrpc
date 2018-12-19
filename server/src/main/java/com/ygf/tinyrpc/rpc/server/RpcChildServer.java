@@ -125,7 +125,7 @@ public class RpcChildServer extends AbstractWriter {
         // obj
         rpcResult.setResult(result);
 
-
+        responseRpcRequest(session, rpcResult);
     }
 
     /**

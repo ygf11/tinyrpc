@@ -204,8 +204,8 @@ public class ByteToDecoderTest {
         Assert.assertEquals(msg.getType(), result.getType());
         Assert.assertEquals(msg.getSessionId(), result.getSessionId());
         Assert.assertEquals(msg.getRequestId(), result.getRequestId());
-        Assert.assertEquals(msg.getService(), result.getService());
-        Assert.assertEquals(msg.getResultType(), result.getResultType());
+        //Assert.assertEquals(msg.getService(), result.getService());
+        //Assert.assertEquals(msg.getResultType(), result.getResultType());
         Assert.assertEquals(msg.getResultClass(), result.getResultClass());
         Assert.assertEquals(msg.getResult(), result.getResult());
     }

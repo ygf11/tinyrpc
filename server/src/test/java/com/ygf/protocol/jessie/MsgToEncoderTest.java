@@ -197,8 +197,6 @@ public class MsgToEncoderTest {
         int length = byteBuf.readInt();
         // requestid
         Assert.assertEquals(requestId, byteBuf.readInt());
-        // resultType
-        Assert.assertEquals(1, byteBuf.readByte());
 
         // resultClass
         int resultLen = byteBuf.readShort();

@@ -164,8 +164,6 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
 
         // requestId
         msg.setRequestId(in.readInt());
-        // resultType
-        msg.setResultType(in.readByte());
         // resultClass
         msg.setResultClass(readString(in));
 

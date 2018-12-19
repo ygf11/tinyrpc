@@ -1,6 +1,8 @@
 package com.ygf.tinyrpc.protocol.jessie.handler.server;
 
+import com.ygf.tinyrpc.common.RpcResult;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
+import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
 import com.ygf.tinyrpc.rpc.OutboundMsg;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
@@ -10,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
+import static com.ygf.tinyrpc.common.RpcResponseType.*;
 
 /**
  * 服务器端处理出站(写)消息的处理器
@@ -68,5 +71,26 @@ public class RpcChildOutboundHandler extends MessageToMessageEncoder<OutboundMsg
         header.setType(CREATE_SESSION_RESPONSE);
 
         out.add(header);
+    }
+
+    /**
+     * 编码rpc响应消息
+     *
+     * @param msg
+     * @param out
+     */
+    private void rpcResponse(OutboundMsg msg, List<Object> out){
+        Object args = msg.getArg();
+        boolean isRpc = args instanceof RpcResult;
+        if (!isRpc){
+            logger.error("outbound type and args not matched");
+            return;
+        }
+
+        RpcResult result = (RpcResult) args;
+        RpcResponseMessage header = new RpcResponseMessage();
+        header.setRequestId(result.getRequestId());
+        //header.setResultType(NORMAL);
+
     }
 }
