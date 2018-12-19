@@ -84,7 +84,7 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
      * @param header
      * @param addr
      */
-    private void handlerRpcRequest(Header header, String addr) {
+    private void handlerRpcRequest(Header header, String addr) throws Exception {
         boolean isRpcRequest = header instanceof RpcRequestMessage;
         if (!isRpcRequest) {
             logger.warn("msg is not a rpc request msg");
@@ -109,6 +109,8 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
 
         metaData.setParamTypes(msg.getParamTypes());
         metaData.setArgs(msg.getParams());
+
+        server.handleRpcRequest(addr, metaData);
 
     }
 

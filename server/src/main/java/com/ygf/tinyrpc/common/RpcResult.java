@@ -10,25 +10,27 @@ package com.ygf.tinyrpc.common;
  */
 public class RpcResult {
     /**
-     * 异常 正常
+     * rpc响应对应的请求的id
      */
-    byte type;
+    private Integer requestId;
     /**
      * 结果类
      */
-    String resultType;
+    private String resultType;
     /**
      * 结果对象
      */
-    Object result;
+    private Object result;
 
-    public byte getType() {
-        return type;
+    public Integer getRequestId() {
+        return requestId;
     }
 
-    public void setType(byte type) {
-        this.type = type;
+    public void setRequestId(Integer requestId) {
+        this.requestId = requestId;
     }
+
+
     public String getResultType() {
         return resultType;
     }
@@ -45,10 +47,10 @@ public class RpcResult {
         this.result = result;
     }
 
+
     @Override
     public String toString() {
-        String t = type == 1 ? "normal" : "exception";
-        return "type: " + (type == 1 ? "normal" : "exception")+" "
+        return "requestId: " + requestId
                 + "returnType: " + resultType + " "
                 + "result: " + result;
     }

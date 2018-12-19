@@ -2,7 +2,7 @@ package com.ygf.tinyrpc.rpc.server;
 
 import com.ygf.tinyrpc.common.IdGenerator;
 import com.ygf.tinyrpc.common.RpcMetaData;
-import com.ygf.tinyrpc.common.ServerRpcResult;
+import com.ygf.tinyrpc.common.RpcResult;
 import com.ygf.tinyrpc.protocol.jessie.common.ServerSession;
 import com.ygf.tinyrpc.rpc.AbstractWriter;
 import com.ygf.tinyrpc.rpc.Exception.RpcException;
@@ -115,10 +115,14 @@ public class RpcChildServer extends AbstractWriter {
             type = RpcException.class;
         }
 
-        ServerRpcResult rpcResult = new ServerRpcResult();
+        RpcResult rpcResult = new RpcResult();
+        // requestId
         rpcResult.setRequestId(metaData.getRequestId());
         Class returnType = type == null ? method.getReturnType() : type;
-        rpcResult.setResultType(returnType);
+        String resultType = returnType.getCanonicalName();
+        // type
+        rpcResult.setResultType(resultType);
+        // obj
         rpcResult.setResult(result);
 
 
@@ -130,7 +134,7 @@ public class RpcChildServer extends AbstractWriter {
      * @param session
      * @param result
      */
-    private void responseRpcRequest(ServerSession session, ServerRpcResult result) {
+    private void responseRpcRequest(ServerSession session, RpcResult result) {
         OutboundMsg msg = new OutboundMsg();
         msg.setType(RPC_RESPONSE);
         msg.setArg(result);
