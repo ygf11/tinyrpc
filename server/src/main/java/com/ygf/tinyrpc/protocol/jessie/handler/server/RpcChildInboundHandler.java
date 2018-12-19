@@ -73,6 +73,9 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
         }
 
         InitSessionMessage msg = (InitSessionMessage) header;
+        logger.info("service: {}, appName: {}", msg.getService(), msg.getAppName());
+
+        // 创建session
         server.handleSessionInit(addr, msg.getService(), msg.getAppName());
 
         // TODO更新心跳
@@ -105,11 +108,12 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
             return;
         }
         metaData.setService(service[0]);
-        metaData.setService(service[1]);
+        metaData.setMethod(service[1]);
 
         metaData.setParamTypes(msg.getParamTypes());
         metaData.setArgs(msg.getParams());
 
+        logger.info("metadata:{}", metaData);
         server.handleRpcRequest(addr, metaData);
 
     }

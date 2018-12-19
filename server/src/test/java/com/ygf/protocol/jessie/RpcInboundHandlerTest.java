@@ -26,7 +26,6 @@ public class RpcInboundHandlerTest {
 
     private RpcInboundHandler handler;
     private Class service;
-    private RpcClient rpcClient;
     private InetSocketAddress address;
     private Channel channel;
     private ChannelHandlerContext ctx;

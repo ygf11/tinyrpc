@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
-import static com.ygf.tinyrpc.common.RpcResponseType.*;
 
 /**
  * 服务器端处理出站(写)消息的处理器
@@ -34,6 +33,7 @@ public class RpcChildOutboundHandler extends MessageToMessageEncoder<OutboundMsg
             case HEARTBEATS:
                 break;
             case RPC_RESPONSE:
+                rpcResponse(msg, out);
                 break;
             case CREATE_SESSION_RESPONSE:
                 sessionResponse(msg, out);
@@ -79,10 +79,10 @@ public class RpcChildOutboundHandler extends MessageToMessageEncoder<OutboundMsg
      * @param msg
      * @param out
      */
-    private void rpcResponse(OutboundMsg msg, List<Object> out){
+    private void rpcResponse(OutboundMsg msg, List<Object> out) {
         Object args = msg.getArg();
         boolean isRpc = args instanceof RpcResult;
-        if (!isRpc){
+        if (!isRpc) {
             logger.error("outbound type and args not matched");
             return;
         }
