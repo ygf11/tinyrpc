@@ -116,6 +116,8 @@ public class RpcChildServer extends AbstractWriter {
         }
 
         RpcResult rpcResult = new RpcResult();
+        // sessionId
+        rpcResult.setSessionId(session.getSessionId());
         // requestId
         rpcResult.setRequestId(metaData.getRequestId());
         Class returnType = type == null ? method.getReturnType() : type;
