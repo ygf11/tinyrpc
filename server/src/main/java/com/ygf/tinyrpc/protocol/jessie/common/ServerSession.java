@@ -18,4 +18,9 @@ public class ServerSession  extends Session{
         this.appName = appName;
     }
 
+    @Override
+    public String toString() {
+        return super.toString()
+                + " appName: " + appName;
+    }
 }

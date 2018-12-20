@@ -69,4 +69,11 @@ public class Session {
     public void setService(Class service) {
         this.service = service;
     }
+
+    @Override
+    public String toString() {
+        return "service: " + service
+                + " status: " + status
+                + " sessionId: " + sessionId;
+    }
 }

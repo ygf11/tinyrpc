@@ -62,7 +62,7 @@ public class RpcChildServer extends AbstractWriter {
      */
     public void handleSessionInit(String addr, String appName, String service) throws ClassNotFoundException {
         ServerSession session = sessionMap.get(addr);
-        Integer sessionId = session.getSessionId();
+        Integer sessionId = SESSIONID.get();
         session.setSessionId(sessionId);
 
         session.setAppName(appName);
@@ -71,6 +71,8 @@ public class RpcChildServer extends AbstractWriter {
         session.setService(cz);
 
         session.setStatus(CONNECTED);
+
+        logger.info("session: {}", session);
         // 发送session响应消息
         responseSessionInit(session);
     }

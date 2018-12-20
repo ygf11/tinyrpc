@@ -7,6 +7,6 @@ package com.ygf.protocol.jessie.api;
  * @date 2018201211
  */
 public interface Service {
-    void test();
-    void test(int a, String b);
+    Integer test();
+    Integer test(int a, String b);
 }
