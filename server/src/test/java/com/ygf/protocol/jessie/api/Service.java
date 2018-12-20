@@ -8,5 +8,5 @@ package com.ygf.protocol.jessie.api;
  */
 public interface Service {
     Integer test();
-    Integer test(int a, String b);
+    Integer test(Integer a, String b);
 }

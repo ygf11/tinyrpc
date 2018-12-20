@@ -20,8 +20,8 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public Integer test(int a, String b) {
-        logger.info("in test(Int, String)");
+    public Integer test(Integer a, String b) {
+        logger.info("in test(Integer, String)");
         return a + 100;
     }
 }

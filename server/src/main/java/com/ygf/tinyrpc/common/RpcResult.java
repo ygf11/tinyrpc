@@ -65,7 +65,7 @@ public class RpcResult {
     @Override
     public String toString() {
         return "requestId: " + requestId
-                + "returnType: " + resultType + " "
-                + "result: " + result;
+                + " returnType: " + resultType + " "
+                + " result: " + result;
     }
 }

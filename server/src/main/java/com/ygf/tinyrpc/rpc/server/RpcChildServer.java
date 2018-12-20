@@ -111,7 +111,8 @@ public class RpcChildServer extends AbstractWriter {
         Class type = null;
         Object result = null;
         try {
-            result = method.invoke(service, metaData.getArgs());
+            Object[] args = metaData.getArgs().toArray();
+            result = method.invoke(service, args);
         } catch (Exception e) {
             logger.error("exception when invoke method:{}", e);
             type = RpcException.class;
@@ -129,6 +130,7 @@ public class RpcChildServer extends AbstractWriter {
         // obj
         rpcResult.setResult(result);
 
+        logger.info("result:{}", rpcResult);
         responseRpcRequest(session, rpcResult);
     }
 
