@@ -4,7 +4,6 @@ import com.ygf.tinyrpc.common.RpcResult;
 import com.ygf.tinyrpc.protocol.jessie.message.Header;
 import com.ygf.tinyrpc.protocol.jessie.message.RpcResponseMessage;
 import com.ygf.tinyrpc.rpc.OutboundMsg;
-import com.ygf.tinyrpc.rpc.server.RpcChildServer;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import org.slf4j.Logger;
@@ -22,7 +21,7 @@ import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
  */
 public class RpcChildOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
     private static final Logger logger = LoggerFactory.getLogger(RpcChildOutboundHandler.class);
-    public RpcChildOutboundHandler(RpcChildServer) {
+    public RpcChildOutboundHandler() {
         super();
     }
 

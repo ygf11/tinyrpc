@@ -24,7 +24,7 @@ public class RpcOutboundHandler extends MessageToMessageEncoder<OutboundMsg> {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcOutboundHandler.class);
 
-    public RpcOutboundHandler(Class service) {
+    public RpcOutboundHandler() {
         super();
     }
 

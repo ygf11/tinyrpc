@@ -33,7 +33,7 @@ public class RpcServerConnector {
     /**
      * channelPromise
      */
-    private ChannelPromise promise;
+    private ChannelFuture future;
     /**
      * 监听的网络地址
      */
@@ -43,16 +43,16 @@ public class RpcServerConnector {
      */
     private RpcChildServer server;
 
-    public RpcServerConnector(InetSocketAddress addr){
+    public RpcServerConnector(InetSocketAddress addr) {
         this.addr = addr;
     }
 
     /**
      * 开始监听网络
      */
-    public void bootStrap(){
-        EventLoopGroup boss = new NioEventLoopGroup(1);
-        EventLoopGroup worker = new NioEventLoopGroup();
+    public void bootStrap() {
+        boss = new NioEventLoopGroup(1);
+        worker = new NioEventLoopGroup();
         ServerBootstrap bootstrap = new ServerBootstrap();
         bootstrap.group(boss, worker)
                 .localAddress(addr)
@@ -63,7 +63,7 @@ public class RpcServerConnector {
                 .childOption(ChannelOption.SO_KEEPALIVE, false)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    public void initChannel(SocketChannel sc){
+                    public void initChannel(SocketChannel sc) {
                         ChannelPipeline pipeline = sc.pipeline();
                         // 出战
                         pipeline.addLast(new RpcChildOutboundHandler());
@@ -75,7 +75,7 @@ public class RpcServerConnector {
                     }
                 });
         // 开始监听网络
-        bootstrap.bind();
+        future = bootstrap.bind();
     }
 
     /**
@@ -83,10 +83,10 @@ public class RpcServerConnector {
      *
      * @throws Exception
      */
-    public void shutDown() throws Exception{
+    public void shutDown() throws Exception {
         try {
-            promise.channel().closeFuture().sync();
-        }finally {
+            future.channel().closeFuture().sync();
+        } finally {
             boss.shutdownGracefully();
             worker.shutdownGracefully();
         }
