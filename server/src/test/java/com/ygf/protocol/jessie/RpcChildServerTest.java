@@ -102,12 +102,12 @@ public class RpcChildServerTest {
         metaData.setService(Service.class.getCanonicalName());
         metaData.setMethod("test");
         // 参数类型
-        List<String> paramTypes = new ArrayList<>();
+        List<String> paramTypes = new ArrayList<String>();
         paramTypes.add("java.lang.Integer");
         paramTypes.add("java.lang.String");
         metaData.setParamTypes(paramTypes);
         // 参数值
-        List<Object> params = new ArrayList<>();
+        List<Object> params = new ArrayList<Object>();
         params.add(100);
         params.add("rpc");
         metaData.setArgs(params);

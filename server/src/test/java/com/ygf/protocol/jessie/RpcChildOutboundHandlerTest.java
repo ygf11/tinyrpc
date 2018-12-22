@@ -28,15 +28,15 @@ public class RpcChildOutboundHandlerTest {
     private RpcChildOutboundHandler handler;
     private RpcChildServer server;
     private List<Object> out;
-    private Class[] types;
+    private Class<?>[] types;
     private Object[] args;
 
     @Before
     public void setup() {
         server = mock(RpcChildServer.class);
         handler = new RpcChildOutboundHandler();
-        out = new ArrayList<>();
-        types = new Class[3];
+        out = new ArrayList<Object>();
+        types = new Class<?>[3];
         types[0] = ChannelHandlerContext.class;
         types[1] = OutboundMsg.class;
         types[2] = List.class;

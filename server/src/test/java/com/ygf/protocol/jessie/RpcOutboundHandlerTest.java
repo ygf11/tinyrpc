@@ -36,7 +36,7 @@ public class RpcOutboundHandlerTest {
     @Before
     public void setup() {
         service = Service.class;
-        handler = new RpcOutboundHandler(service);
+        handler = new RpcOutboundHandler();
         classes = new Class[3];
         classes[0] = ChannelHandlerContext.class;
         classes[1] = OutboundMsg.class;

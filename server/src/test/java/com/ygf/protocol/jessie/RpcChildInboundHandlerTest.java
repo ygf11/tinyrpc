@@ -79,13 +79,13 @@ public class RpcChildInboundHandlerTest {
         msg.setRequestId(110);
         msg.setMethod(service+":"+method);
         // 参数类型
-        List<String> paramTypes = new ArrayList<>();
+        List<String> paramTypes = new ArrayList<String>();
         paramTypes.add("java.lang.Integer");
         paramTypes.add("java.lang.String");
         paramTypes.add("java.lang.Integer");
         msg.setParamTypes(paramTypes);
         // 参数值
-        List<Object> params = new ArrayList<>();
+        List<Object> params = new ArrayList<Object>();
         params.add(1);
         params.add("2");
         params.add(3);
