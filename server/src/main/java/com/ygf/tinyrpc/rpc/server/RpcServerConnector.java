@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 
 /**
- * 服务提供端监听网络连接的启动类
+ * 服务提供端监听网络连接的启动类(单例)
  * //TODO 关闭监听
  *
  * @author theo
@@ -39,12 +39,16 @@ public class RpcServerConnector {
      */
     private InetSocketAddress addr;
     /**
+     * 监听端口
+     */
+    private Integer port;
+    /**
      * server
      */
     private RpcChildServer server;
 
-    public RpcServerConnector(InetSocketAddress addr) {
-        this.addr = addr;
+    public RpcServerConnector(Integer port) {
+        this.port = port;
     }
 
     /**
@@ -55,7 +59,8 @@ public class RpcServerConnector {
         worker = new NioEventLoopGroup();
         ServerBootstrap bootstrap = new ServerBootstrap();
         bootstrap.group(boss, worker)
-                .localAddress(addr)
+                // TODO 多网卡
+                //.localAddress(addr)
                 .option(ChannelOption.SO_BACKLOG, 100)
                 .option(ChannelOption.SO_KEEPALIVE, false)
                 .option(ChannelOption.TCP_NODELAY, false)
@@ -75,7 +80,7 @@ public class RpcServerConnector {
                     }
                 });
         // 开始监听网络
-        future = bootstrap.bind();
+        future = bootstrap.bind(port);
     }
 
     /**
