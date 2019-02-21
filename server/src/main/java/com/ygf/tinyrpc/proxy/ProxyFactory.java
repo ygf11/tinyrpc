@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 代理对象工厂
+ * 在consumer端配合rpcContext一起进行服务调用
  *
  * @author theo
  * @date 20190220

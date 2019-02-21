@@ -1,7 +1,7 @@
 package com.ygf.tinyrpc.export;
 
 /**
- * 服务暴露所需要的信息
+ * 表示待暴露的服务
  *
  * @author theo
  * @date 20190220
@@ -10,36 +10,30 @@ public class ExporterInfo {
     /**
      * 服务暴露类接口
      */
-    private Class target;
+    private Class iService;
     /**
-     * 服务网络监听的端口
+     * 真正的服务对象
      */
-    private Integer port;
+    private Object target;
 
-    public ExporterInfo(Class target, Integer port) {
+    public ExporterInfo(Class iService, Object target){
+        this.iService = iService;
         this.target = target;
-        this.port = port;
     }
 
-    public Class getTarget() {
+    public Class getiService() {
+        return iService;
+    }
+
+    public void setiService(Class iService) {
+        this.iService = iService;
+    }
+
+    public Object getTarget() {
         return target;
     }
 
-    public void setTarget(Class target) {
+    public void setTarget(Object target) {
         this.target = target;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
-    }
-
-    @Override
-    public String toString() {
-        return "target: " + target.getCanonicalName() +
-                "port: " + port;
     }
 }

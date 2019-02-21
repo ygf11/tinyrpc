@@ -2,6 +2,7 @@ package com.ygf.tinyrpc.service;
 
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.ZkClient;
+import org.apache.zookeeper.KeeperException;
 
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -51,7 +52,7 @@ public class ZooKeeperRegistry {
      * @param path
      * @param createParant
      */
-    public void createPersistent(String path, boolean createParant) {
+    public void createPersistent(String path, boolean createParant) throws KeeperException.NodeExistsException {
 
     }
 
