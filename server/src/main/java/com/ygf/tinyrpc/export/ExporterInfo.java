@@ -10,23 +10,27 @@ public class ExporterInfo {
     /**
      * 服务暴露类接口
      */
-    private Class iService;
+    private Class service;
     /**
      * 真正的服务对象
      */
     private Object target;
+    /**
+     * 服务本地别名
+     */
+    private String name;
 
-    public ExporterInfo(Class iService, Object target){
-        this.iService = iService;
+    public ExporterInfo(Class service, Object target) {
+        this.service = service;
         this.target = target;
     }
 
-    public Class getiService() {
-        return iService;
+    public Class getService() {
+        return service;
     }
 
-    public void setiService(Class iService) {
-        this.iService = iService;
+    public void setService(Class service) {
+        this.service = service;
     }
 
     public Object getTarget() {
@@ -35,5 +39,12 @@ public class ExporterInfo {
 
     public void setTarget(Object target) {
         this.target = target;
+    }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

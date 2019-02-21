@@ -52,9 +52,10 @@ public class ZooKeeperRegistry {
      * @param path
      * @param createParant
      */
-    public void createPersistent(String path, boolean createParant) throws KeeperException.NodeExistsException {
-
+    public void createPersistent(String path, boolean createParant) throws Exception {
+        zkClient.createPersistent(path, true);
     }
+
 
     /**
      * 创建临时节点
@@ -62,7 +63,7 @@ public class ZooKeeperRegistry {
      * @param path
      */
     public void createEphemeral(String path) {
-
+        zkClient.createEphemeral(path);
     }
 
     /**

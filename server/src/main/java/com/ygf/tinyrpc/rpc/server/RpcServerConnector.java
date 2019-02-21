@@ -37,7 +37,7 @@ public class RpcServerConnector {
     /**
      * 监听的网络地址
      */
-    private InetSocketAddress addr;
+    private String ip;
     /**
      * 监听端口
      */
@@ -47,7 +47,8 @@ public class RpcServerConnector {
      */
     private RpcChildServer server;
 
-    public RpcServerConnector(Integer port) {
+    public RpcServerConnector(String ip, Integer port) {
+        this.ip = ip;
         this.port = port;
     }
 
@@ -60,7 +61,7 @@ public class RpcServerConnector {
         ServerBootstrap bootstrap = new ServerBootstrap();
         bootstrap.group(boss, worker)
                 // TODO 多网卡
-                //.localAddress(addr)
+                .localAddress(new InetSocketAddress(ip, port))
                 .option(ChannelOption.SO_BACKLOG, 100)
                 .option(ChannelOption.SO_KEEPALIVE, false)
                 .option(ChannelOption.TCP_NODELAY, false)
@@ -80,7 +81,7 @@ public class RpcServerConnector {
                     }
                 });
         // 开始监听网络
-        future = bootstrap.bind(port);
+        future = bootstrap.bind();
     }
 
     /**
