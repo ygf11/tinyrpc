@@ -7,4 +7,5 @@ package com.ygf.tinyrpc.config;
  * @date 20181211
  */
 public class ConsumerConfig {
+
 }

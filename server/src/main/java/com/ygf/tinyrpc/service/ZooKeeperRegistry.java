@@ -2,7 +2,6 @@ package com.ygf.tinyrpc.service;
 
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.ZkClient;
-import org.apache.zookeeper.KeeperException;
 
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -10,7 +9,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
- * 服务发现模块
+ * 注册中心
+ *
+ * 1. 服务暴露
+ * 2. 服务发现
  *
  * @author theo
  * @date 20190219
@@ -74,7 +76,7 @@ public class ZooKeeperRegistry {
     }
 
     /**
-     * 订阅子节点变化的事件(更新缓存)
+     * 异步获取服务url
      *
      * @param parent
      */
@@ -96,6 +98,13 @@ public class ZooKeeperRegistry {
         zkClient.subscribeChildChanges(parent, listener);
     }
 
-
-
+    /**
+     * 从zk获取url(解析模块待做)
+     *
+     * @param path
+     * @return
+     */
+    public String readData(String path){
+        return zkClient.readData(path, true);
+    }
 }
