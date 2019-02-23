@@ -72,7 +72,7 @@ public class Session {
 
     @Override
     public String toString() {
-        return "service: " + service
+        return "registry: " + service
                 + " status: " + status
                 + " sessionId: " + sessionId;
     }

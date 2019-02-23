@@ -100,7 +100,7 @@ public class MsgToEncoderTest {
         Assert.assertEquals(0, byteBuf.readInt());
         // requestId
         int length = byteBuf.readInt();
-        // service
+        // registry
         byte[] bytes = new byte[byteBuf.readShort()];
         byteBuf.readBytes(bytes, 0, bytes.length);
         Assert.assertEquals(service, new String(bytes));

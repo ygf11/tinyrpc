@@ -86,7 +86,7 @@ public class RpcMetaData {
     public String toString() {
         return "sessionId: " + sessionId +
                 " requestId: " + requestId +
-                " service: " + service +
+                " registry: " + service +
                 " method: " + method +
                 " paramTypes: " + paramTypes +
                 " args: " + args;

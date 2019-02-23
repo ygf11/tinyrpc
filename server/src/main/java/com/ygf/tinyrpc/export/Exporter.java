@@ -1,7 +1,7 @@
 package com.ygf.tinyrpc.export;
 
 import com.ygf.tinyrpc.rpc.server.RpcServerConnector;
-import com.ygf.tinyrpc.service.ZooKeeperRegistry;
+import com.ygf.tinyrpc.registry.ZooKeeperRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -73,7 +73,7 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
         }
 
         InitSessionMessage msg = (InitSessionMessage) header;
-        logger.info("service: {}, appName: {}", msg.getService(), msg.getAppName());
+        logger.info("registry: {}, appName: {}", msg.getService(), msg.getAppName());
 
         // 创建session
         server.handleSessionInit(addr, msg.getService(), msg.getAppName());
