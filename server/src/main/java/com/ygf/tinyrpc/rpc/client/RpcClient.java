@@ -95,7 +95,7 @@ public class RpcClient extends AbstractWriter {
     /**
      * 处理来自服务器端会话响应
      *
-     * @param service
+     * @param addr
      * @param sessionId
      */
     public void handleSessionInit(String addr, Integer sessionId) {
@@ -117,7 +117,7 @@ public class RpcClient extends AbstractWriter {
     /**
      * 发起rpc请求
      *
-     * @param service
+     * @param session
      * @param method
      * @param args
      */

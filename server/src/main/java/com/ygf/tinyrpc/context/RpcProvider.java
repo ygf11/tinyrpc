@@ -1,7 +1,5 @@
 package com.ygf.tinyrpc.context;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -36,8 +34,18 @@ public class RpcProvider {
      * 服务可以被调用的方法
      */
     private List<String> methods;
+    /**
+     * 服务rpc代理对象
+     */
+    private Object proxy;
 
+    public Object getProxy() {
+        return proxy;
+    }
 
+    public void setProxy(Object proxy) {
+        this.proxy = proxy;
+    }
 
     public String getIp() {
         return ip;
@@ -86,7 +94,4 @@ public class RpcProvider {
     public void setMethods(List<String> methods) {
         this.methods = methods;
     }
-
-
-
 }

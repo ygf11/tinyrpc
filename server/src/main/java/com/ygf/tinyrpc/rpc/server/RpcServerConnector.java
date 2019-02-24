@@ -50,6 +50,7 @@ public class RpcServerConnector {
     public RpcServerConnector(String ip, Integer port) {
         this.ip = ip;
         this.port = port;
+        this.server = new RpcChildServer();
     }
 
     /**
@@ -97,4 +98,5 @@ public class RpcServerConnector {
             worker.shutdownGracefully();
         }
     }
+
 }

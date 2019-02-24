@@ -1,12 +1,13 @@
 package com.ygf.tinyrpc.context;
 
 import com.ygf.tinyrpc.config.RpcConfigurations;
-import com.ygf.tinyrpc.exception.ProviderUrlParseException;
 import com.ygf.tinyrpc.registry.ZooKeeperRegistry;
+import com.ygf.tinyrpc.rpc.client.RpcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -24,7 +25,11 @@ public class RpcContext {
     /**
      * 保存服务接口-->代理服务的映射
      */
-    private ConcurrentHashMap<Class, List<RpcProvider>> providers = new ConcurrentHashMap<Class, List<RpcProvider>>();
+    private ConcurrentHashMap<Class, List<RpcProvider>> caches = new ConcurrentHashMap<Class, List<RpcProvider>>();
+    /**
+     * 发起rpc请求和接收请求的对象
+     */
+    private RpcClient rpcClient;
     /**
      * 单例对象
      */
@@ -69,12 +74,39 @@ public class RpcContext {
     }
 
     /**
-     * 当与zk断开连接时 从缓存中获取服务位置
+     * 获取对应服务对象
      *
      * @param service
      * @return
      */
-    public List<RpcProvider> getProviders(Class service) throws Exception {
+    public Object getService(Class service) {
+        // 直接从缓存中获取
+        List<RpcProvider> providers = getProviders(service);
+        providers = providers == null ? getProvidersFromRegistry(service) : providers;
+
+        if (providers == null){
+            return null;
+        }
+
+        // 获取其中的一个
+        RpcProvider provider = loadBalanceByRandom(providers);
+        Object proxy = provider.getProxy();
+        if (proxy != null){
+            return proxy;
+        }
+
+        // 与服务提供者尚未连接 则建立连接
+
+        return null;
+    }
+
+    /**
+     * 从注册中心获取providers
+     *
+     * @param service
+     * @return
+     */
+    private List<RpcProvider> getProvidersFromRegistry(Class service) {
         /**
          * 1. 获取registry
          * 2. 检查/rpc/xxx/providers节点是否存在
@@ -84,14 +116,7 @@ public class RpcContext {
         String zkUrl = config.getRegistryConfig().getAddress();
         ZooKeeperRegistry registry = ZooKeeperRegistry.getInstance(zkUrl);
 
-
-        List<RpcProvider> cache = providers.get(service);
-        // 如果缓存中存在 则直接返回缓存
-        if (cache != null) {
-            return cache;
-        }
-
-        // 否则从zk获取  并且监听进行异步更新
+        // 从zk获取  并且监听进行异步更新
         String path = "/rpc/" + service.getCanonicalName() + "/providers";
         boolean exists = registry.exists(path);
         // 判断服务是否存在
@@ -100,11 +125,25 @@ public class RpcContext {
             return null;
         }
 
+        List<RpcProvider> result;
         try {
-            return registry.getProviders(service);
+            result = registry.getProviders(service);
         } catch (Exception e) {
-            throw new Exception("can not get providers", e);
+            result = null;
+            logger.error("get provider from registry error: {}", e);
         }
+
+        return result;
+    }
+
+    /**
+     * 当与zk断开连接时 从缓存中获取服务位置
+     *
+     * @param service
+     * @return
+     */
+    private List<RpcProvider> getProviders(Class service) {
+        return caches.get(service);
     }
 
     /**
@@ -115,5 +154,29 @@ public class RpcContext {
     public void startDiscovery(Class cz) {
 
 
+    }
+
+    /**
+     * 使用基于随机数的负载均衡策略
+     *
+     * @param list
+     * @return
+     */
+    private RpcProvider loadBalanceByRandom(List<RpcProvider> list) {
+        long current = System.currentTimeMillis();
+        Random random = new Random(current);
+        int next = random.nextInt(list.size());
+        return list.get(next);
+    }
+
+    /**
+     * 为服务创建代理对象
+     *
+     * @param provider
+     * @return
+     */
+    private Object getProxy(RpcProvider provider) {
+
+        return null;
     }
 }
