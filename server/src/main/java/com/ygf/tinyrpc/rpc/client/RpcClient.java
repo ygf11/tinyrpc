@@ -3,6 +3,7 @@ package com.ygf.tinyrpc.rpc.client;
 import com.ygf.tinyrpc.common.IdGenerator;
 import com.ygf.tinyrpc.common.RpcMetaData;
 import com.ygf.tinyrpc.common.RpcResult;
+
 import static com.ygf.tinyrpc.protocol.jessie.message.JessieProtocol.*;
 
 import com.ygf.tinyrpc.common.InitParams;
@@ -38,11 +39,11 @@ public class RpcClient extends AbstractWriter {
     /**
      * 保存服务提供者所在地址-->服务会话的映射
      */
-    private Map<String, Map<Class, Session>> acceptSessions  = new ConcurrentHashMap<String, Map<Class, Session>>();
+    private Map<String, Map<Class, Session>> acceptSessions = new ConcurrentHashMap<String, Map<Class, Session>>();
     /**
      * 保存通信地址-->session的映射
-      */
-    private Map<String, Session>  sessionMap = new ConcurrentHashMap<String, Session>();
+     */
+    private Map<String, Session> sessionMap = new ConcurrentHashMap<String, Session>();
     /**
      * 为rpc请求同步时的监视器对象
      */
@@ -121,13 +122,13 @@ public class RpcClient extends AbstractWriter {
      * @param method
      * @param args
      */
-    public void rpcRequest(Session session, Method method, Object[] args) {
+    public void rpcRequest(Integer requestId, Session session, Method method, Object[] args) {
         // 创建rpcInvocation
         // 写入channel
         // 以一个对象作为监视器进行等待
         RpcMetaData metaData = new RpcMetaData();
-        // 获取一个新的requestId
-        Integer requestId = REQUESTID.get();
+        // 获取一个新的requestId(TODO由context边生成)
+        // Integer requestId = REQUESTID.get();
         metaData.setSessionId(session.getSessionId());
         metaData.setRequestId(requestId);
         metaData.setService(session.getService().getCanonicalName());
@@ -205,7 +206,7 @@ public class RpcClient extends AbstractWriter {
      */
     private List<String> transfer(Class[] paramTypes) {
         List<String> res = new ArrayList<String>();
-        for (int i = 0; i < paramTypes.length; ++i){
+        for (int i = 0; i < paramTypes.length; ++i) {
             res.add(paramTypes[i].getCanonicalName());
         }
 
@@ -218,8 +219,24 @@ public class RpcClient extends AbstractWriter {
      * @param session
      * @return
      */
-    private String getServiceName(Session session){
+    private String getServiceName(Session session) {
         Class service = session.getService();
         return service.getCanonicalName();
+    }
+
+    /**
+     * 将session添加到sessionMap中
+     *
+     * @param session
+     */
+    public void addSession(String addr, Session session) {
+        sessionMap.put(addr, session);
+    }
+
+    /**
+     * 生成一个新的requestId
+     */
+    public Integer newRequestId() {
+        return REQUESTID.get();
     }
 }

@@ -1,6 +1,7 @@
 package com.ygf.tinyrpc.context;
 
 import com.ygf.tinyrpc.config.RpcConfigurations;
+import com.ygf.tinyrpc.proxy.ProxyFactory;
 import com.ygf.tinyrpc.registry.ZooKeeperRegistry;
 import com.ygf.tinyrpc.rpc.client.RpcClient;
 import org.slf4j.Logger;
@@ -84,20 +85,19 @@ public class RpcContext {
         List<RpcProvider> providers = getProviders(service);
         providers = providers == null ? getProvidersFromRegistry(service) : providers;
 
-        if (providers == null){
+        if (providers == null) {
             return null;
         }
 
         // 获取其中的一个
         RpcProvider provider = loadBalanceByRandom(providers);
         Object proxy = provider.getProxy();
-        if (proxy != null){
+        if (proxy != null) {
             return proxy;
         }
 
         // 与服务提供者尚未连接 则建立连接
-
-        return null;
+        return ProxyFactory.createProxy(provider, rpcClient);
     }
 
     /**
@@ -142,7 +142,7 @@ public class RpcContext {
      * @param service
      * @return
      */
-    private List<RpcProvider> getProviders(Class service) {
+    public List<RpcProvider> getProviders(Class service) {
         return caches.get(service);
     }
 
@@ -167,16 +167,5 @@ public class RpcContext {
         Random random = new Random(current);
         int next = random.nextInt(list.size());
         return list.get(next);
-    }
-
-    /**
-     * 为服务创建代理对象
-     *
-     * @param provider
-     * @return
-     */
-    private Object getProxy(RpcProvider provider) {
-
-        return null;
     }
 }

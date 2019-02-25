@@ -20,7 +20,7 @@ public class ClientMain {
     public final static int SIZE = 256;
 
     public static void main(String[] args) throws Exception {
-        String HOST = "127.0.0.1";
+        String HOST = "192.168.1.103";
         int PORT = 9001;
         EventLoopGroup group = new NioEventLoopGroup();
         try {

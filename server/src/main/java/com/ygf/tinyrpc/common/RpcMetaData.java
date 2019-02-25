@@ -18,7 +18,7 @@ public class RpcMetaData {
      */
     private Integer requestId;
     /**
-     * 服务权限定类名
+     * 服务全限定类名
      */
     private String service;
     /**

@@ -12,6 +12,7 @@ import io.netty.channel.socket.SocketChannel;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 
 /**
  * 客户端网路连接启动类
@@ -42,15 +43,18 @@ public class RpcConnector {
      */
     private RpcClient client;
 
-    public RpcConnector(InetSocketAddress addr){
+    public RpcConnector(InetSocketAddress addr, RpcClient client) {
         this.addr = addr;
+        this.client = client;
+
     }
 
     /**
      * 进行连接
+     *
      * @throws Exception
      */
-    public void connect() throws Exception{
+    public ChannelFuture connect() throws Exception {
         worker = new NioEventLoopGroup();
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(worker)
@@ -59,7 +63,7 @@ public class RpcConnector {
                 .option(ChannelOption.TCP_NODELAY, false)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    public void initChannel(SocketChannel sc){
+                    public void initChannel(SocketChannel sc) {
                         ChannelPipeline pipeline = sc.pipeline();
                         // 出站
                         pipeline.addLast(new RpcOutboundHandler());
@@ -69,6 +73,17 @@ public class RpcConnector {
                         pipeline.addLast(new ByteToMsgDecoder());
                     }
                 });
-        future = bootstrap.connect().sync();
+
+        return bootstrap.connect().sync();
     }
+
+    public InetSocketAddress getAddr() {
+        return addr;
+    }
+
+    public RpcClient getClient() {
+        return client;
+    }
+
+
 }
