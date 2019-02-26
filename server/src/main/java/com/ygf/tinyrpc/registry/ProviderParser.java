@@ -143,7 +143,7 @@ public class ProviderParser {
 
         if (keyValues.length != KEY_VALUE_MAX) {
             logger.error("provider {}, key=value parse error", provider);
-            throw new ProviderUrlParseException("Provider url parse error");
+            throw new ProviderUrlParseException("Protocol url parse error");
         }
 
         // 解析键值对
