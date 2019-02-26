@@ -3,7 +3,7 @@ package com.ygf.tinyrpc.annotations;
 import java.lang.annotation.*;
 
 /**
- * 作用在成员域上的注解 表示zk注册中心的地址
+ * 服务暴露的端口
  *
  * @author theo
  * @date 20190226
@@ -11,6 +11,6 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface ZkRegistry {
-    String type() default "zookeeper";
+public @interface ProviderPort {
+    String port() default "";
 }

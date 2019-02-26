@@ -18,8 +18,10 @@ public class RpcContextUtils {
 
     /**
      * 初始化rpc上下文
+     *
+     * @param config
      */
-    public static void initRpcContext(String path) {
+    public static void initRpcContext(Class config) {
 
     }
 

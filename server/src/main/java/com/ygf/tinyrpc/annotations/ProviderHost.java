@@ -3,13 +3,11 @@ package com.ygf.tinyrpc.annotations;
 import java.lang.annotation.*;
 
 /**
- * 使用的协议 目前只支持rpc
- *
- * @author theo
- * @date 20190226
+ * 服务提供者域名
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Protocol {
+public @interface ProviderHost {
+    String host() default "";
 }

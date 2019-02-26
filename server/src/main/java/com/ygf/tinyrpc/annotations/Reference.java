@@ -8,7 +8,6 @@ package com.ygf.tinyrpc.annotations;
  */
 public @interface Reference {
     String id() default "";
-    Class<?> service();
     /**
      * TODO 集群容错机制等
      */

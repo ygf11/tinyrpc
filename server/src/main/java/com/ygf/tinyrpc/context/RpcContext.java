@@ -1,6 +1,5 @@
 package com.ygf.tinyrpc.context;
 
-import com.ygf.tinyrpc.config.RpcConfigurations;
 import com.ygf.tinyrpc.proxy.ProxyFactory;
 import com.ygf.tinyrpc.registry.ZooKeeperRegistry;
 import com.ygf.tinyrpc.rpc.client.RpcClient;
@@ -20,9 +19,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RpcContext {
     private static Logger logger = LoggerFactory.getLogger(RpcContext.class);
     /**
-     * rpc配置
+     * 读取配置完成
      */
-    private RpcConfigurations config;
+    private boolean configured;
+    /**
+     * 保存的配置
+     */
+    private ConcurrentHashMap<String, String> configs = new ConcurrentHashMap<>();
+    /**
+     * 已经暴露的服务
+     */
+    private ConcurrentHashMap<Class, Object> exportedServices = new ConcurrentHashMap<>();
     /**
      * 保存服务接口-->代理服务的映射
      */
@@ -113,7 +120,7 @@ public class RpcContext {
          * 3. 获取/rpc/xxx/providers所有子节点
          * 4. 订阅/rpc/xxx/providers子节点的变化事件
          */
-        String zkUrl = config.getRegistryConfig().getAddress();
+        String zkUrl = configs.get("zkUrl");
         ZooKeeperRegistry registry = ZooKeeperRegistry.getInstance(zkUrl);
 
         // 从zk获取  并且监听进行异步更新
