@@ -12,4 +12,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Protocol {
+    String host() default "";
+    String port() default "";
 }

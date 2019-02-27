@@ -11,6 +11,6 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface ZkRegistry {
+public @interface ZkRegistryUrl {
     String type() default "zookeeper";
 }

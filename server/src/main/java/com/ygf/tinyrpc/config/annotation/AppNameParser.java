@@ -6,6 +6,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+
 import static com.ygf.tinyrpc.config.ConfigurationParser.*;
 
 
@@ -18,14 +19,20 @@ import static com.ygf.tinyrpc.config.ConfigurationParser.*;
 public class AppNameParser implements ConfigParser {
     @Override
     public List<Property> parse(Annotation annotation, Field field, Object obj) throws IllegalAccessException{
-        if (!(annotation instanceof AppName)){
-            return EMPTY;
-        }
-        List<Property> result = new ArrayList<>();
-        String appName = String.valueOf(field.get(obj));
-        Property property = new Property(APPLICATIONNAME, appName);
+        List<Property> properties = new ArrayList<>();
+        AppName appName = (AppName) annotation;
+        //owner
+        String owner = appName.owner();
+        properties.add(new Property(APP_OWNER, owner));
 
-        result.add(property);
-        return result;
+        //name
+        properties.add(getAppName(field, obj));
+        return properties;
+    }
+
+    private Property getAppName(Field field, Object obj) throws IllegalAccessException{
+        field.setAccessible(true);
+        String name = String.valueOf(field.get(obj));
+        return new Property(APPLICATION_NAME, name);
     }
 }

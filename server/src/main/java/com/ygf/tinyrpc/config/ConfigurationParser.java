@@ -4,6 +4,7 @@ import com.ygf.tinyrpc.annotations.*;
 import com.ygf.tinyrpc.config.annotation.AppNameParser;
 import com.ygf.tinyrpc.config.annotation.ConfigParser;
 import com.ygf.tinyrpc.config.annotation.Property;
+import com.ygf.tinyrpc.config.annotation.ProtocolParser;
 import com.ygf.tinyrpc.exception.ConfigurationParseException;
 
 import java.lang.annotation.Annotation;
@@ -23,7 +24,11 @@ public class ConfigurationParser {
     /**
      * 应用名
      */
-    public final static String APPLICATIONNAME = "appName";
+    public final static String APPLICATION_NAME = "appName";
+    /**
+     * 应用管理员
+     */
+    public final static String APP_OWNER = "owner";
     /**
      * 注册中心地址
      */
@@ -40,6 +45,10 @@ public class ConfigurationParser {
      * rpc协议
      */
     public final static String PROTOCOL = "protocol";
+    /**
+     * 表示这是一个需要创建代理的类
+     */
+    public final static String REFERENCE = "reference";
     /**
      * 保存所有需要解析的注解
      */
@@ -59,9 +68,10 @@ public class ConfigurationParser {
         annotations.add(Reference.class);
         annotations.add(RpcConfig.class);
         annotations.add(Service.class);
-        annotations.add(ZkRegistry.class);
+        annotations.add(ZkRegistryUrl.class);
 
         map.put(AppName.class, new AppNameParser());
+        map.put(Protocol.class, new ProtocolParser());
     }
 
     /**
@@ -70,11 +80,12 @@ public class ConfigurationParser {
      * @param config
      * @return
      */
-    public Map<String, String> parse(Class config, Object obj) throws Exception{
+    public Map<String, String> parse(Class config, Object obj) throws Exception {
         Field[] fields = config.getFields();
         if (fields == null || fields.length == 0) {
             throw new ConfigurationParseException("none config field");
         }
+
         List<Property> list = new ArrayList<>();
         for (Field field : fields) {
             Annotation annotation = findFirstAnnotation(field, annotations);
@@ -84,7 +95,7 @@ public class ConfigurationParser {
         }
 
         Map<String, String> res = new HashMap<>(16);
-        for (Property property:list){
+        for (Property property : list) {
             res.put(property.getKey(), property.getValue());
         }
         return res;
