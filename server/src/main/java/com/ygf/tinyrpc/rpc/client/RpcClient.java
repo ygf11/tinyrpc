@@ -10,7 +10,6 @@ import com.ygf.tinyrpc.common.InitParams;
 import com.ygf.tinyrpc.protocol.jessie.common.Session;
 import com.ygf.tinyrpc.rpc.AbstractWriter;
 import com.ygf.tinyrpc.rpc.OutboundMsg;
-import com.ygf.tinyrpc.rpc.service.ServiceDiscovery;
 
 import static com.ygf.tinyrpc.protocol.jessie.common.SessionStatus.*;
 
@@ -52,10 +51,6 @@ public class RpcClient extends AbstractWriter {
      * 应用级别的配置
      */
     private Object config;
-    /**
-     * 服务发现模块
-     */
-    private ServiceDiscovery serviceDiscovery;
     /**
      * 用于生成requestId
      */

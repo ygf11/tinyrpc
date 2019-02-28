@@ -33,6 +33,4 @@ public class ProxyWrapper {
     public void setConnector(RpcConnector connector) {
         this.connector = connector;
     }
-
-
 }

@@ -1,4 +1,4 @@
-package com.ygf.tinyrpc.registry;
+package com.ygf.tinyrpc.discovery;
 
 import com.ygf.tinyrpc.context.RpcProvider;
 import com.ygf.tinyrpc.exception.ProviderUrlParseException;
@@ -38,11 +38,11 @@ public class ProviderParser {
     /**
      * 键值对数据所在下标(port appName...)
      */
-    private static final Integer KEY_VALUE_INDEX = 4;
+    private static final Integer KEY_VALUE_INDEX = 3;
     /**
      * 协议
      */
-    private static final String PROTOCOL = "rpc::";
+    private static final String PROTOCOL = "rpc:";
     /**
      * 端口
      */
@@ -62,27 +62,27 @@ public class ProviderParser {
     /**
      * 端口在键值对数组中的下标
      */
-    private static final Integer PORT_INDEX = 0;
+    private static final Integer PORT_INDEX = 1;
     /**
      * 应用名在键值对数组中的下标
      */
-    private static final Integer APPNAME_INDEX = 1;
+    private static final Integer APPNAME_INDEX = 2;
     /**
      * 服务暴露的接口所在键值对数组的下标
      */
-    private static final Integer INTERFACE_INDEX = 2;
+    private static final Integer INTERFACE_INDEX = 3;
     /**
      * 暴露的方法在键值对数组中的下标
      */
-    private static final Integer METHODS_INDEX = 3;
+    private static final Integer METHODS_INDEX = 4;
     /**
      * provider字符串第一次解析时 数组的长度
      */
-    private static final Integer INDEX_MAX = KEY_VALUE_INDEX;
+    private static final Integer INDEX_MAX = KEY_VALUE_INDEX + 1;
     /**
-     * key-value包含port appName interface method四项
+     * key-value包含serviceName port appName interface method四项
      */
-    private static final Integer KEY_VALUE_MAX = 4;
+    private static final Integer KEY_VALUE_MAX = 5;
     /**
      * key-value使用'='分离，数组长度为2
      */
@@ -120,7 +120,7 @@ public class ProviderParser {
      */
     public RpcProvider parse(String provider) {
         String[] array = provider.split("/");
-        if (array.length <= INDEX_MAX + 1) {
+        if (array.length != INDEX_MAX) {
             logger.error("provider {}, parse error", provider);
             throw new ProviderUrlParseException("provider url parse error");
         }
@@ -137,20 +137,20 @@ public class ProviderParser {
             throw new ProviderUrlParseException("provider url parse error");
         }
 
-        //服务别名
-        String name = array[NAME_INDEX];
-
-        String[] keyValues = array[KEY_VALUE_INDEX].split("//?");
+        String[] keyValues = array[KEY_VALUE_INDEX].split("\\?");
 
         if (keyValues.length != KEY_VALUE_MAX) {
             logger.error("provider {}, key=value parse error", provider);
             throw new ProviderUrlParseException("Protocol url parse error");
         }
 
+        // 服务别名
+        String name = keyValues[0];
+
         // 解析键值对
         Map<Integer, String> map = new HashMap<>(16);
-        for (int i = 0; i < keyValues.length; ++i) {
-            String value = parseKeyValue(array[i], i);
+        for (int i = 1; i < keyValues.length; ++i) {
+            String value = parseKeyValue(keyValues[i], i);
             map.put(i, value);
         }
 
@@ -188,7 +188,7 @@ public class ProviderParser {
      * @throws ProviderUrlParseException
      */
     private String parseKeyValue(String entries, int index) throws ProviderUrlParseException {
-        String[] map = entries.split("//?");
+        String[] map = entries.split("=");
         if (map.length != KEY_VALUE_LENGTH) {
             throw new ProviderUrlParseException("num of key-value not correct");
         }

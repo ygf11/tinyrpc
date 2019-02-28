@@ -1,6 +1,7 @@
 package com.ygf.tinyrpc.registry;
 
 import com.ygf.tinyrpc.context.RpcProvider;
+import com.ygf.tinyrpc.discovery.ProviderParser;
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.ZkClient;
 import org.slf4j.Logger;
@@ -8,8 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 注册中心

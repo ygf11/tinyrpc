@@ -4,7 +4,6 @@ import com.ygf.tinyrpc.config.ReferenceConfig;
 import com.ygf.tinyrpc.context.RpcProvider;
 import com.ygf.tinyrpc.exception.ServiceDiscoveryException;
 import com.ygf.tinyrpc.proxy.ProxyWrapper;
-import com.ygf.tinyrpc.registry.ProviderParser;
 import com.ygf.tinyrpc.registry.ZooKeeperRegistry;
 import com.ygf.tinyrpc.rpc.client.RpcConnector;
 import org.I0Itec.zkclient.IZkChildListener;
@@ -126,10 +125,12 @@ public class ServiceDiscovery {
 
     /**
      * 清理无效的缓存
+     * TODO
+     *
+     * @param cache
      */
     private void cleanCache(RpcProvider cache){
         RpcConnector connector = cache.getProxy().getConnector();
-
     }
 
 }
