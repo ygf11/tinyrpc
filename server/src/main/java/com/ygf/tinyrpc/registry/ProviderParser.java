@@ -2,6 +2,7 @@ package com.ygf.tinyrpc.registry;
 
 import com.ygf.tinyrpc.context.RpcProvider;
 import com.ygf.tinyrpc.exception.ProviderUrlParseException;
+import com.ygf.tinyrpc.exception.ServiceDiscoveryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +118,7 @@ public class ProviderParser {
      * @param provider
      * @return
      */
-    public RpcProvider parse(String provider) throws ProviderUrlParseException, ClassNotFoundException {
+    public RpcProvider parse(String provider) {
         String[] array = provider.split("/");
         if (array.length <= INDEX_MAX + 1) {
             logger.error("provider {}, parse error", provider);
@@ -208,8 +209,12 @@ public class ProviderParser {
      * @param service
      * @return
      */
-    private Class findByName(String service) throws ClassNotFoundException {
-        return Class.forName(service);
+    private Class findByName(String service) {
+        try {
+            return Class.forName(service);
+        } catch (ClassNotFoundException e) {
+            throw new ServiceDiscoveryException(service + "not found", e);
+        }
     }
 
     /**

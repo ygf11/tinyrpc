@@ -47,6 +47,10 @@ public class RpcChildServer extends AbstractWriter {
      */
     private ApplicationContext applicationContext;
     /**
+     * 当前暴露的服务
+     */
+    private Map<String, Object> exportedServices = new ConcurrentHashMap<>();
+    /**
      * 保存消费者地址到对应session的映射
      */
     private Map<String, ServerSession> sessionMap = new ConcurrentHashMap<String, ServerSession>();
@@ -178,5 +182,15 @@ public class RpcChildServer extends AbstractWriter {
 
         return cz;
 
+    }
+
+    /**
+     * 添加已经暴露的服务
+     *
+     * @param service
+     * @param ref
+     */
+    public void addExported(String service, Object ref){
+        exportedServices.put(service, ref);
     }
 }

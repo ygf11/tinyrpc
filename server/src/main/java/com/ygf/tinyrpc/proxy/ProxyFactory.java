@@ -30,7 +30,7 @@ public class ProxyFactory {
      * @param provider
      * @return
      */
-    public static Object createProxy(RpcProvider provider, RpcClient client) {
+    public static ProxyWrapper createProxy(RpcProvider provider, RpcClient client) {
         // service
         Class service = provider.getService();
         // classloader
@@ -50,8 +50,13 @@ public class ProxyFactory {
         }catch (Exception e){
             logger.error("init client for provider failed: {}", e);
             proxy = null;
+            connector = null;
         }
-        return proxy;
+
+        ProxyWrapper wrapper = new ProxyWrapper();
+        wrapper.setConnector(connector);
+        wrapper.setProxy(proxy);
+        return wrapper;
     }
 
     /**

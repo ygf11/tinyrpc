@@ -8,6 +8,7 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import org.omg.CORBA.PUBLIC_MEMBER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,4 +100,13 @@ public class RpcServerConnector {
         }
     }
 
+    /**
+     * 完成最后的暴露工作
+     *
+     * @param service
+     * @param ref
+     */
+    public void completeExport(String service, Object ref){
+        server.addExported(service, ref);
+    }
 }

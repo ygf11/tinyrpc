@@ -88,37 +88,12 @@ public class ZooKeeperRegistry {
     }
 
     /**
-     * 异步获取服务url
+     * 订阅事件
      *
      * @param parent
      */
-    public void subscribeChildChanges(String parent) {
-        IZkChildListener listener = new IZkChildListener() {
-            @Override
-            public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
-                Lock lock = new ReentrantLock();
-                lock.lock();
-                try {
-
-                } catch (Exception e) {
-
-                } finally {
-                    lock.unlock();
-                }
-            }
-        };
-
+    public void subscribeChildChanges(String parent, IZkChildListener listener) {
         zkClient.subscribeChildChanges(parent, listener);
-    }
-
-    /**
-     * 从zk获取url(解析模块待做)
-     *
-     * @param path
-     * @return
-     */
-    public String readData(String path) {
-        return zkClient.readData(path, true);
     }
 
     /**
@@ -129,6 +104,16 @@ public class ZooKeeperRegistry {
      */
     public boolean exists(String path) {
         return zkClient.exists(path);
+    }
+
+    /**
+     * 获取某个路径下的所有节点
+     *
+     * @param path
+     * @return
+     */
+    public List<String> getChildren(String path){
+       return zkClient.getChildren(path);
     }
 
     /**

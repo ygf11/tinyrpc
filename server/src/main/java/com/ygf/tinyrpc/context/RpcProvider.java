@@ -1,7 +1,8 @@
 package com.ygf.tinyrpc.context;
 
 
-import java.net.InetSocketAddress;
+import com.ygf.tinyrpc.proxy.ProxyWrapper;
+
 import java.util.List;
 
 /**
@@ -38,15 +39,7 @@ public class RpcProvider {
     /**
      * 服务rpc代理对象
      */
-    private Object proxy;
-
-    public Object getProxy() {
-        return proxy;
-    }
-
-    public void setProxy(Object proxy) {
-        this.proxy = proxy;
-    }
+    private ProxyWrapper proxy;
 
     public String getIp() {
         return ip;
@@ -94,5 +87,46 @@ public class RpcProvider {
 
     public void setMethods(List<String> methods) {
         this.methods = methods;
+    }
+
+
+    public ProxyWrapper getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(ProxyWrapper proxy) {
+        this.proxy = proxy;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj instanceof RpcProvider) {
+            RpcProvider other = (RpcProvider) obj;
+            return this.ip.equals(other.ip) &&
+                    this.port.equals(other.port) &&
+                    this.name.equals(other.name) &&
+                    this.appName.equals(other.appName) &&
+                    this.service.equals(other.service);
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + (ip == null ? 0 : ip.hashCode());
+        result = 31 * result + (port == null ? 0 : port.hashCode());
+        result = 31 * result + (name == null ? 0 : port.hashCode());
+        result = 31 * result + (appName == null ? 0 : appName.hashCode());
+        return 31 * result + (service == null ? 0 : service.hashCode());
     }
 }

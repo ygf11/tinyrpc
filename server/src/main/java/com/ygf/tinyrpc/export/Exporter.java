@@ -77,6 +77,7 @@ public class Exporter {
 
             // 写入zk
             doExport(service, registry);
+            connector.completeExport(service.getInterface(), service.getRef());
         }catch (Exception e){
             logger.error("export service {} error", service.getInterface());
             throw new ServiceExportException("export " + service.getInterface() + "exception", e);
