@@ -1,5 +1,7 @@
 package com.ygf.tinyrpc.context;
 
+import com.ygf.tinyrpc.config.ReferenceConfig;
+import com.ygf.tinyrpc.config.ServiceConfig;
 import com.ygf.tinyrpc.proxy.ProxyFactory;
 import com.ygf.tinyrpc.registry.ZooKeeperRegistry;
 import com.ygf.tinyrpc.rpc.client.RpcClient;
@@ -61,24 +63,21 @@ public class RpcContext {
     }
 
     /**
-     * rpc初始化入口
-     * <p>
-     * 1. 读取配置
-     * 2. 服务暴露
-     * 3. 允许消费者启动
+     * 将指定服务进行暴露
+     *
+     * @param service
      */
-    private void start() {
+    public void export(ServiceConfig service){
 
     }
 
     /**
-     * 添加或者替换
+     * 获取指定服务的远程代理
      *
-     * @param service
-     * @param providers
+     * @param reference
      */
-    public void addProviders(Class service, List<RpcProvider> providers) {
-
+    public Object get(ReferenceConfig reference){
+        return null;
     }
 
     /**
@@ -121,10 +120,12 @@ public class RpcContext {
          * 4. 订阅/rpc/xxx/providers子节点的变化事件
          */
         String zkUrl = configs.get("zkUrl");
-        ZooKeeperRegistry registry = ZooKeeperRegistry.getInstance(zkUrl);
+        //ZooKeeperRegistry registry = ZooKeeperRegistry.getInstance(zkUrl);
+        ZooKeeperRegistry registry = new ZooKeeperRegistry(zkUrl);
 
         // 从zk获取  并且监听进行异步更新
-        String path = "/rpc/" + service.getCanonicalName() + "/providers";
+        String path =
+                "/rpc/" + service.getCanonicalName() + "/providers";
         boolean exists = registry.exists(path);
         // 判断服务是否存在
         if (!exists) {

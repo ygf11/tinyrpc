@@ -41,32 +41,33 @@ public class ZooKeeperRegistry {
      */
     private static ZooKeeperRegistry registry;
 
-    private ZooKeeperRegistry(String url) {
+    /**
+     * 仅仅用于测试
+     *
+     * @param url
+     * @param test
+     */
+    public ZooKeeperRegistry(String url, boolean test){
+        this.url = url;
+        if (!test){
+            zkClient = new ZkClient(url);
+        }
+    }
+
+    public ZooKeeperRegistry(String url) {
         this.url = url;
         zkClient = new ZkClient(url, 5000);
         this.parser = new ProviderParser();
-    }
-
-    public static ZooKeeperRegistry getInstance(String url) {
-        if (registry == null) {
-            synchronized (ZooKeeperRegistry.class) {
-                if (registry == null) {
-                    registry = new ZooKeeperRegistry(url);
-                }
-            }
-        }
-
-        return registry;
     }
 
     /**
      * 创建永久节点
      *
      * @param path
-     * @param createParant
+     * @param createParents
      */
-    public void createPersistent(String path, boolean createParant) throws Exception {
-        zkClient.createPersistent(path, true);
+    public void createPersistent(String path, boolean createParents) {
+        zkClient.createPersistent(path, createParents);
     }
 
 
@@ -136,7 +137,7 @@ public class ZooKeeperRegistry {
      * @param cz
      * @return
      */
-    public List<RpcProvider> getProviders(Class cz) throws Exception{
+    public List<RpcProvider> getProviders(Class cz) throws Exception {
         String path = "/rpc/" + cz.getCanonicalName() + "/providers";
         List<String> providers = zkClient.getChildren(path);
 

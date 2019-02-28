@@ -118,7 +118,7 @@ public class RpcClientTest {
         when(eventLoop.inEventLoop()).thenReturn(Boolean.TRUE);
         when(channel.write(any(OutboundMsg.class))).thenReturn(null);
         final Class service = Service.class;
-        final Method method = Service.class.getMethod("test", int.class, String.class);
+        final Method method = Service.class.getMethod("test", Integer.class, String.class);
         final Object[] params = new Object[2];
         params[0] = 1;
         params[1] = "a";
@@ -131,10 +131,11 @@ public class RpcClientTest {
         session.setSessionId(110);
         sessionMap.put(addr, session);
 
+        Integer requestId = 1;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                rpcClient.rpcRequest(session, method, params);
+                rpcClient.rpcRequest(requestId, session, method, params);
                 logger.info("thread continue!");
             }
         }).start();
