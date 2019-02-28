@@ -82,7 +82,7 @@ public class ServiceDiscovery {
         boolean exists = registry.exists(path);
 
         if (!exists) {
-            throw new ServiceDiscoveryException(path + "not exists in zk");
+            throw new ServiceDiscoveryException(path + " not exists in zk");
         }
 
         // 订阅异步异步更新
