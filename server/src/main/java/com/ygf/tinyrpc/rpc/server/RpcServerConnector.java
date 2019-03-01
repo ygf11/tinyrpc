@@ -8,6 +8,10 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import org.omg.CORBA.PUBLIC_MEMBER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,26 +68,35 @@ public class RpcServerConnector {
         bootstrap.group(boss, worker)
                 // TODO 多网卡
                 .localAddress(new InetSocketAddress(ip, port))
+                .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_BACKLOG, 100)
                 .option(ChannelOption.SO_KEEPALIVE, false)
                 .option(ChannelOption.TCP_NODELAY, false)
                 .childOption(ChannelOption.TCP_NODELAY, false)
                 .childOption(ChannelOption.SO_KEEPALIVE, false)
+                .handler(new LoggingHandler(LogLevel.DEBUG))
                 .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    public void initChannel(SocketChannel sc) {
-                        ChannelPipeline pipeline = sc.pipeline();
-                        // 出战
-                        pipeline.addLast(new RpcChildOutboundHandler());
-                        pipeline.addLast(new MsgToByteEncoder());
-                        // 入站
-                        pipeline.addLast(new RpcChildInboundHandler(server));
-                        pipeline.addLast(new ByteToMsgDecoder());
+                            @Override
+                            public void initChannel(SocketChannel sc) {
+                                ChannelPipeline pipeline = sc.pipeline();
 
-                    }
-                });
+                                pipeline.addLast(new ByteToMsgDecoder());
+                                pipeline.addLast(new MsgToByteEncoder());
+
+                                pipeline.addLast(new RpcChildOutboundHandler());
+                                pipeline.addLast(new RpcChildInboundHandler(server));
+
+                            }
+                        });
+        ;
         // 开始监听网络
-        future = bootstrap.bind();
+        try {
+            future = bootstrap.bind().sync();
+        } catch (
+                InterruptedException e) {
+
+        }
+
     }
 
     /**
@@ -106,7 +119,7 @@ public class RpcServerConnector {
      * @param service
      * @param ref
      */
-    public void completeExport(String service, Object ref){
+    public void completeExport(String service, Object ref) {
         server.addExported(service, ref);
     }
 }

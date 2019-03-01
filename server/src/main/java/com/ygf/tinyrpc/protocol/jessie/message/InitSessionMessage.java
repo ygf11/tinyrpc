@@ -12,7 +12,7 @@ public class InitSessionMessage extends Header {
      */
     private String appName;
     /**
-     * 对应的应用
+     * 对应的接口服务
      */
     private String service;
 

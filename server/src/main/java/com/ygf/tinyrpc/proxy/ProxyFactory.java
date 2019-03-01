@@ -41,7 +41,7 @@ public class ProxyFactory {
         RpcConnector connector = new RpcConnector(address, client);
         InvocationHandler handler = new RpcInvocationHandler(provider.getMethods(), client);
 
-        Object proxy = Proxy.newProxyInstance(classLoader, new Class[]{service.getClass()}, handler);
+        Object proxy = Proxy.newProxyInstance(classLoader, new Class[]{service}, handler);
 
         // 启动网络连接
         try {
@@ -67,7 +67,7 @@ public class ProxyFactory {
      */
     private static ClassLoader getClassLoader(RpcProvider provider) {
         Class service = provider.getService();
-        return service.getClass().getClassLoader();
+        return service.getClassLoader();
     }
 
     /**

@@ -76,7 +76,7 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
         logger.info("registry: {}, appName: {}", msg.getService(), msg.getAppName());
 
         // 创建session
-        server.handleSessionInit(addr, msg.getService(), msg.getAppName());
+        server.handleSessionInit(addr, msg.getAppName(), msg.getService());
 
         // TODO更新心跳
     }
@@ -118,5 +118,15 @@ public class RpcChildInboundHandler extends AbstractRpcInboundHandler {
 
     }
 
-
+    /**
+     * 当与远程channel建立连接时，被调用
+     *
+     * @param ctx
+     * @throws Exception
+     */
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) {
+        String addr = getServerAddr(ctx.channel());
+        server.registerAsyncChannel(addr, ctx.channel());
+    }
 }

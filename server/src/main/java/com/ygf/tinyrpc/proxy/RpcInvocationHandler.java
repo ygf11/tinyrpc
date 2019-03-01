@@ -24,8 +24,6 @@ public class RpcInvocationHandler implements InvocationHandler {
      */
     private RpcClient client;
 
-
-
     /**
      * 关联的会话
      */
@@ -56,9 +54,11 @@ public class RpcInvocationHandler implements InvocationHandler {
             throw new MethodNotExportedException("method: "+ name+ "not exported");
         }
 
+        args = args == null ? new Object[0] : args;
+
         // 否则开启rpc请求
         Integer requestId = client.newRequestId();
         client.rpcRequest(requestId, session, method, args);
-        return session.getResult(requestId);
+        return session.getResult(requestId).getResult();
     }
 }

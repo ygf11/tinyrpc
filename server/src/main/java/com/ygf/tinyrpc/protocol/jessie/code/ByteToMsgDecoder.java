@@ -32,6 +32,7 @@ public class ByteToMsgDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        logger.info("buf: {}", in);
         // 报文数据不够
         if (in.readableBytes() < HEADER_LENGTH) {
             return;

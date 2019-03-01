@@ -16,13 +16,9 @@ public class ReferenceConfig {
      */
     private RegistryConfig registry;
     /**
-     * 协议配置
-     */
-    private ProtocolConfig protocol;
-    /**
      * 服务暴露的接口
      */
-    private String interfaceName;
+    private Class interfaceName;
 
     public ApplicationConfig getApplication() {
         return application;
@@ -40,19 +36,12 @@ public class ReferenceConfig {
         this.registry = registry;
     }
 
-    public ProtocolConfig getProtocol() {
-        return protocol;
-    }
 
-    public void setProtocol(ProtocolConfig protocol) {
-        this.protocol = protocol;
-    }
-
-    public String getInterface() {
+    public Class getInterface() {
         return interfaceName;
     }
 
-    public void setInterface(String interfaceName) {
+    public void setInterface(Class interfaceName) {
         this.interfaceName = interfaceName;
     }
 

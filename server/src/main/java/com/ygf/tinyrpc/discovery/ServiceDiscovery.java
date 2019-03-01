@@ -78,7 +78,7 @@ public class ServiceDiscovery {
         }
 
         // path
-        String path = "/rpc/" + reference.getInterface() + "/providers";
+        String path = "/rpc/" + reference.getInterface().getCanonicalName() + "/providers";
         boolean exists = registry.exists(path);
 
         if (!exists) {
@@ -87,7 +87,8 @@ public class ServiceDiscovery {
 
         // 订阅异步异步更新
         IZkChildListener listener = (parentPath, currentChildren) -> {
-            updateCaches(reference.getInterface(), parentPath, currentChildren);
+            String iName = reference.getInterface().getCanonicalName();
+            updateCaches(iName, parentPath, currentChildren);
         };
         List<String> providers = registry.getChildren(path);
         registry.subscribeChildChanges(path, listener);

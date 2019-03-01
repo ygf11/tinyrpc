@@ -64,7 +64,7 @@ public class ServiceDiscoveryTest {
         registry.setAddress("192.168.1.101:2080");
         reference.setRegistry(registry);
 
-        reference.setInterface(Service.class.getCanonicalName());
+        reference.setInterface(Service.class);
     }
 
     /**

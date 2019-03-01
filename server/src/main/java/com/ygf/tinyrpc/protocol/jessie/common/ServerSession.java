@@ -23,4 +23,5 @@ public class ServerSession  extends Session{
         return super.toString()
                 + " appName: " + appName;
     }
+
 }

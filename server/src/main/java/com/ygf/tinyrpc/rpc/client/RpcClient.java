@@ -128,7 +128,8 @@ public class RpcClient extends AbstractWriter {
         metaData.setRequestId(requestId);
         metaData.setService(session.getService().getCanonicalName());
         metaData.setMethod(method.getName());
-        metaData.setArgs(Arrays.asList(args));
+        List<Object> objs = args == null ? null : Arrays.asList(args);
+        metaData.setArgs(objs);
         metaData.setParamTypes(transfer(method.getParameterTypes()));
         OutboundMsg msg = new OutboundMsg();
         msg.setType(RPC_REQUEST);
@@ -208,6 +209,15 @@ public class RpcClient extends AbstractWriter {
         return res;
     }
 
+    /**
+     * 将参数数组转化成参数列表
+     *
+     * @param objs
+     * @return
+     */
+    private List<Object> getListArgs(Object[] objs){
+        return null;
+    }
     /**
      * 根据session获取对应的服务名
      *

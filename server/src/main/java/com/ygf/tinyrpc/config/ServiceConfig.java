@@ -19,10 +19,11 @@ public class ServiceConfig {
      * 协议配置
      */
     private ProtocolConfig protocol;
+
     /**
      * 服务暴露的接口
      */
-    private String interfaceName;
+    private Class interfaceName;
     /**
      * 实际引用对象
      */
@@ -52,14 +53,6 @@ public class ServiceConfig {
         this.protocol = protocol;
     }
 
-    public String getInterface() {
-        return interfaceName;
-    }
-
-    public void setInterface(String interfaceName) {
-        this.interfaceName = interfaceName;
-    }
-
     public Object getRef() {
         return ref;
     }
@@ -67,4 +60,13 @@ public class ServiceConfig {
     public void setRef(Object ref) {
         this.ref = ref;
     }
+
+    public Class getInterface() {
+        return interfaceName;
+    }
+
+    public void setInterface(Class interfaceName) {
+        this.interfaceName = interfaceName;
+    }
+
 }

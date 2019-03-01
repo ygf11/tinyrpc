@@ -14,18 +14,21 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
+import java.net.InetSocketAddress;
+
 
 public class ClientMain {
 
     public final static int SIZE = 256;
 
     public static void main(String[] args) throws Exception {
-        String HOST = "192.168.1.103";
-        int PORT = 9001;
+        String HOST = "192.168.1.101";
+        int PORT = 20880;
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
             b.group(group)
+                    .remoteAddress(new InetSocketAddress(HOST, PORT))
                     .channel(NioSocketChannel.class)
                     .option(ChannelOption.TCP_NODELAY, true)
                     .handler(new ChannelInitializer<SocketChannel>() {
@@ -36,7 +39,7 @@ public class ClientMain {
                             p.addLast(new EchoClientHandler());
                         }
                     });
-            ChannelFuture future = b.connect(HOST, PORT).sync();
+            ChannelFuture future = b.connect().sync();
             future.channel().closeFuture().sync();
         } finally {
             group.shutdownGracefully();

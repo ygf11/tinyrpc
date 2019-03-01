@@ -59,7 +59,7 @@ public class ExportTest {
         protocol.setPort(20880);
         service.setProtocol(protocol);
 
-        service.setInterface(Service.class.getCanonicalName());
+        service.setInterface(Service.class);
     }
 
 

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -45,6 +46,7 @@ public class Exporter {
         // 监听地址
         String host = service.getProtocol().getHost();
         Integer port = service.getProtocol().getPort();
+        String iName = service.getInterface().getCanonicalName();
 
         // 确保服务提供者端ip:port进行了配置
         if (host == null || port == null) {
@@ -77,7 +79,7 @@ public class Exporter {
 
             // 写入zk
             doExport(service, registry);
-            connector.completeExport(service.getInterface(), service.getRef());
+            connector.completeExport(iName, service.getRef());
         }catch (Exception e){
             logger.error("export service {} error", service.getInterface());
             throw new ServiceExportException("export " + service.getInterface() + "exception", e);
@@ -86,19 +88,20 @@ public class Exporter {
     }
 
 
-    private void doExport(ServiceConfig service, ZooKeeperRegistry registry) throws ClassNotFoundException{
+    private void doExport(ServiceConfig service, ZooKeeperRegistry registry) throws Exception{
         /**
          * 即在zk集群创建节点
          * 1. 检查接口服务节点是否存在，不存在则创建
          * 2. 检查接口节点下的provider和configuration是否存在，不存在则创建
          * 3. 在provider端创建对应节点
          */
+        String iName = service.getInterface().getCanonicalName();
         // 确保zk服务节点存在
-        String servicePath = "/rpc/" + service.getInterface();
+        String servicePath = "/rpc/" + iName;
         registry.createPersistent(servicePath, true);
 
         // 确保providers节点存在
-        String providers = "/rpc/" + service.getInterface() + "/providers";
+        String providers = "/rpc/" + iName + "/providers";
         registry.createPersistent(providers, true);
 
         // 向zk写入服务信息
@@ -112,7 +115,6 @@ public class Exporter {
          */
         String ip = service.getProtocol().getHost();
         Integer port = service.getProtocol().getPort();
-        String iName = service.getInterface();
         String appName = service.getApplication().getApplicationName();
         String url = "rpc://" + ip
                 + "/" + iName
@@ -121,7 +123,7 @@ public class Exporter {
                 + "?" + "interface=" + iName
                 + "?" + "methods=" + getMethods(iName);
 
-        registry.createEphemeral(url);
+        registry.createEphemeral(providers + "/" + URLEncoder.encode(url, "utf-8"));
     }
 
 

@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 1. TCP连接之后 创建会话对象
  * 2. 客户端接收响应会话  修改会话状态
  * 3. 销毁会话  清除会话
- *
+ * <p>
  * 所以这三个地方需要加独占锁
  *
  * @author theo
@@ -20,7 +20,7 @@ public class Session {
     /**
      * 对应服务类
      */
-    private Class  service;
+    private Class service;
     /**
      * 会话当前状态
      */
@@ -75,5 +75,22 @@ public class Session {
         return "registry: " + service
                 + " status: " + status
                 + " sessionId: " + sessionId;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj instanceof Session) {
+            return sessionId.equals(((Session) obj).sessionId);
+        }
+
+        return false;
     }
 }

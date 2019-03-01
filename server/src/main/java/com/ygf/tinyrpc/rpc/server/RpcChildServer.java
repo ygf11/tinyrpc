@@ -7,6 +7,7 @@ import com.ygf.tinyrpc.protocol.jessie.common.ServerSession;
 import com.ygf.tinyrpc.rpc.AbstractWriter;
 import com.ygf.tinyrpc.rpc.Exception.RpcException;
 import com.ygf.tinyrpc.rpc.OutboundMsg;
+import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -65,9 +66,8 @@ public class RpcChildServer extends AbstractWriter {
      * @param addr
      */
     public void handleSessionInit(String addr, String appName, String service) throws ClassNotFoundException {
+        logger.info("addr: {}, appName: {}, service: {}", addr, appName);
         ServerSession session = sessionMap.get(addr);
-        Integer sessionId = SESSIONID.get();
-        session.setSessionId(sessionId);
 
         session.setAppName(appName);
 
@@ -109,7 +109,13 @@ public class RpcChildServer extends AbstractWriter {
         Method method = cz.getMethod(metaData.getMethod(), paramTypes);
 
         // spring上下文中获取目标服务对象
-        Object service = applicationContext.getBean(session.getService());
+        String iName = session.getService().getCanonicalName();
+        Object service = exportedServices.get(session.getService().getCanonicalName());
+
+        if (service == null) {
+            logger.error("no exported {} service", iName);
+            return;
+        }
 
         // 调用目标方法
         Class type = null;
@@ -190,7 +196,27 @@ public class RpcChildServer extends AbstractWriter {
      * @param service
      * @param ref
      */
-    public void addExported(String service, Object ref){
+    public void addExported(String service, Object ref) {
         exportedServices.put(service, ref);
+    }
+
+    /**
+     * 向server注册channel
+     *
+     * @param addr
+     * @param channel
+     */
+    public void registerAsyncChannel(String addr, Channel channel) {
+        synchronized (channel) {
+            ServerSession session = sessionMap.get(addr);
+            if (session != null) {
+                throw new RuntimeException("remote connection exists for " + addr);
+            }
+
+            session = new ServerSession();
+            session.setSessionId(SESSIONID.get());
+            sessionMap.put(addr, session);
+            registerChannel(session, channel);
+        }
     }
 }

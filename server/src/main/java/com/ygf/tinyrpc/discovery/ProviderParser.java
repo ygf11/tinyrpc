@@ -6,6 +6,7 @@ import com.ygf.tinyrpc.exception.ServiceDiscoveryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -118,64 +119,69 @@ public class ProviderParser {
      * @param provider
      * @return
      */
-    public RpcProvider parse(String provider) {
-        String[] array = provider.split("/");
-        if (array.length != INDEX_MAX) {
-            logger.error("provider {}, parse error", provider);
-            throw new ProviderUrlParseException("provider url parse error");
+    public RpcProvider parse(String data) {
+        try {
+            String provider = URLDecoder.decode(data, "utf-8");
+            String[] array = provider.split("/");
+            if (array.length != INDEX_MAX) {
+                logger.error("provider {}, parse error", provider);
+                throw new ProviderUrlParseException("provider url parse error");
+            }
+
+            if (!array[PROTOCOL_INDEX].equals(PROTOCOL)) {
+                logger.error("provider {}, protocol is not rpc", provider);
+                throw new ProviderUrlParseException("provider url parse error");
+            }
+            // ip
+            String ip = array[IP_INDEX];
+            checkIpValidate(ip);
+
+            if (array[EMPTY_INDEX].length() != 0) {
+                throw new ProviderUrlParseException("provider url parse error");
+            }
+
+            String[] keyValues = array[KEY_VALUE_INDEX].split("\\?");
+
+            if (keyValues.length != KEY_VALUE_MAX) {
+                logger.error("provider {}, key=value parse error", provider);
+                throw new ProviderUrlParseException("Protocol url parse error");
+            }
+
+            // 服务别名
+            String name = keyValues[0];
+
+            // 解析键值对
+            Map<Integer, String> map = new HashMap<>(16);
+            for (int i = 1; i < keyValues.length; ++i) {
+                String value = parseKeyValue(keyValues[i], i);
+                map.put(i, value);
+            }
+
+            String appName = map.get(APPNAME_INDEX);
+            checkAppNameValidate(appName);
+
+            Integer port = Integer.valueOf(map.get(PORT_INDEX));
+            checkPortValidate(port);
+
+            checkServiceValidate(map.get(INTERFACE_INDEX));
+            Class service = findByName(map.get(INTERFACE_INDEX));
+
+            String[] methods = map.get(METHODS_INDEX).split(",");
+            checkMethodsValidate(methods);
+
+            // 组装返回对象
+            RpcProvider res = new RpcProvider();
+            res.setIp(ip);
+            res.setName(name);
+            res.setPort(port);
+            res.setAppName(appName);
+            res.setService(service);
+            res.setMethods(Arrays.asList(methods));
+            return res;
+        }catch (Exception e) {
+            logger.error("exception {} occur", e);
         }
-
-        if (!array[PROTOCOL_INDEX].equals(PROTOCOL)) {
-            logger.error("provider {}, protocol is not rpc", provider);
-            throw new ProviderUrlParseException("provider url parse error");
-        }
-        // ip
-        String ip = array[IP_INDEX];
-        checkIpValidate(ip);
-
-        if (array[EMPTY_INDEX].length() != 0) {
-            throw new ProviderUrlParseException("provider url parse error");
-        }
-
-        String[] keyValues = array[KEY_VALUE_INDEX].split("\\?");
-
-        if (keyValues.length != KEY_VALUE_MAX) {
-            logger.error("provider {}, key=value parse error", provider);
-            throw new ProviderUrlParseException("Protocol url parse error");
-        }
-
-        // 服务别名
-        String name = keyValues[0];
-
-        // 解析键值对
-        Map<Integer, String> map = new HashMap<>(16);
-        for (int i = 1; i < keyValues.length; ++i) {
-            String value = parseKeyValue(keyValues[i], i);
-            map.put(i, value);
-        }
-
-        String appName = map.get(APPNAME_INDEX);
-        checkAppNameValidate(appName);
-
-        Integer port = Integer.valueOf(map.get(PORT_INDEX));
-        checkPortValidate(port);
-
-        checkServiceValidate(map.get(INTERFACE_INDEX));
-        Class service = findByName(map.get(INTERFACE_INDEX));
-
-        String[] methods = map.get(METHODS_INDEX).split(",");
-        checkMethodsValidate(methods);
-
-        // 组装返回对象
-        RpcProvider res = new RpcProvider();
-        res.setIp(ip);
-        res.setName(name);
-        res.setPort(port);
-        res.setAppName(appName);
-        res.setService(service);
-        res.setMethods(Arrays.asList(methods));
-
-        return res;
+        return null;
     }
 
 

@@ -8,6 +8,9 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
@@ -59,18 +62,21 @@ public class RpcConnector {
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(worker)
                 .remoteAddress(addr)
+                .channel(NioSocketChannel.class)
                 .option(ChannelOption.SO_KEEPALIVE, false)
                 .option(ChannelOption.TCP_NODELAY, false)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel sc) {
                         ChannelPipeline pipeline = sc.pipeline();
-                        // 出站
-                        pipeline.addLast(new RpcOutboundHandler());
-                        pipeline.addLast(new MsgToByteEncoder());
-                        // 入站
-                        pipeline.addLast(new RpcInboundHandler(client));
+
                         pipeline.addLast(new ByteToMsgDecoder());
+
+                        pipeline.addLast(new MsgToByteEncoder());
+                        pipeline.addLast(new RpcOutboundHandler());
+
+                        pipeline.addLast(new RpcInboundHandler(client));
+
                     }
                 });
 

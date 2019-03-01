@@ -39,12 +39,12 @@ public class AbstractWriter {
     protected void writeMsg(Session session, final OutboundMsg msg) {
         final  Channel channel = channelMap.get(session);
         if (channel.eventLoop().inEventLoop()) {
-            channel.write(msg);
+            channel.writeAndFlush(msg);
         } else {
             channel.eventLoop().execute(new Runnable() {
                 @Override
                 public void run() {
-                    channel.write(msg);
+                    channel.writeAndFlush(msg);
                 }
             });
         }
