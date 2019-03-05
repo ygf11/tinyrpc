@@ -193,7 +193,7 @@ public class ProviderParser {
      * @return
      * @throws ProviderUrlParseException
      */
-    private String parseKeyValue(String entries, int index) throws ProviderUrlParseException {
+    private String parseKeyValue(String entries, int index) {
         String[] map = entries.split("=");
         if (map.length != KEY_VALUE_LENGTH) {
             throw new ProviderUrlParseException("num of key-value not correct");

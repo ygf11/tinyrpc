@@ -37,7 +37,7 @@ public class Exporter {
      *
      * @param service
      */
-    public void export(ServiceConfig service) throws ServiceExportException {
+    public void export(ServiceConfig service) {
         /**
          * 1. 创建网络监听对象
          * 2. 开启网络监听
@@ -88,7 +88,7 @@ public class Exporter {
     }
 
 
-    private void doExport(ServiceConfig service, ZooKeeperRegistry registry) throws Exception{
+    private void doExport(ServiceConfig service, ZooKeeperRegistry registry) {
         /**
          * 即在zk集群创建节点
          * 1. 检查接口服务节点是否存在，不存在则创建
@@ -122,8 +122,12 @@ public class Exporter {
                 + "?" + "appName=" + appName
                 + "?" + "interface=" + iName
                 + "?" + "methods=" + getMethods(iName);
+        try {
+            registry.createEphemeral(providers + "/" + URLEncoder.encode(url, "utf-8"));
 
-        registry.createEphemeral(providers + "/" + URLEncoder.encode(url, "utf-8"));
+        }catch (Exception e){
+            throw new ServiceExportException("url encode failed", e);
+        }
     }
 
 
@@ -133,15 +137,18 @@ public class Exporter {
      * @param iName
      * @return
      */
-    private String getMethods(String iName) throws ClassNotFoundException {
-        Class cz = Class.forName(iName);
-        StringBuilder sb = new StringBuilder();
-        Method[] methods = cz.getMethods();
-        for (Method method : methods) {
-            sb.append(method.getName()).append(",");
+    private String getMethods(String iName) {
+        try {
+            Class cz = Class.forName(iName);
+            StringBuilder sb = new StringBuilder();
+            Method[] methods = cz.getMethods();
+            for (Method method : methods) {
+                sb.append(method.getName()).append(",");
+            }
+            return sb.toString().substring(0, sb.length() - 1);
+        }catch (Exception e){
+            throw new ServiceExportException("class not found", e);
         }
-
-        return sb.toString().substring(0, sb.length() - 1);
     }
 
 }

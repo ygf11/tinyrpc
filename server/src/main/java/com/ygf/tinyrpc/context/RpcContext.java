@@ -7,14 +7,12 @@ import com.ygf.tinyrpc.export.Exporter;
 import com.ygf.tinyrpc.loadBalance.RpcLoadBalance;
 import com.ygf.tinyrpc.proxy.ProxyFactory;
 import com.ygf.tinyrpc.proxy.ProxyWrapper;
-import com.ygf.tinyrpc.registry.ZooKeeperRegistry;
 import com.ygf.tinyrpc.rpc.client.RpcClient;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -115,5 +113,4 @@ public class RpcContext {
         provider.setProxy(proxy);
         return proxy.getProxy();
     }
-
 }
