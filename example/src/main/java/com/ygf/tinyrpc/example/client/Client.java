@@ -21,7 +21,7 @@ public class Client {
         reference.setApplication(application);
 
         RegistryConfig registry = new RegistryConfig();
-        registry.setAddress("192.168.1.104:2181");
+        registry.setAddress("192.168.43.98:2181");
         registry.setType("zookeeper");
         reference.setRegistry(registry);
 
