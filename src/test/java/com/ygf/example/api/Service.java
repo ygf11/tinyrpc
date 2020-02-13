@@ -1,4 +1,4 @@
-package com.ygf.tinyrpc.example.api;
+package com.ygf.example.api;
 
 
 /**

@@ -1,7 +1,7 @@
-package com.ygf.tinyrpc.example.server;
+package com.ygf.example.server;
 
-import com.ygf.tinyrpc.example.api.Service;
-import com.ygf.tinyrpc.example.service.ServiceImpl;
+import com.ygf.example.api.Service;
+import com.ygf.example.service.ServiceImpl;
 import com.ygf.tinyrpc.config.ApplicationConfig;
 import com.ygf.tinyrpc.config.ProtocolConfig;
 import com.ygf.tinyrpc.config.RegistryConfig;

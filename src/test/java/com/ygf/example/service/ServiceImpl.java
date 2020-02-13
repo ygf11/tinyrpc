@@ -1,6 +1,6 @@
-package com.ygf.tinyrpc.example.service;
+package com.ygf.example.service;
 
-import com.ygf.tinyrpc.example.api.Service;
+import com.ygf.example.api.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

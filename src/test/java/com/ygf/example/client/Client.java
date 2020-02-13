@@ -1,9 +1,9 @@
-package com.ygf.tinyrpc.example.client;
+package com.ygf.example.client;
 
 import com.ygf.tinyrpc.config.ApplicationConfig;
 import com.ygf.tinyrpc.config.ReferenceConfig;
 import com.ygf.tinyrpc.config.RegistryConfig;
-import com.ygf.tinyrpc.example.api.Service;
+import com.ygf.example.api.Service;
 import com.ygf.tinyrpc.utils.RpcContextUtils;
 
 /**
