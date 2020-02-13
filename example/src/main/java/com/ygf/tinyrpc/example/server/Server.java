@@ -19,13 +19,13 @@ public class Server {
 
         RegistryConfig registry = new RegistryConfig();
         registry.setType("zookeeper");
-        registry.setAddress("192.168.1.101:2181");
+        registry.setAddress("192.168.1.104:2181");
 
         service.setRegistry(registry);
 
         ProtocolConfig protocol = new ProtocolConfig();
         protocol.setName("jessie");
-        protocol.setHost("192.168.1.101");
+        protocol.setHost("192.168.1.104");
         protocol.setPort(20880);
         service.setProtocol(protocol);
 
