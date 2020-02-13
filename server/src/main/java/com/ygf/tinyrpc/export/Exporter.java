@@ -80,7 +80,7 @@ public class Exporter {
             // 写入zk
             doExport(service, registry);
             connector.completeExport(iName, service.getRef());
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("export service {} error", service.getInterface());
             throw new ServiceExportException("export " + service.getInterface() + "exception", e);
         }
@@ -125,7 +125,7 @@ public class Exporter {
         try {
             registry.createEphemeral(providers + "/" + URLEncoder.encode(url, "utf-8"));
 
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ServiceExportException("url encode failed", e);
         }
     }
@@ -146,7 +146,7 @@ public class Exporter {
                 sb.append(method.getName()).append(",");
             }
             return sb.toString().substring(0, sb.length() - 1);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ServiceExportException("class not found", e);
         }
     }
