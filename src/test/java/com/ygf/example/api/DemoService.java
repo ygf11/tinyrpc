@@ -7,8 +7,7 @@ package com.ygf.example.api;
  * @author theo
  * @date 2018201211
  */
-public interface Service {
-    Integer test();
-    Integer test(Integer a, String b);
+public interface DemoService {
+    Integer sayHello();
 }
 

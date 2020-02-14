@@ -1,7 +1,7 @@
 package com.ygf.example.server;
 
-import com.ygf.example.api.Service;
-import com.ygf.example.service.ServiceImpl;
+import com.ygf.example.api.DemoService;
+import com.ygf.example.service.DemoServiceImpl;
 import com.ygf.tinyrpc.config.ApplicationConfig;
 import com.ygf.tinyrpc.config.ProtocolConfig;
 import com.ygf.tinyrpc.config.RegistryConfig;
@@ -10,7 +10,7 @@ import com.ygf.tinyrpc.utils.RpcContextUtils;
 
 public class Server {
     public  static void main(String[] args) throws Exception{
-        Service testService = new ServiceImpl();
+        DemoService testService = new DemoServiceImpl();
         ServiceConfig service = new ServiceConfig();
 
         ApplicationConfig application = new ApplicationConfig();
@@ -29,7 +29,7 @@ public class Server {
         protocol.setPort(20880);
         service.setProtocol(protocol);
 
-        service.setInterface(Service.class);
+        service.setInterface(DemoService.class);
         service.setRef(testService);
         // 暴露服务
         RpcContextUtils.export(service);

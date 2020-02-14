@@ -3,7 +3,7 @@ package com.ygf.example.client;
 import com.ygf.tinyrpc.config.ApplicationConfig;
 import com.ygf.tinyrpc.config.ReferenceConfig;
 import com.ygf.tinyrpc.config.RegistryConfig;
-import com.ygf.example.api.Service;
+import com.ygf.example.api.DemoService;
 import com.ygf.tinyrpc.utils.RpcContextUtils;
 
 /**
@@ -25,9 +25,9 @@ public class Client {
         registry.setType("zookeeper");
         reference.setRegistry(registry);
 
-        reference.setInterface(Service.class);
-        Service ref = (Service) RpcContextUtils.get(reference);
-        System.out.println(ref.test());
+        reference.setInterface(DemoService.class);
+        DemoService ref = (DemoService) RpcContextUtils.get(reference);
+        System.out.println(ref.sayHello());
         Thread.sleep(60*60*1000);
     }
 }
