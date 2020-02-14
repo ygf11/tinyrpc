@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.ygf</groupId>
+    <groupId>ygf.tinyrpc</groupId>
     <artifactId>tinyrpc</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -25,7 +25,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.13.Final</version>
+            <version>4.1.42.Final</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
