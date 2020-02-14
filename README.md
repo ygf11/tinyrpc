@@ -98,3 +98,7 @@ for example, run on 192.168.0.104:2181
         Thread.sleep(60*60*1000);
     }
 ```
+
+```$xslt
+example code can be found in test-example package.
+```
