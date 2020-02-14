@@ -18,7 +18,7 @@
         <mockit.verion>2.7.19</mockit.verion>
         <spring.context.version>4.3.10.RELEASE</spring.context.version>
         <zkcleint.version>0.11</zkcleint.version>
-        <zookeeper.version>3.4.13</zookeeper.version>
+        <zookeeper.version>3.4.14</zookeeper.version>
     </properties>
 
     <dependencies>
