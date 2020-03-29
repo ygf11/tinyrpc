@@ -139,7 +139,7 @@ public class Exporter {
      */
     private String getMethods(String iName) {
         try {
-            Class cz = Class.forName(iName);
+            Class<?> cz = Class.forName(iName);
             StringBuilder sb = new StringBuilder();
             Method[] methods = cz.getMethods();
             for (Method method : methods) {

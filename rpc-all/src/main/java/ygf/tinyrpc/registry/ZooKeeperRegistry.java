@@ -121,7 +121,7 @@ public class ZooKeeperRegistry {
      * @param cz
      * @return
      */
-    public List<RpcProvider> getProviders(Class cz) throws Exception {
+    public List<RpcProvider> getProviders(Class<?> cz) throws Exception {
         String path = "/rpc/" + cz.getCanonicalName() + "/providers";
         List<String> providers = zkClient.getChildren(path);
 
